@@ -1,14 +1,9 @@
 package com.example.finalprojectbackend.lab2you.db.model.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -16,40 +11,41 @@ import java.time.LocalDateTime;
 @Setter
 @MappedSuperclass
 public class BaseEntity implements Serializable {
+
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "updated_by")
-    private String updatedBy;
+    @ManyToOne
+    @JoinColumn(name = "updated_by")
+    private UserEntity updatedBy;
 
-    @Column(name = "created_by")
-    private String createdBy;
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private UserEntity createdBy;
 
-    //we can use those methods to set the createdAt and updatedAt fields
+    private transient CurrentUserProvider currentUserProvider;
+
     @PrePersist
     public void prePersist() {
-        createdBy = getCurrentUsername();
+        UserEntity userEntity = currentUserProvider.getCurrentUser();
+        if (userEntity != null) {
+            createdBy = userEntity;
+        }
         createdAt = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        updatedBy = getCurrentUsername();
-        updatedAt = LocalDateTime.now();
-    }
-
-    private String getCurrentUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            String userName = authentication.getName();
-            if (userName.contains("@")){
-                return userName.substring(0, userName.indexOf("@"));
-            }
-                return "new user";
+        UserEntity userEntity = currentUserProvider.getCurrentUser();
+        if (userEntity != null) {
+            updatedBy = userEntity;
         }
-        return "new external user";
+        updatedAt = LocalDateTime.now();
     }
 }
