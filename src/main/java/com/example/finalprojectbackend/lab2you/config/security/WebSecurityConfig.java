@@ -47,7 +47,7 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .authorizeRequests()
                 .requestMatchers(
-                        new AntPathRequestMatcher("/api/v1/registerUserFromExternalRequest","POST")
+                        new AntPathRequestMatcher("/api/v1/catalog/analysisDocumentTypes","GET")
                 ).permitAll()
                 .requestMatchers(
                         new AntPathRequestMatcher("/api/v1/userList","GET"),
