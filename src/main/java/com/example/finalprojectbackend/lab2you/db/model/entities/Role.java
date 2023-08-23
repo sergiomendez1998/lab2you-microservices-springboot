@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 @Table(name = "roles")
 public class Role extends BaseEntity{
     @Id
