@@ -33,4 +33,7 @@ public class UserEntity extends BaseEntity {
     @OneToOne(mappedBy = "user")
     private Customer customer;
 
+    @OneToOne(mappedBy = "user")
+    private Employee employee;
+
 }
