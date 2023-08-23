@@ -22,5 +22,6 @@ public class UserDTOConverter {
         newCustomer.setOccupation(userDTO.getOccupation());
         newCustomer.setUser(newUser);
         return newCustomer;
+
     }
 }
