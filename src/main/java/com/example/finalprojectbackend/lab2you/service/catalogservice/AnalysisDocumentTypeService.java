@@ -61,7 +61,6 @@ public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocum
     @Cacheable(value = "analysisDocumentTypes")
     @Override
     public List<AnalysisDocumentType> executeReadAll() {
-        System.out.println("as first time");
         return analysisDocumentTypeRepository.findAllByIsActiveTrue();
     }
 }

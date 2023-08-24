@@ -24,13 +24,15 @@ public class TokenUtils {
     * The token will have the name as extra information.
     * The token will have the expiration date.
      */
-    public static String createToken(String name, String email, Collection<? extends GrantedAuthority> authorities) {
+    public static String createToken(String name, String email, Collection<? extends GrantedAuthority> authorities, String role) {
         long expirationTime = EXPIRATION_TIME*1000; // Convert to milliseconds
         Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
 
         Map<String, Object> extra = new HashMap<>();
         extra.put("name", name);
-        extra.put("roles", authorities);
+        extra.put("authorities", authorities);
+        extra.put("role",role);
+
         return Jwts.builder()
                 .setSubject(email)
                 .setExpiration(expirationDate)
