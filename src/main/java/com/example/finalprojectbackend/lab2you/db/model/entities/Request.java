@@ -39,7 +39,7 @@ public class Request {
     private StatusRequest statusRequest;
 
     @ManyToOne
-    @JoinColumn (name="customer")
+    @JoinColumn (name="customer_id")
     private Customer customer;
 
     @PrePersist
