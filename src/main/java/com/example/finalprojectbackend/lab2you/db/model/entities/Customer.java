@@ -37,8 +37,8 @@ public class Customer {
     private UserEntity user;
     @OneToMany (mappedBy = "customer")
     private List<Request> requests = new ArrayList<>();
+    
     @PrePersist
-
     public void prePersist() {
         createdAt = LocalDateTime.now();
     }
