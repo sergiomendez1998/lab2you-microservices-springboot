@@ -35,6 +35,7 @@ public class Customer {
     @OneToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+    
     @OneToMany (mappedBy = "customer")
     private List<Request> requests = new ArrayList<>();
     
