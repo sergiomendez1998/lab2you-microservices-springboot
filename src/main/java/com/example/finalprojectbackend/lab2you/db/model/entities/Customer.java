@@ -8,6 +8,8 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -33,10 +35,13 @@ public class Customer {
     @OneToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
-
+    @OneToMany (mappedBy = "customer")
+    private List<Request> requests = new ArrayList<>();
     @PrePersist
+
     public void prePersist() {
         createdAt = LocalDateTime.now();
     }
+
 
 }
