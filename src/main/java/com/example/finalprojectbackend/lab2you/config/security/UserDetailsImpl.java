@@ -18,7 +18,10 @@ public class UserDetailsImpl implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return
                 userEntity.getRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority(role.getName()))
+                        .map(role -> role.getAuthorities().stream()
+                                .map(authority -> new SimpleGrantedAuthority(authority.getName()))
+                                .collect(Collectors.toList()))
+                        .flatMap(Collection::stream)
                         .collect(Collectors.toList());
     }
 
@@ -54,5 +57,8 @@ public class UserDetailsImpl implements UserDetails {
 
     public String getName() {
         return userEntity.getEmail();
+    }
+    public String getRole() {
+        return userEntity.getRoles().get(0).getName();
     }
 }

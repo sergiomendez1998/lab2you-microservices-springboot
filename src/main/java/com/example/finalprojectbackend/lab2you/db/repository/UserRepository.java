@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity findByEmail(String email);
-    UserEntity findByCui(Long Cui);
     List<UserEntity> findAllByEnabled(Boolean enabled);
 }
