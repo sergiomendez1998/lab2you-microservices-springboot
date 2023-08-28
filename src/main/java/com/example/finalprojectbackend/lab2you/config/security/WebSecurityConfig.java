@@ -52,7 +52,8 @@ public class WebSecurityConfig {
                                     new AntPathRequestMatcher(
                                             "/api/v1/catalog/analysisDocumentTypes",
                                             "GET"),
-                            new AntPathRequestMatcher("http://localhost:9090/swagger-ui.html", "GET")
+                            new AntPathRequestMatcher("/doc/**", "GET"),
+                            new AntPathRequestMatcher("/v3/api-docs/**", "GET")
 
                             )
                             .permitAll()
