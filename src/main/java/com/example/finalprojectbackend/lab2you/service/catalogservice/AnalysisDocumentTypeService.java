@@ -2,13 +2,12 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentType;
 import com.example.finalprojectbackend.lab2you.db.repository.AnalysisDocumentTypeRepository;
-import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;;
+import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.util.List;
-
 
 @Service
 public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocumentType> {
@@ -20,30 +19,29 @@ public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocum
         this.analysisDocumentTypeRepository = analysisDocumentTypeRepository;
     }
 
-
     @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
     @Override
     public AnalysisDocumentType executeCreation(AnalysisDocumentType entity) {
         return analysisDocumentTypeRepository.save(entity);
     }
 
-
     @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
     @Override
     public AnalysisDocumentType executeUpdate(AnalysisDocumentType entity) {
         AnalysisDocumentType analysisDocumentTypeFound = executeReadAll()
                 .stream()
-                .filter(analysisDocumentType -> analysisDocumentType.getId().equals(entity.getId())).findFirst().orElse(null);
+                .filter(analysisDocumentType -> analysisDocumentType.getId().equals(entity.getId())).findFirst()
+                .orElse(null);
 
         if (analysisDocumentTypeFound != null) {
-            analysisDocumentTypeFound.setName(entity.getName() != null ? entity.getName() : analysisDocumentTypeFound.getName());
-            analysisDocumentTypeFound.setDescription(entity.getDescription() != null ? entity.getDescription() : analysisDocumentTypeFound.getDescription());
+            analysisDocumentTypeFound
+                    .setName(entity.getName() != null ? entity.getName() : analysisDocumentTypeFound.getName());
+            analysisDocumentTypeFound.setDescription(entity.getDescription() != null ? entity.getDescription()
+                    : analysisDocumentTypeFound.getDescription());
             analysisDocumentTypeRepository.save(analysisDocumentTypeFound);
         }
         return analysisDocumentTypeFound;
     }
-
-
 
     @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
     @Override
@@ -58,6 +56,7 @@ public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocum
             analysisDocumentTypeRepository.save(analysisDocumentTypeFound);
         }
     }
+
     @Cacheable(value = "analysisDocumentTypes")
     @Override
     public List<AnalysisDocumentType> executeReadAll() {

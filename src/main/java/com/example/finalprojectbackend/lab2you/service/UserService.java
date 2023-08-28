@@ -7,8 +7,6 @@ import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -20,7 +18,7 @@ public class UserService {
 
     @Transactional
     @ReadOnlyProperty
-   public UserEntity findByEmail(String email) {
+    public UserEntity findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -28,15 +26,14 @@ public class UserService {
         return userRepository.save(userEntity);
     }
 
-//    public List<UserWrapper> executedReadAll() {
-//        return userRepository.findAllByEnabled(true)
-//                .stream()
-//                .map(user -> new UserWrapper(user, user.getRoles()))
-//                .toList();
-//    }
-//    public UserEntity findByCui(Long cui){
-//        return userRepository.findByCui(cui);
-//    }
-
+    // public List<UserWrapper> executedReadAll() {
+    // return userRepository.findAllByEnabled(true)
+    // .stream()
+    // .map(user -> new UserWrapper(user, user.getRoles()))
+    // .toList();
+    // }
+    // public UserEntity findByCui(Long cui){
+    // return userRepository.findByCui(cui);
+    // }
 
 }
