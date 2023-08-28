@@ -199,3 +199,6 @@ buildNumber.properties
 **logs
 **.factorypath
 **/bin
+
+#ignore application properties
+**/application.properties

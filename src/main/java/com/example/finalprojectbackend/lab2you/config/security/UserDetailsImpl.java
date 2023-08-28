@@ -1,7 +1,5 @@
 package com.example.finalprojectbackend.lab2you.config.security;
 
-
-import com.example.finalprojectbackend.lab2you.db.model.entities.Customer;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,15 +12,15 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
     private final UserEntity userEntity;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return
-                userEntity.getRoles().stream()
-                        .map(role -> role.getAuthorities().stream()
-                                .map(authority -> new SimpleGrantedAuthority(authority.getName()))
-                                .collect(Collectors.toList()))
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toList());
+        return userEntity.getRoles().stream()
+                .map(role -> role.getAuthorities().stream()
+                        .map(authority -> new SimpleGrantedAuthority(authority.getName()))
+                        .collect(Collectors.toList()))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -58,6 +56,7 @@ public class UserDetailsImpl implements UserDetails {
     public String getName() {
         return userEntity.getEmail();
     }
+
     public String getRole() {
         return userEntity.getRoles().get(0).getName();
     }

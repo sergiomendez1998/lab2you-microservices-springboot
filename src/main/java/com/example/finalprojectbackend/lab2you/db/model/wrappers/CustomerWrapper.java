@@ -1,6 +1,5 @@
 package com.example.finalprojectbackend.lab2you.db.model.wrappers;
 
-import com.example.finalprojectbackend.lab2you.db.model.entities.Authority;
 import com.example.finalprojectbackend.lab2you.db.model.entities.Customer;
 import com.example.finalprojectbackend.lab2you.db.model.entities.Role;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-
 
 @Getter
 @Setter
@@ -27,8 +25,6 @@ public class CustomerWrapper {
 
     private String occupation;
     private List<Role> roles;
-
-
 
     public CustomerWrapper(UserEntity userEntity, List<Role> roles, Customer customer) {
         this.cui = customer.getCui();

@@ -17,21 +17,22 @@ public class TokenUtils {
     private final static Long EXPIRATION_TIME = 86_400L;// 24 hours in seconds
 
     /*
-    * This method will create a token with the email and name of the user.
-    * The token will expire in 30 days.
-    * The token will be signed with the ACCESS_TOKEN_SECRET.
-    * The token will have the email as subject.
-    * The token will have the name as extra information.
-    * The token will have the expiration date.
+     * This method will create a token with the email and name of the user.
+     * The token will expire in 30 days.
+     * The token will be signed with the ACCESS_TOKEN_SECRET.
+     * The token will have the email as subject.
+     * The token will have the name as extra information.
+     * The token will have the expiration date.
      */
-    public static String createToken(String name, String email, Collection<? extends GrantedAuthority> authorities, String role) {
-        long expirationTime = EXPIRATION_TIME*1000; // Convert to milliseconds
+    public static String createToken(String name, String email, Collection<? extends GrantedAuthority> authorities,
+            String role) {
+        long expirationTime = EXPIRATION_TIME * 1000; // Convert to milliseconds
         Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
 
         Map<String, Object> extra = new HashMap<>();
         extra.put("name", name);
         extra.put("authorities", authorities);
-        extra.put("role",role);
+        extra.put("role", role);
 
         return Jwts.builder()
                 .setSubject(email)
@@ -42,8 +43,9 @@ public class TokenUtils {
     }
 
     /*
-    * This method will return the Authentication object with the username, password and authorities.
-    * if the token is not valid will return null.
+     * This method will return the Authentication object with the username, password
+     * and authorities.
+     * if the token is not valid will return null.
      */
     @SuppressWarnings("unchecked")
     public static UsernamePasswordAuthenticationToken getAuthentication(String token) {
