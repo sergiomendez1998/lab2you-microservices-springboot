@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/catalog")
-
 public class CatalogManagementProcessingController {
 
     private final AnalysisDocumentTypeService analysisDocumentTypeService;
