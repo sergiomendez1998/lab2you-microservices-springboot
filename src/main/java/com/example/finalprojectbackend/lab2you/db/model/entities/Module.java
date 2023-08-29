@@ -24,7 +24,7 @@ public class Module extends BaseEntity {
     private String name;
     private String description;
     private String path;
-    private String image;
+    private String icon;
 
     @ManyToMany(mappedBy = "modules")
     private List<Authority> authorities = new ArrayList<>();
