@@ -71,7 +71,7 @@ public class UserDetailsImpl implements UserDetails {
                     newModule.setName(module.getName());
                     newModule.setDescription(module.getDescription());
                     newModule.setPath(module.getPath());
-                    newModule.setImage(module.getImage());
+                    newModule.setIcon(module.getIcon());
                     return newModule;
                 })
                 .collect(Collectors.toList());
