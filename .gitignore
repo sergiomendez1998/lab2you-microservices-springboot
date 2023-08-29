@@ -202,3 +202,4 @@ buildNumber.properties
 
 #ignore application properties
 **/application.properties
+.env    

@@ -4,6 +4,10 @@ import com.example.finalprojectbackend.lab2you.api.filters.JWTAuthenticationFilt
 import com.example.finalprojectbackend.lab2you.api.filters.JWTAuthorizationFilter;
 import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.config.WebMvcConfigCors;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -13,7 +17,6 @@ import org.springframework.core.Ordered;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -75,6 +78,30 @@ public class WebSecurityConfig {
                                                                 SessionCreationPolicy.STATELESS))
                                 .addFilter(jwtAuthenticationFilter)
                                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                                .exceptionHandling(ex -> {
+                                        ex.authenticationEntryPoint((request, response, failed) -> {
+                                                var responseWrapper = new ResponseWrapper<String>(false,
+                                                                "Login failed", "");
+
+                                                response.getWriter().write(
+                                                                new ObjectMapper().writeValueAsString(
+                                                                                responseWrapper));
+                                                response.setContentType("application/json");
+                                                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                                                response.getWriter().flush();
+                                        });
+                                        ex.accessDeniedHandler((request, response, failed) -> {
+                                                var responseWrapper = new ResponseWrapper<String>(false,
+                                                                "Access denied", "");
+
+                                                response.getWriter().write(
+                                                                new ObjectMapper().writeValueAsString(
+                                                                                responseWrapper));
+                                                response.setContentType("application/json");
+                                                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                                                response.getWriter().flush();
+                                        });
+                                })
                                 .cors(cors -> cors.configurationSource(WebMvcConfigCors.corsConfigurationSource()))
                                 .build();
         }
