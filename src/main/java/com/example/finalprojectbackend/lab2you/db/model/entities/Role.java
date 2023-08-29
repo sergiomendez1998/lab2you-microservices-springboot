@@ -21,10 +21,10 @@ public class Role extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @JsonIgnore
-    @ManyToMany(mappedBy = "roles")
-    private List<UserEntity> userEntities = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "role")
+    private List<UserEntity> userEntities = new ArrayList<>();
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_authorities", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))

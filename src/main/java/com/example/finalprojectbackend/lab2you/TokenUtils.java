@@ -1,5 +1,6 @@
 package com.example.finalprojectbackend.lab2you;
 
+import com.example.finalprojectbackend.lab2you.db.model.entities.Module;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -25,7 +26,7 @@ public class TokenUtils {
      * The token will have the expiration date.
      */
     public static String createToken(String name, String email, Collection<? extends GrantedAuthority> authorities,
-            String role) {
+                                     String role, List<Module> modules) {
         long expirationTime = EXPIRATION_TIME * 1000; // Convert to milliseconds
         Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
 
@@ -33,6 +34,7 @@ public class TokenUtils {
         extra.put("name", name);
         extra.put("authorities", authorities);
         extra.put("role", role);
+        extra.put("modules", modules);
 
         return Jwts.builder()
                 .setSubject(email)

@@ -18,6 +18,7 @@ public class CachingConfig {
         System.out.println("Creating cache manager...");
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCaffeine(Caffeine.newBuilder().expireAfterWrite(90, TimeUnit.DAYS));
+        cacheManager.getCache("analysisDocumentTypes").clear();
         return cacheManager;
     }
 
