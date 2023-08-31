@@ -5,6 +5,7 @@ import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,8 +55,8 @@ public class DepartmentService implements CatalogService<Department> {
             departmentRepository.save(departmentFound);
         }
 
-    }
-    @Override
+    }@Cacheable(value = "departments")
+     @Override
     public List<Department> executeReadAll() {
         return departmentRepository.findAllByIsActiveTrue();
     }

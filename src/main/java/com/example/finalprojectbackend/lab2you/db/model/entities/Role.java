@@ -21,6 +21,7 @@ public class Role extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String description;
 
     @JsonIgnore
     @OneToMany(mappedBy = "role")
