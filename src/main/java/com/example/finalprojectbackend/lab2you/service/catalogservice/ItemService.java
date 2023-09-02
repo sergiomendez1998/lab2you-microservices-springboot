@@ -1,6 +1,5 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
-i
 import com.example.finalprojectbackend.lab2you.db.model.entities.Item;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.ItemRepository;
