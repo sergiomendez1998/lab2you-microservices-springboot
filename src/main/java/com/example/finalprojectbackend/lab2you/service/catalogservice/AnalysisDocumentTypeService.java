@@ -3,6 +3,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentType;
 import com.example.finalprojectbackend.lab2you.db.repository.AnalysisDocumentTypeRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocum
 
     private final AnalysisDocumentTypeRepository analysisDocumentTypeRepository;
 
+    @Autowired
     public AnalysisDocumentTypeService(AnalysisDocumentTypeRepository analysisDocumentTypeRepository) {
         this.analysisDocumentTypeRepository = analysisDocumentTypeRepository;
     }
