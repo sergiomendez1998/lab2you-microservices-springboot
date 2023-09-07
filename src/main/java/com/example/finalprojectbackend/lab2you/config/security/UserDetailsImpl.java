@@ -3,11 +3,13 @@ package com.example.finalprojectbackend.lab2you.config.security;
 import com.example.finalprojectbackend.lab2you.db.model.entities.Authority;
 import com.example.finalprojectbackend.lab2you.db.model.entities.Module;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
+
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,9 +20,9 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return userEntity.getRole().getAuthorities().stream()
+        return userEntity.getRole() != null ? userEntity.getRole().getAuthorities().stream()
                 .map(authority -> new SimpleGrantedAuthority(authority.getName()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()) : new ArrayList<SimpleGrantedAuthority>();
     }
 
     @Override

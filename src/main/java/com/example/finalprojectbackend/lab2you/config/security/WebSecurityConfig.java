@@ -18,6 +18,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -46,14 +47,17 @@ public class WebSecurityConfig {
 
                 JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
                 jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
-                jwtAuthenticationFilter.setFilterProcessesUrl("/login");
+                jwtAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
 
-                return http.csrf(csrf -> csrf.disable())
+                return http.csrf(AbstractHttpConfigurer::disable)
                                 .authorizeHttpRequests(auth -> {
                                         auth.requestMatchers(
                                                         new AntPathRequestMatcher(
                                                                         "/api/v1/catalog/analysisDocumentTypes",
-                                                                        "GET"))
+                                                                        "GET"),
+                                                        new AntPathRequestMatcher("/doc/**", "GET"),
+                                                        new AntPathRequestMatcher("/v3/api-docs/**", "GET"),
+                                                        new AntPathRequestMatcher("/api/v1/login", "POST"))
                                                         .permitAll()
                                                         .requestMatchers(
                                                                         new AntPathRequestMatcher("/api/v1/userList",

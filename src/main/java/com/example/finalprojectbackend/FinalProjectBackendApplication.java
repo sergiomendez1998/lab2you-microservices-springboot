@@ -25,12 +25,13 @@ public class FinalProjectBackendApplication {
 
     @Bean
     OpenAPI customOpenAPI() {
-        return new OpenAPI().info(new Info()
-                .title("lab2you app Backend")
-                .version("1.0.0")
-                .description("documentation about endpoints available in lab2you app backend")
-                .termsOfService("https://swagger.io/terms")
-                .license(new License().name("Apache 2.0").url("https://springdoc.org")));
+        return new OpenAPI()
+                .info(new Info()
+                        .title("lab2you app Backend")
+                        .version("1.0.0")
+                        .description("documentation about endpoints available in lab2you app backend")
+                        .termsOfService("https://swagger.io/terms")
+                        .license(new License().name("Apache 2.0").url("https://springdoc.org")));
     }
 
     // @Bean

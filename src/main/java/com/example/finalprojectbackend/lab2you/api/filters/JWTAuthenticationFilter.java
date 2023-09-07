@@ -49,20 +49,26 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             Authentication authResult) throws IOException, ServletException {
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
+        try {
+            UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
 
-        String token = TokenUtils.createToken(userDetails.getName(), userDetails.getUsername(),
-                userDetails.getAuthorities(), userDetails.getRole(), userDetails.getModules());
+            // var list = userDetails.getModules();
 
-        var authResponse = new AuthWrapper(token,
-                userDetails.getRole(), userDetails.getName(), userDetails.getUsername());
+            String token = TokenUtils.createToken(userDetails.getName(), userDetails.getUsername(),
+                    userDetails.getAuthorities(), userDetails.getRole(), userDetails.getModules());
 
-        var ResponseWrapper = new ResponseWrapper<AuthWrapper>(true,
-                "Login successful", authResponse);
+            var authResponse = new AuthWrapper(token,
+                    userDetails.getRole(), userDetails.getName(), userDetails.getUsername());
 
-        response.getWriter().write(new ObjectMapper().writeValueAsString(ResponseWrapper));
-        response.setContentType("application/json");
-        response.getWriter().flush();
-        super.successfulAuthentication(request, response, chain, authResult);
+            var ResponseWrapper = new ResponseWrapper<AuthWrapper>(true,
+                    "Login successful", authResponse);
+
+            response.getWriter().write(new ObjectMapper().writeValueAsString(ResponseWrapper));
+            response.setContentType("application/json");
+            response.getWriter().flush();
+            super.successfulAuthentication(request, response, chain, authResult);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
