@@ -2,7 +2,6 @@ package com.example.finalprojectbackend.lab2you.service;
 
 import com.example.finalprojectbackend.lab2you.config.security.UserDetailsImpl;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,8 +13,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     private final UserService userService;
 
-
-    @Autowired
     public UserDetailServiceImpl(UserService userService) {
         this.userService = userService;
     }

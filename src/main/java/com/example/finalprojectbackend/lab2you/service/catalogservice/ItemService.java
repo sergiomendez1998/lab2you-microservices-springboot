@@ -3,7 +3,6 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 import com.example.finalprojectbackend.lab2you.db.model.entities.Item;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.ItemRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import java.util.List;
 public class ItemService implements CatalogService<Item> {
     private final ItemRepository itemRepository;
 
-    @Autowired
     public ItemService(ItemRepository itemRepository){
         this.itemRepository=itemRepository;
     }

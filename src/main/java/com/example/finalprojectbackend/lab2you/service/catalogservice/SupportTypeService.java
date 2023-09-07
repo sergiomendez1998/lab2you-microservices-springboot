@@ -3,8 +3,6 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 import com.example.finalprojectbackend.lab2you.db.model.entities.SupportType;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.SupportTypeRepository;
-import org.checkerframework.checker.units.qual.C;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -16,7 +14,6 @@ public class SupportTypeService implements CatalogService<SupportType> {
 
     private final SupportTypeRepository supportTypeRepository;
 
-    @Autowired
     public SupportTypeService(SupportTypeRepository supportTypeRepository){
         this.supportTypeRepository = supportTypeRepository;
     }

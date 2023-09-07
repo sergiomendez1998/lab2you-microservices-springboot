@@ -3,7 +3,6 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 import com.example.finalprojectbackend.lab2you.db.model.entities.TestType;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.TestTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import java.util.List;
 public class TestTypeService implements CatalogService<TestType> {
     private final TestTypeRepository testTypeRepository;
 
-    @Autowired
     public TestTypeService(TestTypeRepository testTypeRepository){
         this.testTypeRepository = testTypeRepository;
     }

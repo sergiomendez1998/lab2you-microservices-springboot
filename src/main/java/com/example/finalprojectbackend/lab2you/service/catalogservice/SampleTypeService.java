@@ -3,7 +3,6 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 import com.example.finalprojectbackend.lab2you.db.model.entities.SampleType;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.SampleTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ public class SampleTypeService implements CatalogService<SampleType> {
 
     private final SampleTypeRepository sampleTypeRepository;
 
-    @Autowired
     public SampleTypeService(SampleTypeRepository sampleTypeRepository){
         this.sampleTypeRepository = sampleTypeRepository;
     }

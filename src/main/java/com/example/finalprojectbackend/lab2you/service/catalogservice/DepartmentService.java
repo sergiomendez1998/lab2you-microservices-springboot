@@ -3,7 +3,6 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 import com.example.finalprojectbackend.lab2you.db.model.entities.Department;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.DepartmentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ public class DepartmentService implements CatalogService<Department> {
 
     private final DepartmentRepository departmentRepository;
 
-    @Autowired
     public DepartmentService(DepartmentRepository departmentRepository){
         this.departmentRepository = departmentRepository;
     }

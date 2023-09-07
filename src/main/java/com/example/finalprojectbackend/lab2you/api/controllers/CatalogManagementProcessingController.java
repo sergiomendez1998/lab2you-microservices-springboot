@@ -18,7 +18,7 @@ public class CatalogManagementProcessingController {
 
     private final AnalysisDocumentTypeService analysisDocumentTypeService;
 
-    @Autowired
+
     public CatalogManagementProcessingController(AnalysisDocumentTypeService analysisDocumentTypeService) {
         this.analysisDocumentTypeService = analysisDocumentTypeService;
     }

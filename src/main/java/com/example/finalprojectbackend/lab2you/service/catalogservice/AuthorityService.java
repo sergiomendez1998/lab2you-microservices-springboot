@@ -3,9 +3,6 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 import com.example.finalprojectbackend.lab2you.db.model.entities.Authority;
 import com.example.finalprojectbackend.lab2you.db.repository.AuthorityRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
-import org.checkerframework.checker.units.qual.A;
-import org.hibernate.annotations.Cache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -15,7 +12,6 @@ import java.util.List;
 public class AuthorityService implements CatalogService<Authority> {
     private final AuthorityRepository authorityRepository;
 
-    @Autowired
     public AuthorityService(AuthorityRepository authorityRepository){
         this.authorityRepository = authorityRepository;
     }
