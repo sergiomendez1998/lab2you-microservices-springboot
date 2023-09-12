@@ -3,6 +3,7 @@ package com.example.finalprojectbackend.lab2you.db.model.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -13,6 +14,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "measure_units")
+@NoArgsConstructor
 public class MeasureUnit extends BaseEntity {
 
     @Id
@@ -20,5 +22,10 @@ public class MeasureUnit extends BaseEntity {
     private Long id;
     private String name;
     private String description;
+
+    public MeasureUnit(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 
 }

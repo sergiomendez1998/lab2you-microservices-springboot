@@ -53,7 +53,7 @@ public class WebSecurityConfig {
                                 .authorizeHttpRequests(auth -> {
                                         auth.requestMatchers(
                                                         new AntPathRequestMatcher(
-                                                                        "/api/v1/catalog/analysisDocumentTypes",
+                                                                        "/api/v1/catalog/**",
                                                                         "GET"),
                                                         new AntPathRequestMatcher("/doc/**", "GET"),
                                                         new AntPathRequestMatcher("/v3/api-docs/**", "GET"),

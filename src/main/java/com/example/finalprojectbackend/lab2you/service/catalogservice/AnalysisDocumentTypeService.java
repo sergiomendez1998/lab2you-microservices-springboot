@@ -1,14 +1,18 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
+import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentType;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.AnalysisDocumentTypeRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Qualifier("analysisDocumentType")
 public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocumentType> {
 
     private final AnalysisDocumentTypeRepository analysisDocumentTypeRepository;
@@ -59,5 +63,20 @@ public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocum
     @Override
     public List<AnalysisDocumentType> executeReadAll() {
         return analysisDocumentTypeRepository.findAllByIsActiveTrue();
+    }
+
+    @Override
+    public String getCatalogName() {
+        return "analysisDocumentType";
+    }
+
+    @Override
+    public CatalogWrapper mapToCatalogWrapper(AnalysisDocumentType catalogItem) {
+        return new CatalogWrapper(catalogItem.getId(), catalogItem.getName(), catalogItem.getDescription());
+    }
+
+    @Override
+    public AnalysisDocumentType mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new AnalysisDocumentType(catalogDTO.getName(), catalogDTO.getDescription());
     }
 }

@@ -1,14 +1,18 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
+import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.Department;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.DepartmentRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
+@Qualifier("department")
 public class DepartmentService implements CatalogService<Department> {
 
     private final DepartmentRepository departmentRepository;
@@ -57,5 +61,20 @@ public class DepartmentService implements CatalogService<Department> {
      @Override
     public List<Department> executeReadAll() {
         return departmentRepository.findAllByIsActiveTrue();
+    }
+
+    @Override
+    public String getCatalogName() {
+        return "department";
+    }
+
+    @Override
+    public CatalogWrapper mapToCatalogWrapper(Department catalogItem) {
+        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+    }
+
+    @Override
+    public Department mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new Department(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

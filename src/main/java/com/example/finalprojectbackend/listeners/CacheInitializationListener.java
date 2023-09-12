@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 public class CacheInitializationListener implements ApplicationListener<ApplicationReadyEvent> {
     private final AnalysisDocumentTypeService analysisDocumentTypeService;
     private final DepartmentService departmentService;
-    private final AuthorityService authorityService;
     private final ItemService itemService;
     private final MeasureUniteService measureUnitService;
     private final RoleService roleService;
@@ -21,7 +20,6 @@ public class CacheInitializationListener implements ApplicationListener<Applicat
 
     public CacheInitializationListener(AnalysisDocumentTypeService analysisDocumentTypeService,
                                        DepartmentService departmentService,
-                                       AuthorityService authorityService,
                                        ItemService itemService,
                                        MeasureUniteService measureUniteService,
                                        RoleService roleService,
@@ -31,7 +29,6 @@ public class CacheInitializationListener implements ApplicationListener<Applicat
                                        TestTypeService testTypeService) {
         this.analysisDocumentTypeService = analysisDocumentTypeService;
         this.departmentService = departmentService;
-        this.authorityService = authorityService;
         this.itemService = itemService;
         this.measureUnitService = measureUniteService;
         this.roleService = roleService;
@@ -44,7 +41,6 @@ public class CacheInitializationListener implements ApplicationListener<Applicat
     public void onApplicationEvent(ApplicationReadyEvent event) {
         analysisDocumentTypeService.executeReadAll();
         departmentService.executeReadAll();
-        authorityService.executeReadAll();
         itemService.executeReadAll();
         measureUnitService.executeReadAll();
         roleService.executeReadAll();

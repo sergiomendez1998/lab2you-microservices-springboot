@@ -3,6 +3,7 @@ package com.example.finalprojectbackend.lab2you.db.model.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -15,6 +16,7 @@ import java.util.List;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "test_types")
+@NoArgsConstructor
 public class TestType extends BaseEntity {
 
     @Id
@@ -26,4 +28,8 @@ public class TestType extends BaseEntity {
     @OneToMany (mappedBy = "testType")
     private List<Request> requests = new ArrayList<>();
 
+    public TestType(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
  }

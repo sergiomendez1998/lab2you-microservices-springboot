@@ -1,8 +1,11 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
+import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.StatusRequest;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.StatusRequestRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Qualifier("statusRequest")
 public class StatusRequestService implements CatalogService<StatusRequest> {
 
     private final StatusRequestRepository statusRequestRepository;
@@ -58,5 +62,20 @@ public class StatusRequestService implements CatalogService<StatusRequest> {
     @Override
     public List<StatusRequest> executeReadAll() {
         return statusRequestRepository.findAllByIsActiveTrue();
+    }
+
+    @Override
+    public String getCatalogName() {
+        return "statusRequest";
+    }
+
+    @Override
+    public CatalogWrapper mapToCatalogWrapper(StatusRequest catalogItem) {
+        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+    }
+
+    @Override
+    public StatusRequest mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new StatusRequest(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

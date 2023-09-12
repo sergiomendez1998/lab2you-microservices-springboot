@@ -1,8 +1,11 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
+import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.Role;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.RoleRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Qualifier("role")
 public class RoleService implements CatalogService<Role> {
 
     private final RoleRepository roleRepository;
@@ -57,5 +61,20 @@ public class RoleService implements CatalogService<Role> {
     @Override
     public List<Role> executeReadAll() {
         return roleRepository.findAllByIsActiveTrue();
+    }
+
+    @Override
+    public String getCatalogName() {
+        return "role";
+    }
+
+    @Override
+    public CatalogWrapper mapToCatalogWrapper(Role catalogItem) {
+        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+    }
+
+    @Override
+    public Role mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new Role(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

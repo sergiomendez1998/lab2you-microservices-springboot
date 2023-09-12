@@ -3,6 +3,7 @@ package com.example.finalprojectbackend.lab2you.db.model.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -16,6 +17,7 @@ import java.util.List;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "support_types")
+@NoArgsConstructor
 public class SupportType extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +28,8 @@ public class SupportType extends BaseEntity {
     @OneToMany (mappedBy = "supportType")
     private List<Request> requests = new ArrayList<>();
 
+    public SupportType(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

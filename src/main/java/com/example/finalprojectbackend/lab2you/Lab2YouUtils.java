@@ -36,4 +36,8 @@ public class Lab2YouUtils {
         return str.replaceAll("_","");
     }
 
+    public static boolean isNullOrEmpty(String str) {
+        return str == null || str.isEmpty();
+    }
+
 }

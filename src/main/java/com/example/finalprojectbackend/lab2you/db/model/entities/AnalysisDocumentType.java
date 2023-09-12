@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.db.model.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "analysis_document_types")
+@NoArgsConstructor
 public class AnalysisDocumentType extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +21,8 @@ public class AnalysisDocumentType extends BaseEntity{
     private String name;
     private String description;
 
+    public AnalysisDocumentType(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

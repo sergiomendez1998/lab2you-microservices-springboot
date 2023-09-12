@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.db.model.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -14,6 +15,7 @@ import java.util.List;
 @Setter
 @DynamicUpdate
 @DynamicInsert
+@NoArgsConstructor
 public class Department extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,5 +25,10 @@ public class Department extends BaseEntity{
 
     @OneToMany(mappedBy = "department")
     private List<Employee> employees = new ArrayList<>();
+
+    public Department(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 
 }

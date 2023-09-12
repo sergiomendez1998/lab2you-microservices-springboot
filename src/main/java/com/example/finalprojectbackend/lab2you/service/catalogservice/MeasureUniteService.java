@@ -1,8 +1,11 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
+import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.MeasureUnit;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.MeasureUnitRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Qualifier("measureUnit")
 public class MeasureUniteService implements CatalogService<MeasureUnit> {
 
     private final MeasureUnitRepository measureUnitRepository;
@@ -55,5 +59,20 @@ public class MeasureUniteService implements CatalogService<MeasureUnit> {
     @Override
     public List<MeasureUnit> executeReadAll() {
         return measureUnitRepository.findAllByIsActiveTrue();
+    }
+
+    @Override
+    public String getCatalogName() {
+        return "measureUnit";
+    }
+
+    @Override
+    public CatalogWrapper mapToCatalogWrapper(MeasureUnit catalogItem) {
+        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+    }
+
+    @Override
+    public MeasureUnit mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new MeasureUnit(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }
