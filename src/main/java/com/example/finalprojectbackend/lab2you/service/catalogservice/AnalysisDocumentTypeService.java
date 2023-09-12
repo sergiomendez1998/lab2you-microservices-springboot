@@ -54,7 +54,7 @@ public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocum
                 .filter(analysisDocumentType -> analysisDocumentType.getId().equals(id)).findFirst().orElse(null);
 
         if (analysisDocumentTypeFound != null) {
-            analysisDocumentTypeFound.setIsActive(false);
+            analysisDocumentTypeFound.setIsDeleted(true);
             analysisDocumentTypeRepository.save(analysisDocumentTypeFound);
         }
     }
@@ -62,7 +62,7 @@ public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocum
     @Cacheable(value = "analysisDocumentTypes")
     @Override
     public List<AnalysisDocumentType> executeReadAll() {
-        return analysisDocumentTypeRepository.findAllByIsActiveTrue();
+        return analysisDocumentTypeRepository.findAllByIsDeletedFalse();
     }
 
     @Override

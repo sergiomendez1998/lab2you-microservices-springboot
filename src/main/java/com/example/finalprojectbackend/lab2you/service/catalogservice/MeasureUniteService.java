@@ -51,14 +51,14 @@ public class MeasureUniteService implements CatalogService<MeasureUnit> {
                 .filter(measureUnit -> measureUnit.getId().equals(id)).findFirst().orElse(null);
 
         if (measureUnitFound != null) {
-              measureUnitFound.setIsActive(false);
+              measureUnitFound.setIsDeleted(true);
               measureUnitRepository.save(measureUnitFound);
         }
     }
     @Cacheable(value = "measureUnits")
     @Override
     public List<MeasureUnit> executeReadAll() {
-        return measureUnitRepository.findAllByIsActiveTrue();
+        return measureUnitRepository.findAllByIsDeletedFalse();
     }
 
     @Override

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface MeasureUnitRepository extends JpaRepository<MeasureUnit, Long> {
     MeasureUnit findByName(String name);
-    List<MeasureUnit> findAllByIsActiveTrue();
+    List<MeasureUnit> findAllByIsDeletedFalse();
 }

@@ -54,7 +54,7 @@ public class SupportTypeService implements CatalogService<SupportType> {
                 .filter(supportType -> supportType.getId().equals(id)).findFirst().orElse(null);
 
         if (supportTypeFound != null){
-            supportTypeFound.setIsActive(false);
+            supportTypeFound.setIsDeleted(true);
             supportTypeRepository.save(supportTypeFound);
         }
     }
@@ -62,7 +62,7 @@ public class SupportTypeService implements CatalogService<SupportType> {
     @Cacheable (value = "supportTypes")
     @Override
     public List<SupportType> executeReadAll() {
-        return supportTypeRepository.findAllByIsActiveTrue();
+        return supportTypeRepository.findAllByIsDeletedFalse();
     }
 
     @Override

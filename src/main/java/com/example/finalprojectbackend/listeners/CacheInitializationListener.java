@@ -14,9 +14,9 @@ public class CacheInitializationListener implements ApplicationListener<Applicat
     private final MeasureUniteService measureUnitService;
     private final RoleService roleService;
     private final SampleTypeService sampleTypeService;
-    private final StatusRequestService statusRequestService;
+    private final StatusService statusService;
     private final SupportTypeService supportTypeService;
-    private final TestTypeService testTypeService;
+    private final ExamTypeService examTypeService;
 
     public CacheInitializationListener(AnalysisDocumentTypeService analysisDocumentTypeService,
                                        DepartmentService departmentService,
@@ -24,18 +24,18 @@ public class CacheInitializationListener implements ApplicationListener<Applicat
                                        MeasureUniteService measureUniteService,
                                        RoleService roleService,
                                        SampleTypeService sampleTypeService,
-                                       StatusRequestService statusRequestService,
+                                       StatusService statusService,
                                        SupportTypeService supportTypeService,
-                                       TestTypeService testTypeService) {
+                                       ExamTypeService examTypeService) {
         this.analysisDocumentTypeService = analysisDocumentTypeService;
         this.departmentService = departmentService;
         this.itemService = itemService;
         this.measureUnitService = measureUniteService;
         this.roleService = roleService;
         this.sampleTypeService =sampleTypeService;
-        this.statusRequestService = statusRequestService;
+        this.statusService = statusService;
         this.supportTypeService = supportTypeService;
-        this.testTypeService = testTypeService;
+        this.examTypeService = examTypeService;
     }
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
@@ -45,8 +45,8 @@ public class CacheInitializationListener implements ApplicationListener<Applicat
         measureUnitService.executeReadAll();
         roleService.executeReadAll();
         sampleTypeService.executeReadAll();
-        statusRequestService.executeReadAll();
+        statusService.executeReadAll();
         supportTypeService.executeReadAll();
-        testTypeService.executeReadAll();
+        examTypeService.executeReadAll();
     }
 }

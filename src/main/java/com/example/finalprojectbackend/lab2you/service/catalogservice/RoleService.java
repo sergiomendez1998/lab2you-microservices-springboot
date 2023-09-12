@@ -52,7 +52,7 @@ public class RoleService implements CatalogService<Role> {
                 .filter(role -> role.getId().equals(id)).findFirst().orElse(null);
 
         if (roleFound != null){
-            roleFound.setIsActive(false);
+            roleFound.setIsDeleted(true);
             roleRepository.save(roleFound);
         }
 
@@ -60,7 +60,7 @@ public class RoleService implements CatalogService<Role> {
     @Cacheable (value = "roles")
     @Override
     public List<Role> executeReadAll() {
-        return roleRepository.findAllByIsActiveTrue();
+        return roleRepository.findAllByIsDeletedFalse();
     }
 
     @Override

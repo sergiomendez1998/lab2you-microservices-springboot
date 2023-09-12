@@ -1,10 +1,10 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.TestType;
+import com.example.finalprojectbackend.lab2you.db.model.entities.ExamType;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
-import com.example.finalprojectbackend.lab2you.db.repository.TestTypeRepository;
+import com.example.finalprojectbackend.lab2you.db.repository.ExamTypeRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,24 +13,24 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@Qualifier("testType")
-public class TestTypeService implements CatalogService<TestType> {
-    private final TestTypeRepository testTypeRepository;
+@Qualifier("examType")
+public class ExamTypeService implements CatalogService<ExamType> {
+    private final ExamTypeRepository examTypeRepository;
 
-    public TestTypeService(TestTypeRepository testTypeRepository){
-        this.testTypeRepository = testTypeRepository;
+    public ExamTypeService(ExamTypeRepository examTypeRepository){
+        this.examTypeRepository = examTypeRepository;
     }
 
-    @CacheEvict(value = "testTypes",allEntries = true)
+    @CacheEvict(value = "examTypes",allEntries = true)
     @Override
-    public TestType executeCreation(TestType entity) {
-        return testTypeRepository.save(entity);
+    public ExamType executeCreation(ExamType entity) {
+        return examTypeRepository.save(entity);
     }
 
-    @CacheEvict(value = "testTypes",allEntries = true)
+    @CacheEvict(value = "examTypes",allEntries = true)
     @Override
-    public TestType executeUpdate(TestType entity) {
-        TestType testTypeFound = executeReadAll()
+    public ExamType executeUpdate(ExamType entity) {
+        ExamType testTypeFound = executeReadAll()
                 .stream()
                 .filter(testType -> testType.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
@@ -40,42 +40,42 @@ public class TestTypeService implements CatalogService<TestType> {
                     .setName(entity.getName() != null ? entity.getName() : testTypeFound.getName());
             testTypeFound.setDescription(entity.getDescription() != null ? entity.getDescription()
                     : testTypeFound.getDescription());
-            testTypeRepository.save(testTypeFound);
+            examTypeRepository.save(testTypeFound);
         }
         return testTypeFound;
     }
 
-    @CacheEvict(value = "testTypes",allEntries = true)
+    @CacheEvict(value = "examTypes",allEntries = true)
     @Override
     public void executeDeleteById(Long id) {
-        TestType testTypeFound = executeReadAll()
+        ExamType examTypeFound = executeReadAll()
                 .stream()
                 .filter(testType -> testType.getId().equals(id)).findFirst().orElse(null);
 
-        if (testTypeFound != null){
-            testTypeFound.setIsActive(false);
-            testTypeRepository.save(testTypeFound);
+        if (examTypeFound != null){
+            examTypeFound.setIsDeleted(true);
+            examTypeRepository.save(examTypeFound);
         }
     }
 
-    @Cacheable (value = "testTypes")
+    @Cacheable (value = "examTypes")
     @Override
-    public List<TestType> executeReadAll() {
-        return testTypeRepository.findAllByIsActiveTrue();
+    public List<ExamType> executeReadAll() {
+        return examTypeRepository.findAllByIsDeletedFalse();
     }
 
     @Override
     public String getCatalogName() {
-        return "testType";
+        return "examType";
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(TestType catalogItem) {
+    public CatalogWrapper mapToCatalogWrapper(ExamType catalogItem) {
         return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
     }
 
     @Override
-    public TestType mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new TestType(catalogDTO.getName(),catalogDTO.getDescription());
+    public ExamType mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new ExamType(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

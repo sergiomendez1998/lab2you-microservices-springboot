@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public class BaseEntity implements Serializable {
 
-    @Column(name = "is_active")
-    private Boolean isActive = true;
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

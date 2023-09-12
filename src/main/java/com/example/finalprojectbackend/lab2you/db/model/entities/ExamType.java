@@ -15,9 +15,9 @@ import java.util.List;
 @Setter
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "test_types")
+@Table(name = "exam_types")
 @NoArgsConstructor
-public class TestType extends BaseEntity {
+public class ExamType extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +25,10 @@ public class TestType extends BaseEntity {
     private String name;
     private String description;
 
-    @OneToMany (mappedBy = "testType")
+    @OneToMany (mappedBy = "examType")
     private List<Request> requests = new ArrayList<>();
 
-    public TestType(String name, String description) {
+    public ExamType(String name, String description) {
         this.name = name;
         this.description = description;
     }

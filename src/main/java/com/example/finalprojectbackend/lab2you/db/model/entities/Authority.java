@@ -30,6 +30,6 @@ public class Authority extends BaseEntity{
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "authority_modules", joinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "module_id", referencedColumnName = "id"))
+    @JoinTable(name = "module_authority", joinColumns = @JoinColumn(name = "module_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
     private List<Module> modules = new ArrayList<>();
 }

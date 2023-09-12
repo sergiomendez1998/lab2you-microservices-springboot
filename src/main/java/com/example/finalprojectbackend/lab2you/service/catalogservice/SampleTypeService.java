@@ -54,7 +54,7 @@ public class SampleTypeService implements CatalogService<SampleType> {
                 .filter(sampleType -> sampleType.getId().equals(id)).findFirst().orElse(null);
 
         if (sampleTypeFound != null){
-            sampleTypeFound.setIsActive(false);
+            sampleTypeFound.setIsDeleted(true);
             sampleTypeRepository.save(sampleTypeFound);
         }
     }
@@ -62,7 +62,7 @@ public class SampleTypeService implements CatalogService<SampleType> {
     @Cacheable (value = "sampleTypes")
     @Override
     public List<SampleType> executeReadAll() {
-        return sampleTypeRepository.findAllByIsActiveTrue();
+        return sampleTypeRepository.findAllByIsDeletedFalse();
     }
 
     @Override

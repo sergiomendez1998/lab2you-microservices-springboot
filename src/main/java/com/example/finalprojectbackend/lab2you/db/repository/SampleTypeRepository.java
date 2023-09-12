@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface SampleTypeRepository extends JpaRepository<SampleType, Long> {
-    List<SampleType> findAllByIsActiveTrue();
+    List<SampleType> findAllByIsDeletedFalse();
 }

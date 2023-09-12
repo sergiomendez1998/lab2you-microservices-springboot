@@ -7,6 +7,8 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="requests")
@@ -20,23 +22,22 @@ public class Request {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String supportNumber;
-    private String description;
+    private String remark;
     private Date receptionDate;
     private Long longitude;
     private Long latitude;
     private LocalDateTime createdAt;
-
+    private boolean isDeleted;
     @ManyToOne
     @JoinColumn (name="support_type_id")
     private SupportType supportType;
 
     @ManyToOne
-    @JoinColumn (name ="test_type_id")
-    private TestType testType;
+    @JoinColumn (name ="exam_type_id")
+    private ExamType examType;
 
-    @ManyToOne
-    @JoinColumn (name="status_request_id")
-    private StatusRequest statusRequest;
+    @ManyToMany(mappedBy = "requests")
+    private List<Status> statuses = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn (name="customer_id")

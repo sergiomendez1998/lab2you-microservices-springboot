@@ -27,6 +27,7 @@ public class UserEntity{
     private  boolean enabled;
     private boolean resetPassword;
     private boolean confirmed;
+    private String userType;
     private String resetPasswordToken;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)

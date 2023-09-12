@@ -30,7 +30,6 @@ public class Customer {
     private String phoneNumber;
     private String gender;
     private String occupation;
-    private LocalDateTime   createdAt;
 
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -38,11 +37,5 @@ public class Customer {
     
     @OneToMany (mappedBy = "customer")
     private List<Request> requests = new ArrayList<>();
-    
-    @PrePersist
-    public void prePersist() {
-        createdAt = LocalDateTime.now();
-    }
-
 
 }

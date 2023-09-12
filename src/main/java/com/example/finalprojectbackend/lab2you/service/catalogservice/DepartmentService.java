@@ -53,14 +53,14 @@ public class DepartmentService implements CatalogService<Department> {
                 .filter(department -> department.getId().equals(id)).findFirst().orElse(null);
 
         if (departmentFound != null) {
-            departmentFound.setIsActive(false);
+            departmentFound.setIsDeleted(true);
             departmentRepository.save(departmentFound);
         }
 
     }@Cacheable(value = "departments")
      @Override
     public List<Department> executeReadAll() {
-        return departmentRepository.findAllByIsActiveTrue();
+        return departmentRepository.findAllByIsDeletedFalse();
     }
 
     @Override

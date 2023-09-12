@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface AnalysisDocumentTypeRepository extends JpaRepository<AnalysisDocumentType, Long> {
 
-    List<AnalysisDocumentType> findAllByIsActiveTrue();
+    List<AnalysisDocumentType> findAllByIsDeletedFalse();
 }

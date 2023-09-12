@@ -49,14 +49,14 @@ public class ItemService implements CatalogService<Item> {
                 .filter(item -> item.getId().equals((id))).findFirst().orElse(null);
 
         if (itemFound !=null){
-            itemFound.setIsActive(false);
+            itemFound.setIsDeleted(true);
             itemRepository.save(itemFound);
         }
     }
     @Cacheable(value = "items")
     @Override
     public List<Item> executeReadAll() {
-        return itemRepository.findAllByIsActiveTrue();
+        return itemRepository.findAllByIsDeletedFalse();
     }
 
     @Override
