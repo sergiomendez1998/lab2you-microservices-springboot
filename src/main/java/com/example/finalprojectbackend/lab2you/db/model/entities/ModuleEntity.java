@@ -7,22 +7,25 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-@Entity
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
+@Entity
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "analysis_document_types")
+@Table(name = "modules")
 @NoArgsConstructor
-public class AnalysisDocumentType extends BaseEntity{
+public class ModuleEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String description;
+    private String path;
+    private String icon;
 
-    public AnalysisDocumentType(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
+    @ManyToMany(mappedBy = "moduleEntities")
+    private List<AuthorityEntity> authorities = new ArrayList<>();
 }

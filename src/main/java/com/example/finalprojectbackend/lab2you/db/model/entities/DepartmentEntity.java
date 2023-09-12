@@ -1,6 +1,5 @@
 package com.example.finalprojectbackend.lab2you.db.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,29 +10,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name="departments")
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "statuses")
 @NoArgsConstructor
-public class Status extends BaseEntity{
+public class DepartmentEntity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String description;
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "request_status",
-            joinColumns = @JoinColumn(name = "status_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id")
-    )
-    private List<Request> requests = new ArrayList<>();
 
-    public Status(String name, String description) {
+    @OneToMany(mappedBy = "departmentEntity")
+    private List<EmployeeEntity> employeeEntities = new ArrayList<>();
+
+    public DepartmentEntity(String name, String description) {
         this.name = name;
         this.description = description;
     }
+
 }

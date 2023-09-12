@@ -8,14 +8,11 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Entity
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
+@Entity
 @Table(name = "users")
 public class UserEntity{
     @Id
@@ -32,12 +29,12 @@ public class UserEntity{
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
-    private Role role;
+    private RoleEntity role;
 
     @OneToOne(mappedBy = "user")
-    private Customer customer;
+    private CustomerEntity customer;
 
     @OneToOne(mappedBy = "user")
-    private Employee employee;
+    private EmployeeEntity employee;
 
 }

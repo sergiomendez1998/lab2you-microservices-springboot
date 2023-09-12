@@ -12,7 +12,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Setter
 @DynamicUpdate
 @DynamicInsert
-public class AnalysisDocument {
+public class AnalysisDocumentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,9 +21,9 @@ public class AnalysisDocument {
 
     @ManyToOne
     @JoinColumn (name = "sample_id")
-    private Sample sample;
+    private SampleEntity sample;
 
     @ManyToOne
     @JoinColumn (name = "analysis_document_type_id")
-    private AnalysisDocumentType analysisDocumentType;
+    private AnalysisDocumentTypeEntity analysisDocumentType;
 }

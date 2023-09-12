@@ -1,7 +1,7 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentType;
+import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.AnalysisDocumentTypeRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @Qualifier("analysisDocumentType")
-public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocumentType> {
+public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocumentTypeEntity> {
 
     private final AnalysisDocumentTypeRepository analysisDocumentTypeRepository;
 
@@ -23,45 +23,45 @@ public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocum
 
     @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
     @Override
-    public AnalysisDocumentType executeCreation(AnalysisDocumentType entity) {
+    public AnalysisDocumentTypeEntity executeCreation(AnalysisDocumentTypeEntity entity) {
         return analysisDocumentTypeRepository.save(entity);
     }
 
     @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
     @Override
-    public AnalysisDocumentType executeUpdate(AnalysisDocumentType entity) {
-        AnalysisDocumentType analysisDocumentTypeFound = executeReadAll()
+    public AnalysisDocumentTypeEntity executeUpdate(AnalysisDocumentTypeEntity entity) {
+        AnalysisDocumentTypeEntity analysisDocumentTypeEntityFound = executeReadAll()
                 .stream()
-                .filter(analysisDocumentType -> analysisDocumentType.getId().equals(entity.getId())).findFirst()
+                .filter(analysisDocumentTypeEntity -> analysisDocumentTypeEntity.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
 
-        if (analysisDocumentTypeFound != null) {
-            analysisDocumentTypeFound
-                    .setName(entity.getName() != null ? entity.getName() : analysisDocumentTypeFound.getName());
-            analysisDocumentTypeFound.setDescription(entity.getDescription() != null ? entity.getDescription()
-                    : analysisDocumentTypeFound.getDescription());
-            analysisDocumentTypeRepository.save(analysisDocumentTypeFound);
+        if (analysisDocumentTypeEntityFound != null) {
+            analysisDocumentTypeEntityFound
+                    .setName(entity.getName() != null ? entity.getName() : analysisDocumentTypeEntityFound.getName());
+            analysisDocumentTypeEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
+                    : analysisDocumentTypeEntityFound.getDescription());
+            analysisDocumentTypeRepository.save(analysisDocumentTypeEntityFound);
         }
-        return analysisDocumentTypeFound;
+        return analysisDocumentTypeEntityFound;
     }
 
     @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
     @Override
     public void executeDeleteById(Long id) {
 
-        AnalysisDocumentType analysisDocumentTypeFound = executeReadAll()
+        AnalysisDocumentTypeEntity analysisDocumentTypeEntityFound = executeReadAll()
                 .stream()
-                .filter(analysisDocumentType -> analysisDocumentType.getId().equals(id)).findFirst().orElse(null);
+                .filter(analysisDocumentTypeEntity -> analysisDocumentTypeEntity.getId().equals(id)).findFirst().orElse(null);
 
-        if (analysisDocumentTypeFound != null) {
-            analysisDocumentTypeFound.setIsDeleted(true);
-            analysisDocumentTypeRepository.save(analysisDocumentTypeFound);
+        if (analysisDocumentTypeEntityFound != null) {
+            analysisDocumentTypeEntityFound.setIsDeleted(true);
+            analysisDocumentTypeRepository.save(analysisDocumentTypeEntityFound);
         }
     }
 
     @Cacheable(value = "analysisDocumentTypes")
     @Override
-    public List<AnalysisDocumentType> executeReadAll() {
+    public List<AnalysisDocumentTypeEntity> executeReadAll() {
         return analysisDocumentTypeRepository.findAllByIsDeletedFalse();
     }
 
@@ -71,12 +71,12 @@ public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocum
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(AnalysisDocumentType catalogItem) {
+    public CatalogWrapper mapToCatalogWrapper(AnalysisDocumentTypeEntity catalogItem) {
         return new CatalogWrapper(catalogItem.getId(), catalogItem.getName(), catalogItem.getDescription());
     }
 
     @Override
-    public AnalysisDocumentType mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new AnalysisDocumentType(catalogDTO.getName(), catalogDTO.getDescription());
+    public AnalysisDocumentTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new AnalysisDocumentTypeEntity(catalogDTO.getName(), catalogDTO.getDescription());
     }
 }

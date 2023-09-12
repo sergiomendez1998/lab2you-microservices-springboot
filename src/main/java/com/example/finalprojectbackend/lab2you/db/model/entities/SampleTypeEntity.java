@@ -15,14 +15,14 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicInsert
 @Table(name = "sample_types")
 @NoArgsConstructor
-public class SampleType extends BaseEntity {
+public class SampleTypeEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String description;
 
-    public SampleType(String name, String description) {
+    public SampleTypeEntity(String name, String description) {
         this.name = name;
         this.description = description;
     }

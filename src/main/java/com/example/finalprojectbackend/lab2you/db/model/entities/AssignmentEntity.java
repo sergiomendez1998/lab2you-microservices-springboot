@@ -6,24 +6,26 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
 @Entity
-@Table(name = "documents")
-public class Document {
+@Table(name = "assignments")
+public class AssignmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String remark;
-    private String path;
-    private boolean isDeleted;
 
     @ManyToOne
-    @JoinColumn (name="request_id")
-    private Request request;
+    @JoinColumn(name = "assigned_by")
+    private EmployeeEntity assignedByEmployee;
 
+    @ManyToOne
+    @JoinColumn(name = "assigned_to")
+    private EmployeeEntity assignedToEmployee;
+
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    private RequestEntity request;
 }

@@ -1,7 +1,7 @@
 package com.example.finalprojectbackend.lab2you.config.security;
 
-import com.example.finalprojectbackend.lab2you.db.model.entities.Authority;
-import com.example.finalprojectbackend.lab2you.db.model.entities.Module;
+import com.example.finalprojectbackend.lab2you.db.model.entities.AuthorityEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.ModuleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userEntity.getRole() != null ? userEntity.getRole().getAuthorities().stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.getName()))
+                .map(authorityEntity -> new SimpleGrantedAuthority(authorityEntity.getName()))
                 .collect(Collectors.toList()) : new ArrayList<SimpleGrantedAuthority>();
     }
 
@@ -63,18 +63,18 @@ public class UserDetailsImpl implements UserDetails {
         return userEntity.getRole().getName();
     }
 
-    public List<Module> getModules() {
+    public List<ModuleEntity> getModules() {
         return userEntity.getRole().getAuthorities().stream()
-                .map(Authority::getModules)
+                .map(AuthorityEntity::getModuleEntities)
                 .flatMap(Collection::stream)
-                .map(module -> {
-                    Module newModule = new Module();
-                    newModule.setId(module.getId());
-                    newModule.setName(module.getName());
-                    newModule.setDescription(module.getDescription());
-                    newModule.setPath(module.getPath());
-                    newModule.setIcon(module.getIcon());
-                    return newModule;
+                .map(moduleEntity -> {
+                    ModuleEntity newModuleEntity = new ModuleEntity();
+                    newModuleEntity.setId(moduleEntity.getId());
+                    newModuleEntity.setName(moduleEntity.getName());
+                    newModuleEntity.setDescription(moduleEntity.getDescription());
+                    newModuleEntity.setPath(moduleEntity.getPath());
+                    newModuleEntity.setIcon(moduleEntity.getIcon());
+                    return newModuleEntity;
                 })
                 .collect(Collectors.toList());
     }

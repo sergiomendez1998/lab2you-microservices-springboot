@@ -7,15 +7,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "measure_units")
+@Table(name = "exam_types")
 @NoArgsConstructor
-public class MeasureUnit extends BaseEntity {
+public class ExamTypeEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +25,11 @@ public class MeasureUnit extends BaseEntity {
     private String name;
     private String description;
 
-    public MeasureUnit(String name, String description) {
+    @OneToMany (mappedBy = "examType")
+    private List<RequestEntity> requestEntities = new ArrayList<>();
+
+    public ExamTypeEntity(String name, String description) {
         this.name = name;
         this.description = description;
     }
-
-}
+ }

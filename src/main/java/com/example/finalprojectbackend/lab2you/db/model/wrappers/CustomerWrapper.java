@@ -1,7 +1,7 @@
 package com.example.finalprojectbackend.lab2you.db.model.wrappers;
 
-import com.example.finalprojectbackend.lab2you.db.model.entities.Customer;
-import com.example.finalprojectbackend.lab2you.db.model.entities.Role;
+import com.example.finalprojectbackend.lab2you.db.model.entities.CustomerEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,17 +24,17 @@ public class CustomerWrapper {
     private String gender;
 
     private String occupation;
-    private List<Role> roles;
+    private List<RoleEntity> roleEntities;
 
-    public CustomerWrapper(UserEntity userEntity, List<Role> roles, Customer customer) {
-        this.cui = customer.getCui();
-        this.name = customer.getName();
-        this.lastName = customer.getLastName();
-        this.address = customer.getAddress();
+    public CustomerWrapper(UserEntity userEntity, List<RoleEntity> roleEntities, CustomerEntity customerEntity) {
+        this.cui = customerEntity.getCui();
+        this.name = customerEntity.getName();
+        this.lastName = customerEntity.getLastName();
+        this.address = customerEntity.getAddress();
         this.email = userEntity.getEmail();
-        this.phoneNumber = customer.getPhoneNumber();
-        this.gender = customer.getGender();
-        this.occupation = customer.getOccupation();
-        this.roles = roles;
+        this.phoneNumber = customerEntity.getPhoneNumber();
+        this.gender = customerEntity.getGender();
+        this.occupation = customerEntity.getOccupation();
+        this.roleEntities = roleEntities;
     }
 }

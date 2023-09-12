@@ -1,7 +1,7 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.SupportType;
+import com.example.finalprojectbackend.lab2you.db.model.entities.SupportTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.SupportTypeRepository;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @Qualifier("supportType")
-public class SupportTypeService implements CatalogService<SupportType> {
+public class SupportTypeService implements CatalogService<SupportTypeEntity> {
 
     private final SupportTypeRepository supportTypeRepository;
 
@@ -24,44 +24,44 @@ public class SupportTypeService implements CatalogService<SupportType> {
 
     @CacheEvict(value = "SupportTypes", allEntries = true)
     @Override
-    public SupportType executeCreation(SupportType entity) {
+    public SupportTypeEntity executeCreation(SupportTypeEntity entity) {
         return supportTypeRepository.save(entity);
     }
 
     @CacheEvict(value = "supportTypes",allEntries = true)
     @Override
-    public SupportType executeUpdate(SupportType entity) {
-        SupportType supportTypeFound = executeReadAll()
+    public SupportTypeEntity executeUpdate(SupportTypeEntity entity) {
+        SupportTypeEntity supportTypeEntityFound = executeReadAll()
                 .stream()
-                .filter(supportType -> supportType.getId().equals(entity.getId())).findFirst()
+                .filter(supportTypeEntity -> supportTypeEntity.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
 
-        if(supportTypeFound != null){
-            supportTypeFound
-                    .setName(entity.getName() != null ? entity.getName() : supportTypeFound.getName());
-            supportTypeFound.setDescription(entity.getDescription() != null ? entity.getDescription()
-                    : supportTypeFound.getDescription());
-            supportTypeRepository.save(supportTypeFound);
+        if(supportTypeEntityFound != null){
+            supportTypeEntityFound
+                    .setName(entity.getName() != null ? entity.getName() : supportTypeEntityFound.getName());
+            supportTypeEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
+                    : supportTypeEntityFound.getDescription());
+            supportTypeRepository.save(supportTypeEntityFound);
         }
-        return supportTypeFound;
+        return supportTypeEntityFound;
     }
 
     @CacheEvict(value = "supportTypes", allEntries = true)
     @Override
     public void executeDeleteById(Long id) {
-        SupportType supportTypeFound = executeReadAll()
+        SupportTypeEntity supportTypeEntityFound = executeReadAll()
                 .stream()
-                .filter(supportType -> supportType.getId().equals(id)).findFirst().orElse(null);
+                .filter(supportTypeEntity -> supportTypeEntity.getId().equals(id)).findFirst().orElse(null);
 
-        if (supportTypeFound != null){
-            supportTypeFound.setIsDeleted(true);
-            supportTypeRepository.save(supportTypeFound);
+        if (supportTypeEntityFound != null){
+            supportTypeEntityFound.setIsDeleted(true);
+            supportTypeRepository.save(supportTypeEntityFound);
         }
     }
 
     @Cacheable (value = "supportTypes")
     @Override
-    public List<SupportType> executeReadAll() {
+    public List<SupportTypeEntity> executeReadAll() {
         return supportTypeRepository.findAllByIsDeletedFalse();
     }
 
@@ -71,12 +71,12 @@ public class SupportTypeService implements CatalogService<SupportType> {
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(SupportType catalogItem) {
+    public CatalogWrapper mapToCatalogWrapper(SupportTypeEntity catalogItem) {
         return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
     }
 
     @Override
-    public SupportType mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new SupportType(catalogDTO.getName(),catalogDTO.getDescription());
+    public SupportTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new SupportTypeEntity(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @DynamicUpdate
 @DynamicInsert
-public class Request {
+public class RequestEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,18 +30,18 @@ public class Request {
     private boolean isDeleted;
     @ManyToOne
     @JoinColumn (name="support_type_id")
-    private SupportType supportType;
+    private SupportTypeEntity supportType;
 
     @ManyToOne
     @JoinColumn (name ="exam_type_id")
-    private ExamType examType;
+    private ExamTypeEntity examType;
 
     @ManyToMany(mappedBy = "requests")
-    private List<Status> statuses = new ArrayList<>();
+    private List<StatusEntity> statusEntities = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn (name="customer_id")
-    private Customer customer;
+    private CustomerEntity customer;
 
     @PrePersist
     public void prePersist(){

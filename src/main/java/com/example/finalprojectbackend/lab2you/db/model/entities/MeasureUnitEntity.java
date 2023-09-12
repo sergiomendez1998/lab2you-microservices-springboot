@@ -1,31 +1,31 @@
 package com.example.finalprojectbackend.lab2you.db.model.entities;
 
+
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+@Entity
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
-@Entity
-@Table(name = "assignments")
-public class Assignment {
+@Table(name = "measure_units")
+@NoArgsConstructor
+public class MeasureUnitEntity extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
+    private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "assigned_by")
-    private Employee assignedByEmployee;
+    public MeasureUnitEntity(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "assigned_to")
-    private Employee assignedToEmployee;
-
-    @ManyToOne
-    @JoinColumn(name = "request_id")
-    private Request request;
 }

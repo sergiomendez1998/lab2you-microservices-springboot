@@ -11,14 +11,14 @@ import org.hibernate.annotations.DynamicUpdate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 @Getter
 @Setter
+@Entity
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "items")
+@Table(name = "roles")
 @NoArgsConstructor
-public class Item extends BaseEntity {
+public class RoleEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,13 +26,15 @@ public class Item extends BaseEntity {
     private String description;
 
     @JsonIgnore
+    @OneToMany(mappedBy = "role")
+    private List<UserEntity> userEntities = new ArrayList<>();
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "item_sample",joinColumns = @JoinColumn(name = "item_id",referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name="sample_id",referencedColumnName="id"))
-    private List<Sample> samples =new ArrayList<>();
+    @JoinTable(name = "role_authority", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
+    private List<AuthorityEntity> authorities = new ArrayList<>();
 
-    public Item(String name, String description) {
+    public RoleEntity(String name, String description) {
         this.name = name;
         this.description = description;
     }
-
 }

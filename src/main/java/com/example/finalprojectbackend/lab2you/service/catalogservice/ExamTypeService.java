@@ -1,7 +1,7 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.ExamType;
+import com.example.finalprojectbackend.lab2you.db.model.entities.ExamTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.ExamTypeRepository;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @Qualifier("examType")
-public class ExamTypeService implements CatalogService<ExamType> {
+public class ExamTypeService implements CatalogService<ExamTypeEntity> {
     private final ExamTypeRepository examTypeRepository;
 
     public ExamTypeService(ExamTypeRepository examTypeRepository){
@@ -23,14 +23,14 @@ public class ExamTypeService implements CatalogService<ExamType> {
 
     @CacheEvict(value = "examTypes",allEntries = true)
     @Override
-    public ExamType executeCreation(ExamType entity) {
+    public ExamTypeEntity executeCreation(ExamTypeEntity entity) {
         return examTypeRepository.save(entity);
     }
 
     @CacheEvict(value = "examTypes",allEntries = true)
     @Override
-    public ExamType executeUpdate(ExamType entity) {
-        ExamType testTypeFound = executeReadAll()
+    public ExamTypeEntity executeUpdate(ExamTypeEntity entity) {
+        ExamTypeEntity testTypeFound = executeReadAll()
                 .stream()
                 .filter(testType -> testType.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
@@ -48,19 +48,19 @@ public class ExamTypeService implements CatalogService<ExamType> {
     @CacheEvict(value = "examTypes",allEntries = true)
     @Override
     public void executeDeleteById(Long id) {
-        ExamType examTypeFound = executeReadAll()
+        ExamTypeEntity examTypeEntityFound = executeReadAll()
                 .stream()
                 .filter(testType -> testType.getId().equals(id)).findFirst().orElse(null);
 
-        if (examTypeFound != null){
-            examTypeFound.setIsDeleted(true);
-            examTypeRepository.save(examTypeFound);
+        if (examTypeEntityFound != null){
+            examTypeEntityFound.setIsDeleted(true);
+            examTypeRepository.save(examTypeEntityFound);
         }
     }
 
     @Cacheable (value = "examTypes")
     @Override
-    public List<ExamType> executeReadAll() {
+    public List<ExamTypeEntity> executeReadAll() {
         return examTypeRepository.findAllByIsDeletedFalse();
     }
 
@@ -70,12 +70,12 @@ public class ExamTypeService implements CatalogService<ExamType> {
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(ExamType catalogItem) {
+    public CatalogWrapper mapToCatalogWrapper(ExamTypeEntity catalogItem) {
         return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
     }
 
     @Override
-    public ExamType mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new ExamType(catalogDTO.getName(),catalogDTO.getDescription());
+    public ExamTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new ExamTypeEntity(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

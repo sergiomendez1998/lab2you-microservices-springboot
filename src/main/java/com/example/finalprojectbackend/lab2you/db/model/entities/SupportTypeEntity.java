@@ -18,7 +18,7 @@ import java.util.List;
 @DynamicInsert
 @Table(name = "support_types")
 @NoArgsConstructor
-public class SupportType extends BaseEntity {
+public class SupportTypeEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,9 +26,9 @@ public class SupportType extends BaseEntity {
     private String description;
 
     @OneToMany (mappedBy = "supportType")
-    private List<Request> requests = new ArrayList<>();
+    private List<RequestEntity> requestEntities = new ArrayList<>();
 
-    public SupportType(String name, String description) {
+    public SupportTypeEntity(String name, String description) {
         this.name = name;
         this.description = description;
     }

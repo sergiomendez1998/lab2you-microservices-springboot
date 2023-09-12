@@ -1,7 +1,7 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.SampleType;
+import com.example.finalprojectbackend.lab2you.db.model.entities.SampleTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.SampleTypeRepository;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @Qualifier("sampleType")
-public class SampleTypeService implements CatalogService<SampleType> {
+public class SampleTypeService implements CatalogService<SampleTypeEntity> {
 
     private final SampleTypeRepository sampleTypeRepository;
 
@@ -24,44 +24,44 @@ public class SampleTypeService implements CatalogService<SampleType> {
 
     @CacheEvict(value = "sampleTypes",allEntries = true)
     @Override
-    public SampleType executeCreation(SampleType entity) {
+    public SampleTypeEntity executeCreation(SampleTypeEntity entity) {
         return sampleTypeRepository.save(entity);
     }
 
     @CacheEvict(value = "sampleTypes",allEntries = true)
     @Override
-    public SampleType executeUpdate(SampleType entity) {
-        SampleType sampleTypeFound = executeReadAll()
+    public SampleTypeEntity executeUpdate(SampleTypeEntity entity) {
+        SampleTypeEntity sampleTypeEntityFound = executeReadAll()
                 .stream()
-                .filter(sampleType -> sampleType.getId().equals(entity.getId())).findFirst()
+                .filter(sampleTypeEntity -> sampleTypeEntity.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
 
-        if (sampleTypeFound != null){
-            sampleTypeFound
-                    .setName(entity.getName() != null ? entity.getName() : sampleTypeFound.getName());
-            sampleTypeFound.setDescription(entity.getDescription() != null ? entity.getDescription()
-                    : sampleTypeFound.getDescription());
-            sampleTypeRepository.save(sampleTypeFound);
+        if (sampleTypeEntityFound != null){
+            sampleTypeEntityFound
+                    .setName(entity.getName() != null ? entity.getName() : sampleTypeEntityFound.getName());
+            sampleTypeEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
+                    : sampleTypeEntityFound.getDescription());
+            sampleTypeRepository.save(sampleTypeEntityFound);
         }
-        return sampleTypeFound;
+        return sampleTypeEntityFound;
     }
 
     @CacheEvict(value = "sampleTypes", allEntries = true)
     @Override
     public void executeDeleteById(Long id) {
-        SampleType sampleTypeFound = executeReadAll()
+        SampleTypeEntity sampleTypeEntityFound = executeReadAll()
                 .stream()
-                .filter(sampleType -> sampleType.getId().equals(id)).findFirst().orElse(null);
+                .filter(sampleTypeEntity -> sampleTypeEntity.getId().equals(id)).findFirst().orElse(null);
 
-        if (sampleTypeFound != null){
-            sampleTypeFound.setIsDeleted(true);
-            sampleTypeRepository.save(sampleTypeFound);
+        if (sampleTypeEntityFound != null){
+            sampleTypeEntityFound.setIsDeleted(true);
+            sampleTypeRepository.save(sampleTypeEntityFound);
         }
     }
 
     @Cacheable (value = "sampleTypes")
     @Override
-    public List<SampleType> executeReadAll() {
+    public List<SampleTypeEntity> executeReadAll() {
         return sampleTypeRepository.findAllByIsDeletedFalse();
     }
 
@@ -71,12 +71,12 @@ public class SampleTypeService implements CatalogService<SampleType> {
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(SampleType catalogItem) {
+    public CatalogWrapper mapToCatalogWrapper(SampleTypeEntity catalogItem) {
         return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
     }
 
     @Override
-    public SampleType mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new SampleType(catalogDTO.getName(),catalogDTO.getDescription());
+    public SampleTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new SampleTypeEntity(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

@@ -1,7 +1,7 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.MeasureUnit;
+import com.example.finalprojectbackend.lab2you.db.model.entities.MeasureUnitEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.MeasureUnitRepository;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @Qualifier("measureUnit")
-public class MeasureUniteService implements CatalogService<MeasureUnit> {
+public class MeasureUniteService implements CatalogService<MeasureUnitEntity> {
 
     private final MeasureUnitRepository measureUnitRepository;
 
@@ -23,41 +23,41 @@ public class MeasureUniteService implements CatalogService<MeasureUnit> {
     }
     @CacheEvict(value = "measure units", allEntries = true)
     @Override
-    public MeasureUnit executeCreation(MeasureUnit entity) {
+    public MeasureUnitEntity executeCreation(MeasureUnitEntity entity) {
         return measureUnitRepository.save(entity);
     }
     @CacheEvict(value = "measure units",allEntries = true)
     @Override
-    public MeasureUnit executeUpdate(MeasureUnit entity) {
-        MeasureUnit measureUnitFound = executeReadAll()
+    public MeasureUnitEntity executeUpdate(MeasureUnitEntity entity) {
+        MeasureUnitEntity measureUnitEntityFound = executeReadAll()
                 .stream()
-                .filter(measureUnit -> measureUnit.getId().equals(entity.getId())).findFirst()
+                .filter(measureUnitEntity -> measureUnitEntity.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
-        if(measureUnitFound != null){
-            measureUnitFound
-                    .setName(entity.getName() != null ? entity.getName() : measureUnitFound.getName());
-            measureUnitFound.setDescription(entity.getDescription() != null ? entity.getDescription()
-                    : measureUnitFound.getDescription());
-            measureUnitRepository.save(measureUnitFound);
+        if(measureUnitEntityFound != null){
+            measureUnitEntityFound
+                    .setName(entity.getName() != null ? entity.getName() : measureUnitEntityFound.getName());
+            measureUnitEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
+                    : measureUnitEntityFound.getDescription());
+            measureUnitRepository.save(measureUnitEntityFound);
         }
-        return measureUnitFound;
+        return measureUnitEntityFound;
     }
 
     @CacheEvict(value = "measureUnits",allEntries = true)
     @Override
     public void executeDeleteById(Long id) {
-        MeasureUnit measureUnitFound = executeReadAll()
+        MeasureUnitEntity measureUnitEntityFound = executeReadAll()
                 .stream()
-                .filter(measureUnit -> measureUnit.getId().equals(id)).findFirst().orElse(null);
+                .filter(measureUnitEntity -> measureUnitEntity.getId().equals(id)).findFirst().orElse(null);
 
-        if (measureUnitFound != null) {
-              measureUnitFound.setIsDeleted(true);
-              measureUnitRepository.save(measureUnitFound);
+        if (measureUnitEntityFound != null) {
+              measureUnitEntityFound.setIsDeleted(true);
+              measureUnitRepository.save(measureUnitEntityFound);
         }
     }
     @Cacheable(value = "measureUnits")
     @Override
-    public List<MeasureUnit> executeReadAll() {
+    public List<MeasureUnitEntity> executeReadAll() {
         return measureUnitRepository.findAllByIsDeletedFalse();
     }
 
@@ -67,12 +67,12 @@ public class MeasureUniteService implements CatalogService<MeasureUnit> {
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(MeasureUnit catalogItem) {
+    public CatalogWrapper mapToCatalogWrapper(MeasureUnitEntity catalogItem) {
         return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
     }
 
     @Override
-    public MeasureUnit mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new MeasureUnit(catalogDTO.getName(),catalogDTO.getDescription());
+    public MeasureUnitEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new MeasureUnitEntity(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

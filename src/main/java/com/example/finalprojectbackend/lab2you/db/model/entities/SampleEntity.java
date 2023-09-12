@@ -17,7 +17,7 @@ import java.util.List;
 @DynamicInsert
 @Entity
 @Table(name="samples")
-public class Sample {
+public class SampleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,18 +30,18 @@ public class Sample {
 
     @ManyToOne
     @JoinColumn (name="measure_unit_id")
-    private MeasureUnit measureUnit;
+    private MeasureUnitEntity measureUnitEntity;
     @ManyToOne
     @JoinColumn (name="sample_type_id")
-    private SampleType sampleType;
+    private SampleTypeEntity sampleTypeEntity;
 
     @ManyToOne
     @JoinColumn (name = "request_id")
-    private Request request;
+    private RequestEntity requestEntity;
 
     @OneToMany(mappedBy = "sample")
-    private List<AnalysisDocument> analysisDocuments = new ArrayList<>();
+    private List<AnalysisDocumentEntity> analysisDocumentEntities = new ArrayList<>();
 
     @ManyToMany(mappedBy = "samples")
-    private List<Item> items;
+    private List<ItemEntity> itemEntities;
 }

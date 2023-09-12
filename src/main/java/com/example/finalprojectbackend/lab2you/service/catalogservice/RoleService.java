@@ -1,7 +1,7 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.Role;
+import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.RoleRepository;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @Qualifier("role")
-public class RoleService implements CatalogService<Role> {
+public class RoleService implements CatalogService<RoleEntity> {
 
     private final RoleRepository roleRepository;
 
@@ -24,42 +24,42 @@ public class RoleService implements CatalogService<Role> {
 
     @CacheEvict(value = "roles",allEntries = true)
     @Override
-    public Role executeCreation(Role entity) {
+    public RoleEntity executeCreation(RoleEntity entity) {
         return roleRepository.save(entity);
     }
 
     @Override
-    public Role executeUpdate(Role entity) {
-        Role roleFound = executeReadAll()
+    public RoleEntity executeUpdate(RoleEntity entity) {
+        RoleEntity roleEntityFound = executeReadAll()
                 .stream()
                 .filter(role -> role.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
-        if (roleFound != null){
-            roleFound
-                    .setName(entity.getName() != null ? entity.getName() : roleFound.getName());
-            roleFound.setDescription(entity.getDescription() != null ? entity.getDescription()
-                    :roleFound.getDescription());
-            roleRepository.save(roleFound);
+        if (roleEntityFound != null){
+            roleEntityFound
+                    .setName(entity.getName() != null ? entity.getName() : roleEntityFound.getName());
+            roleEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
+                    : roleEntityFound.getDescription());
+            roleRepository.save(roleEntityFound);
         }
-        return roleFound;
+        return roleEntityFound;
     }
 
     @CacheEvict(value = "roles",allEntries = true)
     @Override
     public void executeDeleteById(Long id) {
-        Role roleFound = executeReadAll()
+        RoleEntity roleEntityFound = executeReadAll()
                 .stream()
                 .filter(role -> role.getId().equals(id)).findFirst().orElse(null);
 
-        if (roleFound != null){
-            roleFound.setIsDeleted(true);
-            roleRepository.save(roleFound);
+        if (roleEntityFound != null){
+            roleEntityFound.setIsDeleted(true);
+            roleRepository.save(roleEntityFound);
         }
 
     }
     @Cacheable (value = "roles")
     @Override
-    public List<Role> executeReadAll() {
+    public List<RoleEntity> executeReadAll() {
         return roleRepository.findAllByIsDeletedFalse();
     }
 
@@ -69,12 +69,12 @@ public class RoleService implements CatalogService<Role> {
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(Role catalogItem) {
+    public CatalogWrapper mapToCatalogWrapper(RoleEntity catalogItem) {
         return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
     }
 
     @Override
-    public Role mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new Role(catalogDTO.getName(),catalogDTO.getDescription());
+    public RoleEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new RoleEntity(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

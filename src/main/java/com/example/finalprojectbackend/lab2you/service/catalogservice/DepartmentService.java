@@ -1,7 +1,7 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.Department;
+import com.example.finalprojectbackend.lab2you.db.model.entities.DepartmentEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.DepartmentRepository;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 @Qualifier("department")
-public class DepartmentService implements CatalogService<Department> {
+public class DepartmentService implements CatalogService<DepartmentEntity> {
 
     private final DepartmentRepository departmentRepository;
 
@@ -23,43 +23,43 @@ public class DepartmentService implements CatalogService<Department> {
 
     @CacheEvict(value = "departments", allEntries = true)
     @Override
-    public Department executeCreation(Department entity) {
+    public DepartmentEntity executeCreation(DepartmentEntity entity) {
 
         return departmentRepository.save(entity);
     }
     @CacheEvict(value = "departments", allEntries = true)
     @Override
-    public Department executeUpdate(Department entity) {
-        Department departmentFound = executeReadAll()
+    public DepartmentEntity executeUpdate(DepartmentEntity entity) {
+        DepartmentEntity departmentEntityFound = executeReadAll()
                 .stream()
-                .filter(department -> department.getId().equals(entity.getId())).findFirst()
+                .filter(departmentEntity -> departmentEntity.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
 
-        if (departmentFound != null ){
-            departmentFound
-                    .setName(entity.getName()!= null? entity.getName() : departmentFound.getName());
-            departmentFound.setDescription(entity.getDescription() != null ? entity.getDescription()
-                    : departmentFound.getDescription());
-            departmentRepository.save(departmentFound);
+        if (departmentEntityFound != null ){
+            departmentEntityFound
+                    .setName(entity.getName()!= null? entity.getName() : departmentEntityFound.getName());
+            departmentEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
+                    : departmentEntityFound.getDescription());
+            departmentRepository.save(departmentEntityFound);
         }
-        return departmentFound;
+        return departmentEntityFound;
 
     }
     @CacheEvict(value = "departments",allEntries = true)
     @Override
     public void executeDeleteById(Long id) {
-        Department departmentFound = executeReadAll()
+        DepartmentEntity departmentEntityFound = executeReadAll()
                 .stream()
-                .filter(department -> department.getId().equals(id)).findFirst().orElse(null);
+                .filter(departmentEntity -> departmentEntity.getId().equals(id)).findFirst().orElse(null);
 
-        if (departmentFound != null) {
-            departmentFound.setIsDeleted(true);
-            departmentRepository.save(departmentFound);
+        if (departmentEntityFound != null) {
+            departmentEntityFound.setIsDeleted(true);
+            departmentRepository.save(departmentEntityFound);
         }
 
     }@Cacheable(value = "departments")
      @Override
-    public List<Department> executeReadAll() {
+    public List<DepartmentEntity> executeReadAll() {
         return departmentRepository.findAllByIsDeletedFalse();
     }
 
@@ -69,12 +69,12 @@ public class DepartmentService implements CatalogService<Department> {
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(Department catalogItem) {
+    public CatalogWrapper mapToCatalogWrapper(DepartmentEntity catalogItem) {
         return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
     }
 
     @Override
-    public Department mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new Department(catalogDTO.getName(),catalogDTO.getDescription());
+    public DepartmentEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new DepartmentEntity(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

@@ -2,30 +2,26 @@ package com.example.finalprojectbackend.lab2you.db.model.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @Setter
-@Entity
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "modules")
-@NoArgsConstructor
-public class Module extends BaseEntity {
+@Entity
+@Table(name = "documents")
+public class DocumentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String description;
+    private String remark;
     private String path;
-    private String icon;
+    private boolean isDeleted;
 
-    @ManyToMany(mappedBy = "modules")
-    private List<Authority> authorities = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn (name="request_id")
+    private RequestEntity requestEntity;
+
 }
