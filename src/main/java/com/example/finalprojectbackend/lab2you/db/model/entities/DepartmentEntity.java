@@ -9,13 +9,14 @@ import org.hibernate.annotations.DynamicUpdate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name="departments")
+
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
 @NoArgsConstructor
+@Entity
+@Table(name="departments")
 public class DepartmentEntity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,11 +7,11 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-@Entity
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
+@Entity
 @Table(name = "analysis_document_types")
 @NoArgsConstructor
 public class AnalysisDocumentTypeEntity extends BaseEntity{

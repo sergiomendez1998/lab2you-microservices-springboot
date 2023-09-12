@@ -11,6 +11,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.*;
 
 @Service
 @Qualifier("measureUnit")
@@ -33,14 +36,15 @@ public class MeasureUniteService implements CatalogService<MeasureUnitEntity> {
                 .stream()
                 .filter(measureUnitEntity -> measureUnitEntity.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
-        if(measureUnitEntityFound != null){
+        if(!isNull(measureUnitEntityFound)) {
             measureUnitEntityFound
                     .setName(entity.getName() != null ? entity.getName() : measureUnitEntityFound.getName());
             measureUnitEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
                     : measureUnitEntityFound.getDescription());
             measureUnitRepository.save(measureUnitEntityFound);
+            return measureUnitEntityFound;
         }
-        return measureUnitEntityFound;
+       throw new RuntimeException("Measure unit not found");
     }
 
     @CacheEvict(value = "measureUnits",allEntries = true)
@@ -50,10 +54,11 @@ public class MeasureUniteService implements CatalogService<MeasureUnitEntity> {
                 .stream()
                 .filter(measureUnitEntity -> measureUnitEntity.getId().equals(id)).findFirst().orElse(null);
 
-        if (measureUnitEntityFound != null) {
+        if (!isNull(measureUnitEntityFound)) {
               measureUnitEntityFound.setIsDeleted(true);
               measureUnitRepository.save(measureUnitEntityFound);
         }
+        throw new RuntimeException("Measure unit not found");
     }
     @Cacheable(value = "measureUnits")
     @Override

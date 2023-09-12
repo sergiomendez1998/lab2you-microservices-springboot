@@ -10,13 +10,13 @@ import org.hibernate.annotations.DynamicUpdate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "exam_types")
 @NoArgsConstructor
+@Entity
+@Table(name = "exam_types")
 public class ExamTypeEntity extends BaseEntity {
 
     @Id

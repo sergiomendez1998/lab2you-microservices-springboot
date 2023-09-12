@@ -10,12 +10,13 @@ import org.hibernate.annotations.DynamicUpdate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "authorities")
+
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
+@Entity
+@Table(name = "authorities")
 public class AuthorityEntity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

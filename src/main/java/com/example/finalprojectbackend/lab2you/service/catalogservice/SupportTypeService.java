@@ -11,6 +11,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.*;
 
 @Service
 @Qualifier("supportType")
@@ -36,14 +39,15 @@ public class SupportTypeService implements CatalogService<SupportTypeEntity> {
                 .filter(supportTypeEntity -> supportTypeEntity.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
 
-        if(supportTypeEntityFound != null){
+        if(!isNull(supportTypeEntityFound)){
             supportTypeEntityFound
                     .setName(entity.getName() != null ? entity.getName() : supportTypeEntityFound.getName());
             supportTypeEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
                     : supportTypeEntityFound.getDescription());
             supportTypeRepository.save(supportTypeEntityFound);
+            return supportTypeEntityFound;
         }
-        return supportTypeEntityFound;
+        throw new RuntimeException("SupportType not found");
     }
 
     @CacheEvict(value = "supportTypes", allEntries = true)
@@ -53,10 +57,12 @@ public class SupportTypeService implements CatalogService<SupportTypeEntity> {
                 .stream()
                 .filter(supportTypeEntity -> supportTypeEntity.getId().equals(id)).findFirst().orElse(null);
 
-        if (supportTypeEntityFound != null){
+        if (!isNull(supportTypeEntityFound)){
             supportTypeEntityFound.setIsDeleted(true);
             supportTypeRepository.save(supportTypeEntityFound);
         }
+
+        throw new RuntimeException("SupportType not found");
     }
 
     @Cacheable (value = "supportTypes")

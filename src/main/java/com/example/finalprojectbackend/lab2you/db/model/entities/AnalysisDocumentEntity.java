@@ -6,12 +6,12 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-@Entity
-@Table(name = "analysis_documents")
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
+@Entity
+@Table(name = "analysis_documents")
 public class AnalysisDocumentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

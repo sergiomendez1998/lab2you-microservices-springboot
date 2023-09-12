@@ -13,9 +13,9 @@ import java.util.List;
 
 @Getter
 @Setter
-@Entity
 @DynamicUpdate
 @DynamicInsert
+@Entity
 @Table(name = "customers")
 public class CustomerEntity {
     @Id

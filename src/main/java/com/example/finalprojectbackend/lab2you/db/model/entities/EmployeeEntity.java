@@ -8,12 +8,12 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.List;
 
-@Entity
-@Table(name="employees")
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
+@Entity
+@Table(name="employees")
 public class EmployeeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -11,6 +11,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.isNull;
+
 @Service
 @Qualifier("department")
 public class DepartmentService implements CatalogService<DepartmentEntity> {
@@ -35,14 +39,15 @@ public class DepartmentService implements CatalogService<DepartmentEntity> {
                 .filter(departmentEntity -> departmentEntity.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
 
-        if (departmentEntityFound != null ){
+        if (!isNull(departmentEntityFound)){
             departmentEntityFound
                     .setName(entity.getName()!= null? entity.getName() : departmentEntityFound.getName());
             departmentEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
                     : departmentEntityFound.getDescription());
             departmentRepository.save(departmentEntityFound);
+            return departmentEntityFound;
         }
-        return departmentEntityFound;
+        throw new RuntimeException("Department not found");
 
     }
     @CacheEvict(value = "departments",allEntries = true)
@@ -52,7 +57,7 @@ public class DepartmentService implements CatalogService<DepartmentEntity> {
                 .stream()
                 .filter(departmentEntity -> departmentEntity.getId().equals(id)).findFirst().orElse(null);
 
-        if (departmentEntityFound != null) {
+        if (!isNull(departmentEntityFound)) {
             departmentEntityFound.setIsDeleted(true);
             departmentRepository.save(departmentEntityFound);
         }

@@ -11,6 +11,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.*;
 
 @Service
 @Qualifier("role")
@@ -34,14 +37,15 @@ public class RoleService implements CatalogService<RoleEntity> {
                 .stream()
                 .filter(role -> role.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
-        if (roleEntityFound != null){
+        if (!isNull(roleEntityFound)){
             roleEntityFound
                     .setName(entity.getName() != null ? entity.getName() : roleEntityFound.getName());
             roleEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
                     : roleEntityFound.getDescription());
             roleRepository.save(roleEntityFound);
+            return roleEntityFound;
         }
-        return roleEntityFound;
+        throw new RuntimeException("Role not found");
     }
 
     @CacheEvict(value = "roles",allEntries = true)

@@ -11,6 +11,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.*;
+import static java.util.Objects.isNull;
 
 @Service
 @Qualifier("item")
@@ -33,13 +37,14 @@ public class ItemService implements CatalogService<ItemEntity> {
                 .filter(itemEntity -> itemEntity.getId().equals(entity.getId())).findFirst()
                 .orElse((null));
 
-        if (itemEntityFound != null){
+        if (!isNull(itemEntityFound)){
             itemEntityFound
                     .setName(entity.getName()!=null?entity.getName(): itemEntityFound.getName());
             itemEntityFound.setDescription(entity.getDescription()!= null? entity.getDescription()
                 : itemEntityFound.getDescription());
+            return itemEntityFound;
         }
-        return itemEntityFound;
+        throw new RuntimeException("Item not found");
     }
     @CacheEvict(value = "items",allEntries = true)
     @Override
@@ -48,10 +53,11 @@ public class ItemService implements CatalogService<ItemEntity> {
                 .stream()
                 .filter(itemEntity -> itemEntity.getId().equals((id))).findFirst().orElse(null);
 
-        if (itemEntityFound !=null){
+        if (!isNull(itemEntityFound)){
             itemEntityFound.setIsDeleted(true);
             itemRepository.save(itemEntityFound);
         }
+        throw new RuntimeException("Item not found");
     }
     @Cacheable(value = "items")
     @Override

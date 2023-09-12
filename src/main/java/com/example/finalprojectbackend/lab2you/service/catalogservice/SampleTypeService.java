@@ -11,6 +11,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.*;
 
 @Service
 @Qualifier("sampleType")
@@ -36,14 +39,15 @@ public class SampleTypeService implements CatalogService<SampleTypeEntity> {
                 .filter(sampleTypeEntity -> sampleTypeEntity.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
 
-        if (sampleTypeEntityFound != null){
+        if (!isNull(sampleTypeEntityFound)){
             sampleTypeEntityFound
                     .setName(entity.getName() != null ? entity.getName() : sampleTypeEntityFound.getName());
             sampleTypeEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
                     : sampleTypeEntityFound.getDescription());
             sampleTypeRepository.save(sampleTypeEntityFound);
+            return sampleTypeEntityFound;
         }
-        return sampleTypeEntityFound;
+        throw new RuntimeException("SampleType not found");
     }
 
     @CacheEvict(value = "sampleTypes", allEntries = true)
@@ -53,10 +57,11 @@ public class SampleTypeService implements CatalogService<SampleTypeEntity> {
                 .stream()
                 .filter(sampleTypeEntity -> sampleTypeEntity.getId().equals(id)).findFirst().orElse(null);
 
-        if (sampleTypeEntityFound != null){
+        if (!isNull(sampleTypeEntityFound)){
             sampleTypeEntityFound.setIsDeleted(true);
             sampleTypeRepository.save(sampleTypeEntityFound);
         }
+        throw new RuntimeException("SampleType not found");
     }
 
     @Cacheable (value = "sampleTypes")

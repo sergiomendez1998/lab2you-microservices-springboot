@@ -8,13 +8,13 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-@Entity
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "measure_units")
 @NoArgsConstructor
+@Entity
+@Table(name = "measure_units")
 public class MeasureUnitEntity extends BaseEntity {
 
     @Id

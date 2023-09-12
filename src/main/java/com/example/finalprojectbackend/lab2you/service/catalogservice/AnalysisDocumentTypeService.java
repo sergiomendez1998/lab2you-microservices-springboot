@@ -10,6 +10,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.isNull;
 
 @Service
 @Qualifier("analysisDocumentType")
@@ -35,14 +38,15 @@ public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocum
                 .filter(analysisDocumentTypeEntity -> analysisDocumentTypeEntity.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
 
-        if (analysisDocumentTypeEntityFound != null) {
+        if (!isNull(analysisDocumentTypeEntityFound)) {
             analysisDocumentTypeEntityFound
                     .setName(entity.getName() != null ? entity.getName() : analysisDocumentTypeEntityFound.getName());
             analysisDocumentTypeEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
                     : analysisDocumentTypeEntityFound.getDescription());
             analysisDocumentTypeRepository.save(analysisDocumentTypeEntityFound);
+            return analysisDocumentTypeEntityFound;
         }
-        return analysisDocumentTypeEntityFound;
+        throw new RuntimeException("AnalysisDocumentType not found");
     }
 
     @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
@@ -53,10 +57,11 @@ public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocum
                 .stream()
                 .filter(analysisDocumentTypeEntity -> analysisDocumentTypeEntity.getId().equals(id)).findFirst().orElse(null);
 
-        if (analysisDocumentTypeEntityFound != null) {
+        if (!isNull(analysisDocumentTypeEntityFound)) {
             analysisDocumentTypeEntityFound.setIsDeleted(true);
             analysisDocumentTypeRepository.save(analysisDocumentTypeEntityFound);
         }
+        throw new RuntimeException("AnalysisDocumentType not found");
     }
 
     @Cacheable(value = "analysisDocumentTypes")

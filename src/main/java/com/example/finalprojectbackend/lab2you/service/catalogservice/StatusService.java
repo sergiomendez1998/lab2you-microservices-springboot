@@ -11,6 +11,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.*;
 
 @Service
 @Qualifier("status")
@@ -36,14 +39,15 @@ public class StatusService implements CatalogService<StatusEntity> {
                 .filter(statusEntity -> statusEntity.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
 
-        if (statusEntityFound != null){
+        if (!isNull(statusEntityFound)){
             statusEntityFound
                     .setName(entity.getName() != null ? entity.getName() : statusEntityFound.getName());
             statusEntityFound.setDescription(entity.getDescription() != null ? entity.getDescription()
                     : statusEntityFound.getDescription());
             statusRepository.save(statusEntityFound);
+            return statusEntityFound;
         }
-        return statusEntityFound;
+        throw new RuntimeException("Status not found");
     }
 
     @Override
@@ -52,10 +56,11 @@ public class StatusService implements CatalogService<StatusEntity> {
                 .stream()
                 .filter(statusEntity -> statusEntity.getId().equals(id)).findFirst().orElse(null);
 
-        if(statusEntityFound != null){
+        if(!isNull(statusEntityFound)){
             statusEntityFound.setIsDeleted(true);
             statusRepository.save(statusEntityFound);
         }
+        throw new RuntimeException("Status not found");
     }
 
     @Cacheable(value = "statuses")

@@ -11,6 +11,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.isNull;
 
 @Service
 @Qualifier("examType")
@@ -30,19 +33,22 @@ public class ExamTypeService implements CatalogService<ExamTypeEntity> {
     @CacheEvict(value = "examTypes",allEntries = true)
     @Override
     public ExamTypeEntity executeUpdate(ExamTypeEntity entity) {
-        ExamTypeEntity testTypeFound = executeReadAll()
+        ExamTypeEntity examTypeFound = executeReadAll()
                 .stream()
                 .filter(testType -> testType.getId().equals(entity.getId())).findFirst()
                 .orElse(null);
 
-        if (testTypeFound != null){
-            testTypeFound
-                    .setName(entity.getName() != null ? entity.getName() : testTypeFound.getName());
-            testTypeFound.setDescription(entity.getDescription() != null ? entity.getDescription()
-                    : testTypeFound.getDescription());
-            examTypeRepository.save(testTypeFound);
+        if (!isNull(examTypeFound)){
+            examTypeFound
+                    .setName(entity.getName() != null ? entity.getName() : examTypeFound.getName());
+            examTypeFound.setDescription(entity.getDescription() != null ? entity.getDescription()
+                    : examTypeFound.getDescription());
+            examTypeRepository.save(examTypeFound);
+            return examTypeFound;
         }
-        return testTypeFound;
+
+        throw new RuntimeException("Exam type not found");
+
     }
 
     @CacheEvict(value = "examTypes",allEntries = true)
@@ -52,7 +58,7 @@ public class ExamTypeService implements CatalogService<ExamTypeEntity> {
                 .stream()
                 .filter(testType -> testType.getId().equals(id)).findFirst().orElse(null);
 
-        if (examTypeEntityFound != null){
+        if (!isNull(examTypeEntityFound)){
             examTypeEntityFound.setIsDeleted(true);
             examTypeRepository.save(examTypeEntityFound);
         }

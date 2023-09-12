@@ -12,11 +12,11 @@ import java.util.List;
 
 @Getter
 @Setter
-@Entity
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "modules")
 @NoArgsConstructor
+@Entity
+@Table(name = "modules")
 public class ModuleEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

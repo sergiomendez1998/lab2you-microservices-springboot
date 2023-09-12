@@ -13,11 +13,11 @@ import java.util.List;
 
 @Getter
 @Setter
-@Entity
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "roles")
 @NoArgsConstructor
+@Entity
+@Table(name = "roles")
 public class RoleEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
