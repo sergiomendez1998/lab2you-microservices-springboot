@@ -49,10 +49,10 @@ public class Lab2YouConstants {
     }
 
     public enum lab2YouRoles {
-        ADMIN("ROLE_ADMIN"),
-        USER("ROLE_USER"),
-        ANALYST("ROLE_ANALYST"),
-        MEDICAL("ROLE_MEDICAL");
+        ADMIN("admin"),
+        USER("user"),
+        ANALYST("analyst"),
+        MEDICAL("medical");
 
         private String role;
 

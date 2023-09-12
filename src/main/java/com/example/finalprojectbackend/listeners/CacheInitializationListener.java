@@ -8,25 +8,25 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CacheInitializationListener implements ApplicationListener<ApplicationReadyEvent> {
-    private final AnalysisDocumentTypeService analysisDocumentTypeService;
-    private final DepartmentService departmentService;
-    private final ItemService itemService;
-    private final MeasureUniteService measureUnitService;
-    private final RoleService roleService;
-    private final SampleTypeService sampleTypeService;
-    private final StatusService statusService;
-    private final SupportTypeService supportTypeService;
-    private final ExamTypeService examTypeService;
+    private final AnalysisDocumentTypeServiceCRUD analysisDocumentTypeService;
+    private final DepartmentServiceCRUD departmentService;
+    private final ItemServiceCRUD itemService;
+    private final MeasureUniteServiceCRUD measureUnitService;
+    private final RoleServiceCRUD roleService;
+    private final SampleTypeServiceCRUD sampleTypeService;
+    private final StatusServiceCRUD statusService;
+    private final SupportTypeServiceCRUD supportTypeService;
+    private final ExamTypeServiceCRUD examTypeService;
 
-    public CacheInitializationListener(AnalysisDocumentTypeService analysisDocumentTypeService,
-                                       DepartmentService departmentService,
-                                       ItemService itemService,
-                                       MeasureUniteService measureUniteService,
-                                       RoleService roleService,
-                                       SampleTypeService sampleTypeService,
-                                       StatusService statusService,
-                                       SupportTypeService supportTypeService,
-                                       ExamTypeService examTypeService) {
+    public CacheInitializationListener(AnalysisDocumentTypeServiceCRUD analysisDocumentTypeService,
+                                       DepartmentServiceCRUD departmentService,
+                                       ItemServiceCRUD itemService,
+                                       MeasureUniteServiceCRUD measureUniteService,
+                                       RoleServiceCRUD roleService,
+                                       SampleTypeServiceCRUD sampleTypeService,
+                                       StatusServiceCRUD statusService,
+                                       SupportTypeServiceCRUD supportTypeService,
+                                       ExamTypeServiceCRUD examTypeService) {
         this.analysisDocumentTypeService = analysisDocumentTypeService;
         this.departmentService = departmentService;
         this.itemService = itemService;

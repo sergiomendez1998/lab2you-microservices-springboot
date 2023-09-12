@@ -5,15 +5,7 @@ import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 
 import java.util.List;
 
-public interface CatalogService <T> {
-
-    T executeCreation(T entity);
-
-    T executeUpdate(T entity);
-
-    void executeDeleteById(Long id);
-
-    List<T> executeReadAll();
+public interface CRUDCatalogService<T> extends CRUDEntity<T>{
 
     String getCatalogName();
 

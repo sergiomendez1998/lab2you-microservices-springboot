@@ -22,7 +22,6 @@ public class UserEntity{
     private String password;
     private String email;
     private  boolean enabled;
-    private boolean resetPassword;
     private boolean confirmed;
     private String userType;
     private String resetPasswordToken;

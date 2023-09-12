@@ -3,7 +3,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.MeasureUnitEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
-import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
+import com.example.finalprojectbackend.lab2you.db.repository.CRUDCatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.MeasureUnitRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
@@ -11,17 +11,16 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Objects.*;
 
 @Service
 @Qualifier("measureUnit")
-public class MeasureUniteService implements CatalogService<MeasureUnitEntity> {
+public class MeasureUniteServiceCRUD implements CRUDCatalogService<MeasureUnitEntity> {
 
     private final MeasureUnitRepository measureUnitRepository;
 
-    public MeasureUniteService(MeasureUnitRepository measureUnitRepository){
+    public MeasureUniteServiceCRUD(MeasureUnitRepository measureUnitRepository){
         this.measureUnitRepository = measureUnitRepository;
     }
     @CacheEvict(value = "measure units", allEntries = true)

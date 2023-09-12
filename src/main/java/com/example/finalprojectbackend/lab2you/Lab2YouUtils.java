@@ -40,4 +40,12 @@ public class Lab2YouUtils {
         return str == null || str.isEmpty();
     }
 
+    public static String generateRandomPassword() {
+        String password = "";
+        for (int i = 0; i < 8; i++) {
+            password += (char) (Math.random() * 26 + 'a');
+        }
+        return password;
+    }
+
 }

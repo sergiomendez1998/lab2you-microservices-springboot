@@ -3,7 +3,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.StatusEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
-import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
+import com.example.finalprojectbackend.lab2you.db.repository.CRUDCatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.StatusRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
@@ -11,17 +11,16 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Objects.*;
 
 @Service
 @Qualifier("status")
-public class StatusService implements CatalogService<StatusEntity> {
+public class StatusServiceCRUD implements CRUDCatalogService<StatusEntity> {
 
     private final StatusRepository statusRepository;
 
-    public StatusService(StatusRepository statusRepository){
+    public StatusServiceCRUD(StatusRepository statusRepository){
         this.statusRepository = statusRepository;
     }
 

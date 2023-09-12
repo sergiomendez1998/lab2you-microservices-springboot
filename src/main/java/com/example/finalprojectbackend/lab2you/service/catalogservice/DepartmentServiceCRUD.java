@@ -3,7 +3,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.DepartmentEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
-import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;
+import com.example.finalprojectbackend.lab2you.db.repository.CRUDCatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
@@ -11,17 +11,16 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Objects.isNull;
 
 @Service
 @Qualifier("department")
-public class DepartmentService implements CatalogService<DepartmentEntity> {
+public class DepartmentServiceCRUD implements CRUDCatalogService<DepartmentEntity> {
 
     private final DepartmentRepository departmentRepository;
 
-    public DepartmentService(DepartmentRepository departmentRepository){
+    public DepartmentServiceCRUD(DepartmentRepository departmentRepository){
         this.departmentRepository = departmentRepository;
     }
 
