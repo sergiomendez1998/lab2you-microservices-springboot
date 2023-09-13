@@ -66,4 +66,18 @@ public class Lab2YouConstants {
 
     }
 
+    public enum lab2YouUserTypes {
+        CUSTOMER("internal"),
+        EMPLOYEE("external");
+        private String userType;
+        lab2YouUserTypes(String userType) {
+            this.userType = userType;
+        }
+
+        public String getUserType() {
+            return userType;
+        }
+
+    }
+
 }

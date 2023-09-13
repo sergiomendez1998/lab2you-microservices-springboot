@@ -3,6 +3,7 @@ package com.example.finalprojectbackend.lab2you.db.model.dto;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.catalina.User;
 
 
 @Getter
@@ -16,9 +17,9 @@ public class CustomerDTO{
     private String phoneNumber;
     private String gender;
     private String occupation;
-    private UserEntity user;
+    private UserDTO user;
 
-    public CustomerDTO(Long cui, String firstName, String lastName, String address, String nit, String phoneNumber, String gender, String occupation, UserEntity user) {
+    public CustomerDTO(Long cui, String firstName, String lastName, String address, String nit, String phoneNumber, String gender, String occupation, UserDTO user) {
         this.cui = cui;
         this.firstName = firstName;
         this.lastName = lastName;

@@ -26,121 +26,132 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 @Configuration
 @AllArgsConstructor
 public class WebSecurityConfig {
 
-        private final UserDetailsService userDetailsService;
-        private final JWTAuthorizationFilter jwtAuthorizationFilter;
+    private final UserDetailsService userDetailsService;
+    private final JWTAuthorizationFilter jwtAuthorizationFilter;
 
-        /*
-         * This method is used to configure the security filter chain.
-         * It is used to configure the security filter chain.
-         *
-         */
+    /*
+     * This method is used to configure the security filter chain.
+     * It is used to configure the security filter chain.
+     *
+     */
 
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager)
-                        throws Exception {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager)
+            throws Exception {
 
-                JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
-                jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
-                jwtAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
+        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
+        jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
+        jwtAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
 
-                return http.csrf(AbstractHttpConfigurer::disable)
-                                .authorizeHttpRequests(auth -> {
-                                        auth.requestMatchers(
-                                                        new AntPathRequestMatcher(
-                                                                        "/api/v1/catalog/**",
-                                                                        "GET"),
-                                                        new AntPathRequestMatcher("/doc/**", "GET"),
-                                                        new AntPathRequestMatcher("/v3/api-docs/**", "GET"),
-                                                        new AntPathRequestMatcher("/api/v1/login", "POST"))
-                                                        .permitAll()
-                                                        .requestMatchers(
-                                                                        new AntPathRequestMatcher("/api/v1/userList",
-                                                                                        "GET"),
-                                                                        new AntPathRequestMatcher(
-                                                                                        "/api/v1/registerUserFromInternalRequest",
-                                                                                        "POST"))
-                                                        .hasAuthority(
-                                                                        Lab2YouConstants.lab2YouRoles.ADMIN.getRole())
-                                                        .requestMatchers(
-                                                                        new AntPathRequestMatcher("/api/v1/userList",
-                                                                                        "GET"),
-                                                                        new AntPathRequestMatcher(
-                                                                                        "/api/v1/registerUserFromMedicalRequest",
-                                                                                        "POST"))
-                                                        .hasAuthority(
-                                                                        Lab2YouConstants.lab2YouRoles.MEDICAL.getRole())
-                                                        .anyRequest().authenticated();
-                                })
-                                .sessionManagement(
-                                                sessionManagement -> sessionManagement.sessionCreationPolicy(
-                                                                SessionCreationPolicy.STATELESS))
-                                .addFilter(jwtAuthenticationFilter)
-                                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-                                .exceptionHandling(ex -> {
-                                        ex.authenticationEntryPoint((request, response, failed) -> {
-                                                var responseWrapper = new ResponseWrapper<String>(false,
-                                                                "Login failed", "");
+        return http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers(request ->
+                                    permitAllRequestMatchers().stream().anyMatch(matcher -> matcher.matches(request))
+                            ).permitAll()
+                            .requestMatchers(request ->
+                                    adminRequestMatchers().stream().anyMatch(matcher -> matcher.matches(request)))
+                            .hasAuthority(
+                                    Lab2YouConstants.lab2YouRoles.ADMIN.getRole())
+                            .requestMatchers(request ->
+                                    medicalRequestMatchers().stream().anyMatch(matcher -> matcher.matches(request)))
+                            .hasAuthority(
+                                    Lab2YouConstants.lab2YouRoles.MEDICAL.getRole())
+                            .anyRequest().authenticated();
+                })
+                .sessionManagement(
+                        sessionManagement -> sessionManagement.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS))
+                .addFilter(jwtAuthenticationFilter)
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> {
+                    ex.authenticationEntryPoint((request, response, failed) -> {
+                        var responseWrapper = new ResponseWrapper<String>(false,
+                                "Login failed", "");
 
-                                                response.getWriter().write(
-                                                                new ObjectMapper().writeValueAsString(
-                                                                                responseWrapper));
-                                                response.setContentType("application/json");
-                                                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                                                response.getWriter().flush();
-                                        });
-                                        ex.accessDeniedHandler((request, response, failed) -> {
-                                                var responseWrapper = new ResponseWrapper<String>(false,
-                                                                "Access denied", "");
+                        response.getWriter().write(
+                                new ObjectMapper().writeValueAsString(
+                                        responseWrapper));
+                        response.setContentType("application/json");
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getWriter().flush();
+                    });
+                    ex.accessDeniedHandler((request, response, failed) -> {
+                        var responseWrapper = new ResponseWrapper<String>(false,
+                                "Access denied", "");
 
-                                                response.getWriter().write(
-                                                                new ObjectMapper().writeValueAsString(
-                                                                                responseWrapper));
-                                                response.setContentType("application/json");
-                                                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                                                response.getWriter().flush();
-                                        });
-                                })
-                                .cors(cors -> cors.configurationSource(WebMvcConfigCors.corsConfigurationSource()))
-                                .build();
-        }
+                        response.getWriter().write(
+                                new ObjectMapper().writeValueAsString(
+                                        responseWrapper));
+                        response.setContentType("application/json");
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getWriter().flush();
+                    });
+                })
+                .cors(cors -> cors.configurationSource(WebMvcConfigCors.corsConfigurationSource()))
+                .build();
+    }
 
-        /*
-         * This method is used to load the user by username.
-         * It is used by the authentication manager to validate the user if exists in
-         * the record.
-         *
-         */
+    /*
+     * This method is used to load the user by username.
+     * It is used by the authentication manager to validate the user if exists in
+     * the record.
+     *
+     */
 
-        @Bean
-        AuthenticationManager authenticationManager(HttpSecurity httpSecurity, PasswordEncoder passwordEncoder)
-                        throws Exception {
-                var authenticationManagerBuilder = new DaoAuthenticationProvider();
-                authenticationManagerBuilder.setUserDetailsService(userDetailsService);
-                authenticationManagerBuilder.setPasswordEncoder(passwordEncoder);
-                return new ProviderManager(authenticationManagerBuilder);
+    @Bean
+    AuthenticationManager authenticationManager(HttpSecurity httpSecurity, PasswordEncoder passwordEncoder)
+            throws Exception {
+        var authenticationManagerBuilder = new DaoAuthenticationProvider();
+        authenticationManagerBuilder.setUserDetailsService(userDetailsService);
+        authenticationManagerBuilder.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(authenticationManagerBuilder);
 
-        }
+    }
 
-        /*
-         * This method is used to encode the password.
-         */
+    /*
+     * This method is used to encode the password.
+     */
 
-        @Bean
-        PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
-        }
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-        @Bean
-        FilterRegistrationBean<CorsFilter> corsFilterFilterRegistrationBean() {
-                FilterRegistrationBean<CorsFilter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
-                filterFilterRegistrationBean.setFilter(new CorsFilter(WebMvcConfigCors.corsConfigurationSource()));
-                filterFilterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-                return filterFilterRegistrationBean;
-        }
+    @Bean
+    FilterRegistrationBean<CorsFilter> corsFilterFilterRegistrationBean() {
+        FilterRegistrationBean<CorsFilter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
+        filterFilterRegistrationBean.setFilter(new CorsFilter(WebMvcConfigCors.corsConfigurationSource()));
+        filterFilterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return filterFilterRegistrationBean;
+    }
+
+
+    private List<RequestMatcher> permitAllRequestMatchers() {
+        return List.of(new AntPathRequestMatcher("/api/v1/customer/register", "GET"),
+                new AntPathRequestMatcher("/api/v1/catalog/**", "GET"),
+                new AntPathRequestMatcher("/doc/**", "GET"),
+                new AntPathRequestMatcher("/v3/api-docs/**", "GET"),
+                new AntPathRequestMatcher("/api/v1/login", "POST"));
+    }
+
+    private List<RequestMatcher> adminRequestMatchers() {
+        return List.of(new AntPathRequestMatcher("/api/v1/userList", "GET"),
+                new AntPathRequestMatcher("/api/v1/registerUserFromInternalRequest", "POST"));
+    }
+
+    private List<RequestMatcher> medicalRequestMatchers() {
+        return List.of(new AntPathRequestMatcher("/api/v1/userList", "GET"),
+                new AntPathRequestMatcher("/api/v1/registerUserFromMedicalRequest", "POST"));
+    }
+
+
 }

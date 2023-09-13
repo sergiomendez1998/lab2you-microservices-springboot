@@ -42,6 +42,7 @@ public class CustomerManagementProcessingController {
 
         userEntity.setNickName(customerDTO.getUser().getNickName());
         userEntity.setEmail(customerDTO.getUser().getEmail());
+        userEntity.setUserType(Lab2YouConstants.lab2YouUserTypes.CUSTOMER.getUserType());
 
         if (ObjectUtils.isEmpty(customerDTO.getUser().getPassword()))
         {
