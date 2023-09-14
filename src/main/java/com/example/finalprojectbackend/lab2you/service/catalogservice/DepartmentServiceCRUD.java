@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.DepartmentEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.CRUDCatalogService;
 import com.example.finalprojectbackend.lab2you.db.repository.DepartmentRepository;
@@ -80,5 +81,13 @@ public class DepartmentServiceCRUD implements CRUDCatalogService<DepartmentEntit
     @Override
     public DepartmentEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
         return new DepartmentEntity(catalogDTO.getName(),catalogDTO.getDescription());
+    }
+
+    public DepartmentEntity getDepartmentByName(String name){
+        return departmentRepository.findAllByIsDeletedFalse()
+                .stream()
+                .filter(department -> department.getName().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 }
