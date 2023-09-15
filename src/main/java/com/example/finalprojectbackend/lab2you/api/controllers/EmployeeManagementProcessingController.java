@@ -48,6 +48,7 @@ public class EmployeeManagementProcessingController {
         userEntity.setUserType(Lab2YouConstants.lab2YouUserTypes.EMPLOYEE.getUserType());
         userEntity.setEmail(employeeDTO.getUser().getEmail());
         userEntity.setPassword(Lab2YouUtils.encodePassword(employeeDTO.getUser().getPassword()));
+        userEntity.setEnabled(true);
         userEntity.setRole(role);
 
         employeeEntity.setFirstName(employeeDTO.getFirstName());
