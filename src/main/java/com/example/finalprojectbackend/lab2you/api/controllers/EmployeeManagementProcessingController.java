@@ -9,8 +9,8 @@ import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.service.EmployeeService;
 import com.example.finalprojectbackend.lab2you.service.UserService;
-import com.example.finalprojectbackend.lab2you.service.catalogservice.DepartmentServiceCRUD;
-import com.example.finalprojectbackend.lab2you.service.catalogservice.RoleServiceCRUD;
+import com.example.finalprojectbackend.lab2you.service.catalogservice.DepartmentProcessingControllerServiceCrud;
+import com.example.finalprojectbackend.lab2you.service.catalogservice.RoleProcessingControllerServiceCrud;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,11 +25,11 @@ public class EmployeeManagementProcessingController {
 
     private final UserService userService;
 
-    private final RoleServiceCRUD roleServiceCRUD;
+    private final RoleProcessingControllerServiceCrud roleServiceCRUD;
 
-    private final DepartmentServiceCRUD departmentServiceCRUD;
+    private final DepartmentProcessingControllerServiceCrud departmentServiceCRUD;
 
-    public EmployeeManagementProcessingController(EmployeeService employeeService, UserService userService, RoleServiceCRUD roleServiceCRUD, DepartmentServiceCRUD departmentServiceCRUD) {
+    public EmployeeManagementProcessingController(EmployeeService employeeService, UserService userService, RoleProcessingControllerServiceCrud roleServiceCRUD, DepartmentProcessingControllerServiceCrud departmentServiceCRUD) {
         this.employeeService = employeeService;
         this.userService = userService;
         this.roleServiceCRUD = roleServiceCRUD;

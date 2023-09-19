@@ -9,7 +9,7 @@ import org.apache.catalina.User;
 @Getter
 @Setter
 public class CustomerDTO{
-    private Long cui;
+    private String cui;
     private String firstName;
     private String lastName;
     private String address;
@@ -19,7 +19,7 @@ public class CustomerDTO{
     private String occupation;
     private UserDTO user;
 
-    public CustomerDTO(Long cui, String firstName, String lastName, String address, String nit, String phoneNumber, String gender, String occupation, UserDTO user) {
+    public CustomerDTO(String cui, String firstName, String lastName, String address, String nit, String phoneNumber, String gender, String occupation, UserDTO user) {
         this.cui = cui;
         this.firstName = firstName;
         this.lastName = lastName;

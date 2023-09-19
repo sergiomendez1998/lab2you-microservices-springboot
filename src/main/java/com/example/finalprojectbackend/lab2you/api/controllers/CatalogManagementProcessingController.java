@@ -1,8 +1,8 @@
 package com.example.finalprojectbackend.lab2you.api.controllers;
 
+import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
-import com.example.finalprojectbackend.lab2you.db.repository.CRUDCatalogService;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 
 import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
@@ -16,53 +16,75 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/catalog")
 public class CatalogManagementProcessingController<T> {
 
-    private final Map<String, CRUDCatalogService<T>> catalogServiceMap;
+    private final Map<String, CrudCatalogServiceProcessingInterceptor<T>> catalogServiceMap;
+    private ResponseWrapper responseWrapper;
 
 
-    public CatalogManagementProcessingController(List<CRUDCatalogService<T>> catalogServices) {
+    public CatalogManagementProcessingController(List<CrudCatalogServiceProcessingInterceptor<T>> catalogServices) {
         catalogServiceMap = catalogServices.stream()
                 .collect(Collectors.toMap(service -> service.getCatalogName().toLowerCase(), service -> service));
+        this.responseWrapper = new ResponseWrapper();
     }
 
     @GetMapping()
-    public ResponseEntity<List<CatalogWrapper>> getAll(@PathParam("catalogType") String catalogType) {
-        CRUDCatalogService<T> catalogService = getCatalogService(catalogType);
-        List<T> catalogItems = catalogService.executeReadAll();
-        List<CatalogWrapper> catalogWrapperList = catalogItems.stream()
-                .map(catalogService::mapToCatalogWrapper)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(catalogWrapperList);
+    public ResponseEntity<ResponseWrapper> getAll(@PathParam("catalogType") String catalogType) {
+
+        if (catalogType.isEmpty()) {
+            responseWrapper.setSuccessful(false);
+            responseWrapper.setMessage("Catalog type not found");
+            responseWrapper.addError("Catalog type", "the catalog type name is required");
+            return ResponseEntity.badRequest().body(responseWrapper);
+        }
+
+        CrudCatalogServiceProcessingInterceptor<T> catalogService = getCatalogService(catalogType);
+        responseWrapper = catalogService.executeReadAll();
+
+        return ResponseEntity.ok(responseWrapper);
     }
 
-    @PostMapping()
-    public ResponseEntity<CatalogWrapper> create(@PathParam("catalogType") String catalogType,
-                                                 @RequestBody CatalogDTO CatalogDTO) {
-        CRUDCatalogService<T> catalogService = getCatalogService(catalogType);
+    @PostMapping
+    public ResponseEntity<ResponseWrapper> create(@PathParam("catalogType") String catalogType,
+                                                          @RequestBody CatalogDTO CatalogDTO) {
+        CrudCatalogServiceProcessingInterceptor<T> catalogService = getCatalogService(catalogType);
         T catalogEntity = catalogService.mapToCatalogEntity(CatalogDTO);
-        T createdCatalogEntity = catalogService.executeCreation(catalogEntity);
-        CatalogWrapper createdCatalogWrapper = catalogService.mapToCatalogWrapper(createdCatalogEntity);
-        return ResponseEntity.ok(createdCatalogWrapper);
+        responseWrapper = catalogService.validate(catalogEntity, Lab2YouConstants.operationTypes.CREATE.getOperationType());
+        if (!responseWrapper.getErrors().isEmpty()) {
+            return ResponseEntity.badRequest().body(responseWrapper);
+        }
+        responseWrapper = catalogService.execute(catalogEntity,  Lab2YouConstants.operationTypes.CREATE.getOperationType());
+        return ResponseEntity.ok(responseWrapper);
     }
 
-    @PutMapping()
-    public ResponseEntity<CatalogWrapper> update(@PathParam("catalogType") String catalogType,
-                                                 @RequestBody CatalogDTO CatalogDTO) {
-        CRUDCatalogService<T> catalogService = getCatalogService(catalogType);
-        T catalogEntity = catalogService.mapToCatalogEntity(CatalogDTO);
-        T updatedCatalogEntity = catalogService.executeUpdate(catalogEntity);
-        CatalogWrapper updatedCatalogWrapper = catalogService.mapToCatalogWrapper(updatedCatalogEntity);
-        return ResponseEntity.ok(updatedCatalogWrapper);
+    @PutMapping
+    public ResponseEntity<ResponseWrapper> update(@PathParam("catalogType") String catalogType,
+                                                          @RequestBody CatalogDTO catalogDTO) {
+        CrudCatalogServiceProcessingInterceptor<T> catalogService = getCatalogService(catalogType);
+
+        T catalogEntity = catalogService.mapToCatalogEntity(catalogDTO);
+        responseWrapper = catalogService.validate(catalogEntity, Lab2YouConstants.operationTypes.UPDATE.getOperationType());
+
+        if(!responseWrapper.getErrors().isEmpty()){
+            ResponseEntity.badRequest().body(responseWrapper);
+        }
+
+        ResponseWrapper updatedCatalogEntity = catalogService.execute(catalogEntity,Lab2YouConstants.operationTypes.UPDATE.getOperationType());
+        return ResponseEntity.ok(updatedCatalogEntity);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathParam("catalogType") String catalogType,
-                                       @PathVariable("id") Long id) {
-        CRUDCatalogService<T> catalogService = getCatalogService(catalogType);
-        catalogService.executeDeleteById(id);
-        return ResponseEntity.ok("Catalog item with id " + id + " was deleted");
+    @DeleteMapping
+    public ResponseEntity<ResponseWrapper> delete(@PathParam("catalogType") String catalogType,
+                                                  @RequestBody CatalogDTO catalogDTO) {
+        CrudCatalogServiceProcessingInterceptor<T> catalogService = getCatalogService(catalogType);
+        T catalogEntity = catalogService.mapToCatalogEntity(catalogDTO);
+        responseWrapper = catalogService.validate(catalogEntity, Lab2YouConstants.operationTypes.DELETE.getOperationType());
+        if (!responseWrapper.getErrors().isEmpty()) {
+            return ResponseEntity.badRequest().body(responseWrapper);
+        }
+        responseWrapper = catalogService.execute(catalogEntity, Lab2YouConstants.operationTypes.DELETE.getOperationType());
+        return ResponseEntity.ok(responseWrapper);
     }
 
-    private CRUDCatalogService<T> getCatalogService(String catalogType) {
+    private CrudCatalogServiceProcessingInterceptor<T> getCatalogService(String catalogType) {
         return catalogServiceMap.get(catalogType.toLowerCase());
     }
 

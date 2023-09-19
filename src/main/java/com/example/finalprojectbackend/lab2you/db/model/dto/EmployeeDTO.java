@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EmployeeDTO {
-    private Long cui;
+    private String cui;
     private String firstName;
     private String lastName;
     private String address;
@@ -15,7 +15,7 @@ public class EmployeeDTO {
     private DepartmentDTO department;
     private UserDTO user;
 
-    public EmployeeDTO(Long cui, String firstName, String lastName, String address, String phoneNumber, String gender, DepartmentDTO department, UserDTO user) {
+    public EmployeeDTO(String cui, String firstName, String lastName, String address, String phoneNumber, String gender, DepartmentDTO department, UserDTO user) {
         this.cui = cui;
         this.firstName = firstName;
         this.lastName = lastName;

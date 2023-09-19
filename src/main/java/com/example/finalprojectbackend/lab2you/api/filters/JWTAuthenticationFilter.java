@@ -60,8 +60,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             var authResponse = new AuthWrapper(token,
                     userDetails.getRole(), userDetails.getName(), userDetails.getUsername());
 
-            var ResponseWrapper = new ResponseWrapper<AuthWrapper>(true,
-                    "Login successful", authResponse);
+            var ResponseWrapper = new ResponseWrapper();
+            ResponseWrapper.setSuccessful(true);
+            ResponseWrapper.setMessage("User authenticated");
+            ResponseWrapper.setData(Collections.singletonList(authResponse));
 
             response.getWriter().write(new ObjectMapper().writeValueAsString(ResponseWrapper));
             response.setContentType("application/json");

@@ -81,4 +81,19 @@ public class Lab2YouConstants {
 
     }
 
+    public enum operationTypes {
+        CREATE("CREATE"),
+        UPDATE("UPDATE"),
+        DELETE("DELETE"),
+        READ("READ");
+        private String operation;
+        operationTypes(String operation) {
+            this.operation = operation;
+        }
+        public String getOperationType() {
+            return operation;
+        }
+
+    }
+
 }

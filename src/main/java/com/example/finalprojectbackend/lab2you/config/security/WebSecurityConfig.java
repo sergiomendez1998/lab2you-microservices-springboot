@@ -29,6 +29,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -74,8 +75,10 @@ public class WebSecurityConfig {
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> {
                     ex.authenticationEntryPoint((request, response, failed) -> {
-                        var responseWrapper = new ResponseWrapper<String>(false,
-                                "Login failed", "");
+                        var responseWrapper = new ResponseWrapper();
+                        responseWrapper.setSuccessful(false);
+                        responseWrapper.setMessage("Authentication failed");
+                        responseWrapper.setData(Collections.emptyList());
 
                         response.getWriter().write(
                                 new ObjectMapper().writeValueAsString(
@@ -85,8 +88,10 @@ public class WebSecurityConfig {
                         response.getWriter().flush();
                     });
                     ex.accessDeniedHandler((request, response, failed) -> {
-                        var responseWrapper = new ResponseWrapper<String>(false,
-                                "Access denied", "");
+                        var responseWrapper = new ResponseWrapper();
+                        responseWrapper.setSuccessful(false);
+                        responseWrapper.setMessage("Access denied");
+                        responseWrapper.setData(Collections.emptyList());
 
                         response.getWriter().write(
                                 new ObjectMapper().writeValueAsString(
@@ -138,6 +143,9 @@ public class WebSecurityConfig {
     private List<RequestMatcher> permitAllRequestMatchers() {
         return List.of(new AntPathRequestMatcher("/api/v1/customer/register", "POST"),
                 new AntPathRequestMatcher("/api/v1/catalog/**", "GET"),
+                new AntPathRequestMatcher("/api/v1/catalog/**", "POST"),
+                new AntPathRequestMatcher("/api/v1/catalog/**", "PUT"),
+                new AntPathRequestMatcher("/api/v1/catalog/**", "DELETE"),
                 new AntPathRequestMatcher("/doc/**", "GET"),
                 new AntPathRequestMatcher("/v3/api-docs/**", "GET"),
                 new AntPathRequestMatcher("/api/v1/login", "POST"));

@@ -8,25 +8,25 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CacheInitializationListener implements ApplicationListener<ApplicationReadyEvent> {
-    private final AnalysisDocumentTypeServiceCRUD analysisDocumentTypeService;
-    private final DepartmentServiceCRUD departmentService;
-    private final ItemServiceCRUD itemService;
-    private final MeasureUniteServiceCRUD measureUnitService;
-    private final RoleServiceCRUD roleService;
-    private final SampleTypeServiceCRUD sampleTypeService;
-    private final StatusServiceCRUD statusService;
-    private final SupportTypeServiceCRUD supportTypeService;
-    private final ExamTypeServiceCRUD examTypeService;
+    private final AnalysisDocumentTypeServiceProcessingInterceptorCrud analysisDocumentTypeService;
+    private final DepartmentProcessingControllerServiceCrud departmentService;
+    private final ItemProcessingControllerServiceCrud itemService;
+    private final MeasureUniteServiceProcessingInterceptorCrud measureUnitService;
+    private final RoleProcessingControllerServiceCrud roleService;
+    private final SampleTypeServiceProcessingInterceptorCrud sampleTypeService;
+    private final StatusProcessingControllerServiceCrud statusService;
+    private final SupportTypeServiceProcessingInterceptorCrud supportTypeService;
+    private final ExamTypeServiceProcessingInterceptorCrud examTypeService;
 
-    public CacheInitializationListener(AnalysisDocumentTypeServiceCRUD analysisDocumentTypeService,
-                                       DepartmentServiceCRUD departmentService,
-                                       ItemServiceCRUD itemService,
-                                       MeasureUniteServiceCRUD measureUniteService,
-                                       RoleServiceCRUD roleService,
-                                       SampleTypeServiceCRUD sampleTypeService,
-                                       StatusServiceCRUD statusService,
-                                       SupportTypeServiceCRUD supportTypeService,
-                                       ExamTypeServiceCRUD examTypeService) {
+    public CacheInitializationListener(AnalysisDocumentTypeServiceProcessingInterceptorCrud analysisDocumentTypeService,
+                                       DepartmentProcessingControllerServiceCrud departmentService,
+                                       ItemProcessingControllerServiceCrud itemService,
+                                       MeasureUniteServiceProcessingInterceptorCrud measureUniteService,
+                                       RoleProcessingControllerServiceCrud roleService,
+                                       SampleTypeServiceProcessingInterceptorCrud sampleTypeService,
+                                       StatusProcessingControllerServiceCrud statusService,
+                                       SupportTypeServiceProcessingInterceptorCrud supportTypeService,
+                                       ExamTypeServiceProcessingInterceptorCrud examTypeService) {
         this.analysisDocumentTypeService = analysisDocumentTypeService;
         this.departmentService = departmentService;
         this.itemService = itemService;

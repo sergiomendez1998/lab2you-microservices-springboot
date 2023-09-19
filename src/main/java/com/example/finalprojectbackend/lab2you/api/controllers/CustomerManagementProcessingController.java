@@ -6,10 +6,10 @@ import com.example.finalprojectbackend.lab2you.db.model.dto.CustomerDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.CustomerEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.service.CustomerService;
 import com.example.finalprojectbackend.lab2you.service.EmailService;
-import com.example.finalprojectbackend.lab2you.service.UserService;
-import com.example.finalprojectbackend.lab2you.service.catalogservice.RoleServiceCRUD;
+import com.example.finalprojectbackend.lab2you.service.catalogservice.RoleProcessingControllerServiceCrud;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,22 +22,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerManagementProcessingController {
 
     private final CustomerService customerService;
-    private final UserService userService;
 
-    private final RoleServiceCRUD roleServiceCRUD;
+    private final RoleProcessingControllerServiceCrud roleServiceCRUD;
 
     private final EmailService emailService;
 
-    public CustomerManagementProcessingController(CustomerService customerService, UserService userService, RoleServiceCRUD roleServiceCRUD, EmailService emailService) {
+    private ResponseWrapper responseWrapper;
+
+    public CustomerManagementProcessingController(CustomerService customerService, RoleProcessingControllerServiceCrud roleServiceCRUD, EmailService emailService) {
         this.customerService = customerService;
-        this.userService = userService;
         this.roleServiceCRUD = roleServiceCRUD;
         this.emailService = emailService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody CustomerDTO customerDTO) {
-        UserEntity userEntity =  new UserEntity();
+    public ResponseEntity<ResponseWrapper> register(@RequestBody CustomerDTO customerDTO) {
+        UserEntity userEntity = new UserEntity();
         RoleEntity role = roleServiceCRUD.getRoleByName(Lab2YouConstants.lab2YouRoles.USER.getRole());
 
         userEntity.setNickName(customerDTO.getUser().getNickName());
@@ -45,29 +45,26 @@ public class CustomerManagementProcessingController {
         userEntity.setUserType(Lab2YouConstants.lab2YouUserTypes.CUSTOMER.getUserType());
         userEntity.setEnabled(true);
 
-        if (ObjectUtils.isEmpty(customerDTO.getUser().getPassword()))
-        {
+        if (ObjectUtils.isEmpty(customerDTO.getUser().getPassword())) {
             String password = Lab2YouUtils.generateRandomPassword();
             customerDTO.getUser().setPassword(password);
         }
         userEntity.setPassword(Lab2YouUtils.encodePassword(customerDTO.getUser().getPassword()));
         userEntity.setRole(role);
 
-        CustomerEntity customerEntity = new CustomerEntity();
-
-        customerEntity.setFirstName(customerDTO.getFirstName());
-        customerEntity.setLastName(customerDTO.getLastName());
-        customerEntity.setPhoneNumber(customerDTO.getPhoneNumber());
-        customerEntity.setAddress(customerDTO.getAddress());
-        customerEntity.setNit(customerDTO.getNit());
-        customerEntity.setCui(customerDTO.getCui());
-        customerEntity.setGender(customerDTO.getGender());
-        customerEntity.setOccupation(customerDTO.getOccupation());
+        CustomerEntity customerEntity = customerService.mapToEntityCustomer(customerDTO);
         customerEntity.setUser(userEntity);
 
-        userService.save(userEntity);
-        customerService.executeCreation(customerEntity);
+        responseWrapper = customerService.validate(customerEntity, Lab2YouConstants.operationTypes.CREATE.getOperationType());
+
+        if (!responseWrapper.getErrors().isEmpty()) {
+            return ResponseEntity.badRequest().body(responseWrapper);
+        }
+
+        customerService.execute(customerEntity, Lab2YouConstants.operationTypes.CREATE.getOperationType());
         emailService.sendRegistrationEmail(customerDTO);
-        return ResponseEntity.ok(Lab2YouConstants.lab2YouSuccessCodes.EMAIL_SENT.getDescription());
+        responseWrapper.setSuccessful(true);
+        responseWrapper.setMessage(Lab2YouConstants.lab2YouSuccessCodes.EMAIL_SENT.getDescription());
+        return ResponseEntity.ok(responseWrapper);
     }
 }

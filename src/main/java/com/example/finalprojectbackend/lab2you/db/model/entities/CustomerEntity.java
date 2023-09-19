@@ -21,10 +21,10 @@ public class CustomerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long cui;
+    private String cui;
     private String firstName;
     private String lastName;
-    private String Nit;
+    private String nit;
     private String address;
     private String phoneNumber;
     private String gender;
