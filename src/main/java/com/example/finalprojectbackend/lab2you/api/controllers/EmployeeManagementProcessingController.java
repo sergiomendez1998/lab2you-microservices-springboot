@@ -7,10 +7,14 @@ import com.example.finalprojectbackend.lab2you.db.model.entities.DepartmentEntit
 import com.example.finalprojectbackend.lab2you.db.model.entities.EmployeeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.EmployeeWrapper;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
+import com.example.finalprojectbackend.lab2you.service.EmailService;
 import com.example.finalprojectbackend.lab2you.service.EmployeeService;
 import com.example.finalprojectbackend.lab2you.service.UserService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.DepartmentProcessingControllerServiceCrud;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.RoleProcessingControllerServiceCrud;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +33,8 @@ public class EmployeeManagementProcessingController {
 
     private final DepartmentProcessingControllerServiceCrud departmentServiceCRUD;
 
+    private ResponseWrapper responseWrapper;
+
     public EmployeeManagementProcessingController(EmployeeService employeeService, UserService userService, RoleProcessingControllerServiceCrud roleServiceCRUD, DepartmentProcessingControllerServiceCrud departmentServiceCRUD) {
         this.employeeService = employeeService;
         this.userService = userService;
@@ -37,9 +43,8 @@ public class EmployeeManagementProcessingController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody EmployeeDTO employeeDTO){
+    public ResponseEntity<ResponseWrapper> register(@RequestBody EmployeeDTO employeeDTO) {
         UserEntity userEntity = new UserEntity();
-        EmployeeEntity employeeEntity = new EmployeeEntity();
 
         RoleEntity role = roleServiceCRUD.getRoleByName(employeeDTO.getUser().getRole().getName());
         DepartmentEntity department = departmentServiceCRUD.getDepartmentByName(employeeDTO.getDepartment().getName());
@@ -49,19 +54,23 @@ public class EmployeeManagementProcessingController {
         userEntity.setEmail(employeeDTO.getUser().getEmail());
         userEntity.setPassword(Lab2YouUtils.encodePassword(employeeDTO.getUser().getPassword()));
         userEntity.setEnabled(true);
+
         userEntity.setRole(role);
 
-        employeeEntity.setFirstName(employeeDTO.getFirstName());
-        employeeEntity.setLastName(employeeDTO.getLastName());
-        employeeEntity.setPhoneNumber(employeeDTO.getPhoneNumber());
-        employeeEntity.setAddress(employeeDTO.getAddress());
-        employeeEntity.setCui(employeeDTO.getCui());
-        employeeEntity.setGender(employeeDTO.getGender());
-        employeeEntity.setDepartmentEntity(department);
+        EmployeeEntity employeeEntity = employeeService.mapToEntityEmployee(employeeDTO);
         employeeEntity.setUser(userEntity);
+        employeeEntity.setDepartmentEntity(department);
 
+        responseWrapper = employeeService.validate(employeeEntity, Lab2YouConstants.operationTypes.CREATE.getOperationType());
+
+        if (!responseWrapper.getErrors().isEmpty()) {
+            return ResponseEntity.badRequest().body(responseWrapper);
+        }
         userService.save(userEntity);
-        employeeService.executeCreation(employeeEntity);
-        return ResponseEntity.ok(Lab2YouConstants.lab2YouSuccessCodes.REGISTRATION_SUCCESS.getDescription());
+        employeeService.execute(employeeEntity, Lab2YouConstants.operationTypes.CREATE.getOperationType());
+        responseWrapper.setSuccessful(true);
+        responseWrapper.setMessage(Lab2YouConstants.lab2YouSuccessCodes.REGISTRATION_SUCCESS.getDescription());
+        return ResponseEntity.ok(responseWrapper);
     }
+
 }

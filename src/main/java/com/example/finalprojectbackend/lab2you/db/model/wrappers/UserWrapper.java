@@ -8,9 +8,11 @@ import lombok.Setter;
 public class UserWrapper {
     private  String email;
     private   RoleWrapper role;
+    private String password;
 
-    public UserWrapper(String email, RoleWrapper role) {
+    public UserWrapper(String email, RoleWrapper role,String password) {
         this.email = email;
         this.role = role;
+        this.password = password;
     }
 }

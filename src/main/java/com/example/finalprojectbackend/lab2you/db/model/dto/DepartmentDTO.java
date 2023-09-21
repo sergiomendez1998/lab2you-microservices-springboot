@@ -9,4 +9,9 @@ import org.checkerframework.checker.index.qual.SearchIndexBottom;
 public class DepartmentDTO {
     private  int id;
     private String name;
+
+    public DepartmentDTO(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
