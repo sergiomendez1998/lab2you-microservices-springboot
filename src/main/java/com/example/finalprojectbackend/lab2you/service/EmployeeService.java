@@ -44,9 +44,10 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
             employeeEntityFound.get().getUser().setRole(entity.getUser().getRole() != null ? entity.getUser().getRole() : employeeEntityFound.get().getUser().getRole());
             employeeEntityFound.get().setFirstName(entity.getFirstName() != null ? entity.getFirstName() : employeeEntityFound.get().getFirstName());
             employeeEntityFound.get().setLastName(entity.getLastName() != null ? entity.getLastName() : employeeEntityFound.get().getLastName());
-        responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("employee updated successfully");
-        responseWrapper.setData(Collections.singletonList(employeeRepository.save(employeeEntityFound.get())));
+            employeeRepository.save(employeeEntityFound.get());
+            responseWrapper.setSuccessful(true);
+            responseWrapper.setMessage("employee updated successfully");
+            responseWrapper.setData(Collections.singletonList("employee created successfully"));
         return responseWrapper;
         }
         responseWrapper.setSuccessful(false);
@@ -168,7 +169,6 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
         employeeWrapper.setPhoneNumber(employeeEntity.getPhoneNumber());
         employeeWrapper.setAddress(employeeEntity.getAddress());
         employeeWrapper.getUser().setEmail(employeeEntity.getUser().getEmail());
-        employeeWrapper.getUser().setPassword(employeeEntity.getUser().getPassword());
         employeeWrapper.getUser().getRole().setId(employeeEntity.getUser().getRole().getId());
         employeeWrapper.getUser().getRole().setName(employeeEntity.getUser().getRole().getName());
         employeeWrapper.getUser().getRole().setDescription(employeeEntity.getUser().getRole().getDescription());
