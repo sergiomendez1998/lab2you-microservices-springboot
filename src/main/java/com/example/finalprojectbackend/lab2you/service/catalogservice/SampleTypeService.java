@@ -1,11 +1,11 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.ExamTypeEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.SampleTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
-import com.example.finalprojectbackend.lab2you.db.repository.ExamTypeRepository;
+import com.example.finalprojectbackend.lab2you.db.repository.SampleTypeRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,84 +16,89 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+
+
 @Service
-@Qualifier("examType")
-public class ExamTypeServiceProcessingInterceptorCrud extends CrudCatalogServiceProcessingInterceptor<ExamTypeEntity> {
-    private final ExamTypeRepository examTypeRepository;
+@Qualifier("sampleType")
+public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<SampleTypeEntity> {
+
+    private final SampleTypeRepository sampleTypeRepository;
     private  ResponseWrapper responseWrapper;
 
-    public ExamTypeServiceProcessingInterceptorCrud(ExamTypeRepository examTypeRepository){
-        this.examTypeRepository = examTypeRepository;
+    public SampleTypeService(SampleTypeRepository sampleTypeRepository) {
+        this.sampleTypeRepository = sampleTypeRepository;
     }
 
-    @CacheEvict(value = "examTypes",allEntries = true)
+    @CacheEvict(value = "sampleTypes", allEntries = true)
     @Override
-    public ResponseWrapper executeCreation(ExamTypeEntity examTypeEntity) {
+    public ResponseWrapper executeCreation(SampleTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
-        examTypeRepository.save(examTypeEntity);
+        sampleTypeRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Exam type created");
-        responseWrapper.setData(Collections.singletonList("Exam type created"));
+        responseWrapper.setMessage("SampleType created");
+        responseWrapper.setData(Collections.singletonList("SampleType created"));
         return responseWrapper;
     }
 
-    @CacheEvict(value = "examTypes",allEntries = true)
+    @CacheEvict(value = "sampleTypes", allEntries = true)
     @Override
-    public ResponseWrapper executeUpdate(ExamTypeEntity examTypeEntity) {
+    public ResponseWrapper executeUpdate(SampleTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
-        Optional<ExamTypeEntity> examTypeFound = examTypeRepository.findById(examTypeEntity.getId());
+        Optional<SampleTypeEntity> sampleTypeEntityFound = sampleTypeRepository.findById(entity.getId());
 
-        if (examTypeFound.isPresent()) {
-            examTypeFound.get().setName(examTypeEntity.getName() != null ? examTypeEntity.getName() : examTypeFound.get().getName());
-            examTypeFound.get().setDescription(examTypeEntity.getDescription() != null ? examTypeEntity.getDescription() : examTypeFound.get().getDescription());
-            examTypeRepository.save(examTypeFound.get());
+        if (sampleTypeEntityFound.isPresent()) {
+            sampleTypeEntityFound.get().setName(entity.getName() != null ? entity.getName() : sampleTypeEntityFound.get().getName());
+            sampleTypeEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : sampleTypeEntityFound.get().getDescription());
+            sampleTypeRepository.save(sampleTypeEntityFound.get());
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Department updated");
-            responseWrapper.setData(Collections.singletonList("Department updated"));
+            responseWrapper.setMessage("SampleType updated");
+            responseWrapper.setData(Collections.singletonList("SampleType updated"));
             return responseWrapper;
         }
-
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("examTypeEntity not found");
-        responseWrapper.addError("id","examTypeEntity not found");
+        responseWrapper.setMessage("SampleType not found");
+        responseWrapper.addError("id", "SampleType not found");
         return responseWrapper;
     }
 
-    @CacheEvict(value = "examTypes",allEntries = true)
+    @CacheEvict(value = "sampleTypes", allEntries = true)
     @Override
-    public ResponseWrapper executeDeleteById(ExamTypeEntity examTypeEntity) {
+    public ResponseWrapper executeDeleteById(SampleTypeEntity sampleTypeEntity) {
         responseWrapper = new ResponseWrapper();
-        Optional<ExamTypeEntity> analysisDocumentTypeEntityFound = examTypeRepository.findById(examTypeEntity.getId());
+        Optional<SampleTypeEntity> sampleTypeEntityFound = sampleTypeRepository.findById(sampleTypeEntity.getId());
 
-        analysisDocumentTypeEntityFound.ifPresent(analysisDocumentTypeEntity -> {
-            analysisDocumentTypeEntity.setIsDeleted(true);
-            examTypeRepository.save(analysisDocumentTypeEntity);
-        });
+        sampleTypeEntityFound.ifPresent(
+                sampleTypeEntity1 -> {
+                    sampleTypeEntity1.setIsDeleted(true);
+                    sampleTypeRepository.save(sampleTypeEntity1);
+                }
+        );
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Exam type deleted");
-        responseWrapper.setData(Collections.singletonList("Exam Type deleted"));
+        responseWrapper.setMessage("SampleType deleted");
+        responseWrapper.setData(Collections.singletonList("SampleType deleted"));
         return responseWrapper;
+
     }
 
-    @Cacheable (value = "examTypes")
+    @Cacheable(value = "sampleTypes")
     @Override
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Exam types found");
-        List<CatalogWrapper> catalogWrapperList = examTypeRepository
-                .findAllByIsDeletedFalse()
+        responseWrapper.setMessage("SampleTypes found");
+        List<CatalogWrapper> sampleTypeEntities = sampleTypeRepository.findAllByIsDeletedFalse()
                 .stream()
                 .map(this::mapToCatalogWrapper)
                 .toList();
-        responseWrapper.setData(catalogWrapperList);
+        responseWrapper.setData(sampleTypeEntities);
+
         return responseWrapper;
     }
 
     @Override
-    protected ResponseWrapper validateForCreation(ExamTypeEntity entity) {
+    protected ResponseWrapper validateForCreation(SampleTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
@@ -114,8 +119,8 @@ public class ExamTypeServiceProcessingInterceptorCrud extends CrudCatalogService
     }
 
     @Override
-    protected ResponseWrapper validateForUpdate(ExamTypeEntity entity) {
-         responseWrapper = new ResponseWrapper();
+    protected ResponseWrapper validateForUpdate(SampleTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
@@ -131,7 +136,8 @@ public class ExamTypeServiceProcessingInterceptorCrud extends CrudCatalogService
     }
 
     @Override
-    protected ResponseWrapper validateForDelete(ExamTypeEntity entity) {
+    protected ResponseWrapper validateForDelete(SampleTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
@@ -142,27 +148,26 @@ public class ExamTypeServiceProcessingInterceptorCrud extends CrudCatalogService
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
-
         return responseWrapper;
     }
 
     @Override
-    protected ResponseWrapper validateForRead(ExamTypeEntity entity) {
+    protected ResponseWrapper validateForRead(SampleTypeEntity entity) {
         return null;
     }
 
     @Override
     public String getCatalogName() {
-        return "examType";
+        return "sampleType";
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(ExamTypeEntity catalogItem) {
-        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+    public CatalogWrapper mapToCatalogWrapper(SampleTypeEntity catalogItem) {
+        return new CatalogWrapper(catalogItem.getId(), catalogItem.getName(), catalogItem.getDescription());
     }
 
     @Override
-    public ExamTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new ExamTypeEntity(catalogDTO.getName(),catalogDTO.getDescription());
+    public SampleTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new SampleTypeEntity(catalogDTO.getName(), catalogDTO.getDescription());
     }
 }

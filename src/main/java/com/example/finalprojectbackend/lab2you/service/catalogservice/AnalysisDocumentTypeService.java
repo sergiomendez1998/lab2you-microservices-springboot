@@ -18,12 +18,12 @@ import java.util.Optional;
 
 @Service
 @Qualifier("analysisDocumentType")
-public class AnalysisDocumentTypeServiceProcessingInterceptorCrud extends CrudCatalogServiceProcessingInterceptor<AnalysisDocumentTypeEntity> {
+public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInterceptor<AnalysisDocumentTypeEntity> {
 
     private final AnalysisDocumentTypeRepository analysisDocumentTypeRepository;
     private  ResponseWrapper responseWrapper;
 
-    public AnalysisDocumentTypeServiceProcessingInterceptorCrud(AnalysisDocumentTypeRepository analysisDocumentTypeRepository) {
+    public AnalysisDocumentTypeService(AnalysisDocumentTypeRepository analysisDocumentTypeRepository) {
         this.analysisDocumentTypeRepository = analysisDocumentTypeRepository;
     }
 

@@ -1,11 +1,11 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.SampleTypeEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.SupportTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
-import com.example.finalprojectbackend.lab2you.db.repository.SampleTypeRepository;
+import com.example.finalprojectbackend.lab2you.db.repository.SupportTypeRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,89 +16,83 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-
-
 @Service
-@Qualifier("sampleType")
-public class SampleTypeServiceProcessingInterceptorCrud extends CrudCatalogServiceProcessingInterceptor<SampleTypeEntity> {
+@Qualifier("supportType")
+public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<SupportTypeEntity> {
 
-    private final SampleTypeRepository sampleTypeRepository;
+    private final SupportTypeRepository supportTypeRepository;
     private  ResponseWrapper responseWrapper;
-
-    public SampleTypeServiceProcessingInterceptorCrud(SampleTypeRepository sampleTypeRepository) {
-        this.sampleTypeRepository = sampleTypeRepository;
+    public SupportTypeService(SupportTypeRepository supportTypeRepository){
+        this.supportTypeRepository = supportTypeRepository;
     }
 
-    @CacheEvict(value = "sampleTypes", allEntries = true)
+    @CacheEvict(value = "SupportTypes", allEntries = true)
     @Override
-    public ResponseWrapper executeCreation(SampleTypeEntity entity) {
+    public ResponseWrapper executeCreation(SupportTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
-        sampleTypeRepository.save(entity);
+        supportTypeRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("SampleType created");
-        responseWrapper.setData(Collections.singletonList("SampleType created"));
+        responseWrapper.setMessage("SupportType created");
+        responseWrapper.setData(Collections.singletonList("SupportType created"));
         return responseWrapper;
     }
 
-    @CacheEvict(value = "sampleTypes", allEntries = true)
+    @CacheEvict(value = "supportTypes",allEntries = true)
     @Override
-    public ResponseWrapper executeUpdate(SampleTypeEntity entity) {
+    public ResponseWrapper executeUpdate(SupportTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
-        Optional<SampleTypeEntity> sampleTypeEntityFound = sampleTypeRepository.findById(entity.getId());
+       Optional<SupportTypeEntity> supportTypeEntityFound = supportTypeRepository.findById(entity.getId());
 
-        if (sampleTypeEntityFound.isPresent()) {
-            sampleTypeEntityFound.get().setName(entity.getName() != null ? entity.getName() : sampleTypeEntityFound.get().getName());
-            sampleTypeEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : sampleTypeEntityFound.get().getDescription());
-            sampleTypeRepository.save(sampleTypeEntityFound.get());
+         if (supportTypeEntityFound.isPresent()) {
+              supportTypeEntityFound.get().setName(entity.getName() != null ? entity.getName() : supportTypeEntityFound.get().getName());
+              supportTypeEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : supportTypeEntityFound.get().getDescription());
+              supportTypeRepository.save(supportTypeEntityFound.get());
 
-            responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("SampleType updated");
-            responseWrapper.setData(Collections.singletonList("SampleType updated"));
+              responseWrapper.setSuccessful(true);
+              responseWrapper.setMessage("SupportType updated");
+              responseWrapper.setData(Collections.singletonList("SupportType updated"));
+              return responseWrapper;
+         }
+
+            responseWrapper.setSuccessful(false);
+            responseWrapper.setMessage("SupportType not found");
+            responseWrapper.addError("id","SupportType not found");
             return responseWrapper;
-        }
-        responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("SampleType not found");
-        responseWrapper.addError("id", "SampleType not found");
-        return responseWrapper;
     }
 
-    @CacheEvict(value = "sampleTypes", allEntries = true)
+    @CacheEvict(value = "supportTypes", allEntries = true)
     @Override
-    public ResponseWrapper executeDeleteById(SampleTypeEntity sampleTypeEntity) {
+    public ResponseWrapper executeDeleteById(SupportTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
-        Optional<SampleTypeEntity> sampleTypeEntityFound = sampleTypeRepository.findById(sampleTypeEntity.getId());
+        Optional<SupportTypeEntity> supportTypeEntityFound = supportTypeRepository.findById(entity.getId());
 
-        sampleTypeEntityFound.ifPresent(
-                sampleTypeEntity1 -> {
-                    sampleTypeEntity1.setIsDeleted(true);
-                    sampleTypeRepository.save(sampleTypeEntity1);
-                }
-        );
+        supportTypeEntityFound.ifPresent(supportTypeEntity -> {
+            supportTypeEntity.setIsDeleted(true);
+            supportTypeRepository.save(supportTypeEntity);
+        });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("SampleType deleted");
-        responseWrapper.setData(Collections.singletonList("SampleType deleted"));
+        responseWrapper.setMessage("SupportType deleted");
+        responseWrapper.setData(Collections.singletonList("SupportType deleted"));
         return responseWrapper;
-
     }
 
-    @Cacheable(value = "sampleTypes")
+    @Cacheable (value = "supportTypes")
     @Override
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("SampleTypes found");
-        List<CatalogWrapper> sampleTypeEntities = sampleTypeRepository.findAllByIsDeletedFalse()
+        responseWrapper.setMessage("SupportTypes found");
+        List<CatalogWrapper> catalogWrapperList = supportTypeRepository.findAllByIsDeletedFalse()
                 .stream()
                 .map(this::mapToCatalogWrapper)
                 .toList();
-        responseWrapper.setData(sampleTypeEntities);
-
+        responseWrapper.setData(catalogWrapperList);
         return responseWrapper;
     }
 
     @Override
-    protected ResponseWrapper validateForCreation(SampleTypeEntity entity) {
+    protected ResponseWrapper validateForCreation(SupportTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
@@ -119,7 +113,7 @@ public class SampleTypeServiceProcessingInterceptorCrud extends CrudCatalogServi
     }
 
     @Override
-    protected ResponseWrapper validateForUpdate(SampleTypeEntity entity) {
+    protected ResponseWrapper validateForUpdate(SupportTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
@@ -136,7 +130,7 @@ public class SampleTypeServiceProcessingInterceptorCrud extends CrudCatalogServi
     }
 
     @Override
-    protected ResponseWrapper validateForDelete(SampleTypeEntity entity) {
+    protected ResponseWrapper validateForDelete(SupportTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
@@ -152,22 +146,22 @@ public class SampleTypeServiceProcessingInterceptorCrud extends CrudCatalogServi
     }
 
     @Override
-    protected ResponseWrapper validateForRead(SampleTypeEntity entity) {
+    protected ResponseWrapper validateForRead(SupportTypeEntity entity) {
         return null;
     }
 
     @Override
     public String getCatalogName() {
-        return "sampleType";
+        return "supportType";
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(SampleTypeEntity catalogItem) {
-        return new CatalogWrapper(catalogItem.getId(), catalogItem.getName(), catalogItem.getDescription());
+    public CatalogWrapper mapToCatalogWrapper(SupportTypeEntity catalogItem) {
+        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
     }
 
     @Override
-    public SampleTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new SampleTypeEntity(catalogDTO.getName(), catalogDTO.getDescription());
+    public SupportTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new SupportTypeEntity(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

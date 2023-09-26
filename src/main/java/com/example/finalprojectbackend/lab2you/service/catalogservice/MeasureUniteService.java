@@ -1,11 +1,11 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.SupportTypeEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.MeasureUnitEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
-import com.example.finalprojectbackend.lab2you.db.repository.SupportTypeRepository;
+import com.example.finalprojectbackend.lab2you.db.repository.MeasureUnitRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,74 +16,73 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
-@Qualifier("supportType")
-public class SupportTypeServiceProcessingInterceptorCrud extends CrudCatalogServiceProcessingInterceptor<SupportTypeEntity> {
+@Qualifier("measureUnit")
+public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor<MeasureUnitEntity> {
 
-    private final SupportTypeRepository supportTypeRepository;
+    private final MeasureUnitRepository measureUnitRepository;
     private  ResponseWrapper responseWrapper;
-    public SupportTypeServiceProcessingInterceptorCrud(SupportTypeRepository supportTypeRepository){
-        this.supportTypeRepository = supportTypeRepository;
-    }
 
-    @CacheEvict(value = "SupportTypes", allEntries = true)
+    public MeasureUniteService(MeasureUnitRepository measureUnitRepository){
+        this.measureUnitRepository = measureUnitRepository;
+    }
+    @CacheEvict(value = "measure units", allEntries = true)
     @Override
-    public ResponseWrapper executeCreation(SupportTypeEntity entity) {
+    public ResponseWrapper executeCreation(MeasureUnitEntity entity) {
         responseWrapper = new ResponseWrapper();
-        supportTypeRepository.save(entity);
+        measureUnitRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("SupportType created");
-        responseWrapper.setData(Collections.singletonList("SupportType created"));
+        responseWrapper.setMessage("Measure unit created");
+        responseWrapper.setData(Collections.singletonList("Measure unit created"));
+        return responseWrapper;
+    }
+    @CacheEvict(value = "measure units",allEntries = true)
+    @Override
+    public ResponseWrapper executeUpdate(MeasureUnitEntity entity) {
+        responseWrapper = new ResponseWrapper();
+
+        Optional<MeasureUnitEntity> measureUnitEntityFound = measureUnitRepository.findById(entity.getId());
+
+        if (measureUnitEntityFound.isPresent()) {
+            measureUnitEntityFound.get().setName(entity.getName() != null ? entity.getName() : measureUnitEntityFound.get().getName());
+            measureUnitEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : measureUnitEntityFound.get().getDescription());
+            measureUnitRepository.save(measureUnitEntityFound.get());
+
+            responseWrapper.setSuccessful(true);
+            responseWrapper.setMessage("Measure unit updated");
+            responseWrapper.setData(Collections.singletonList("Measure unit updated"));
+            return responseWrapper;
+        }
+
+        responseWrapper.setSuccessful(false);
+        responseWrapper.setMessage("Measure unit not found");
+        responseWrapper.addError("id","Measure unit not found");
         return responseWrapper;
     }
 
-    @CacheEvict(value = "supportTypes",allEntries = true)
+    @CacheEvict(value = "measureUnits",allEntries = true)
     @Override
-    public ResponseWrapper executeUpdate(SupportTypeEntity entity) {
+    public ResponseWrapper executeDeleteById(MeasureUnitEntity measureUnitEntity) {
         responseWrapper = new ResponseWrapper();
-       Optional<SupportTypeEntity> supportTypeEntityFound = supportTypeRepository.findById(entity.getId());
-
-         if (supportTypeEntityFound.isPresent()) {
-              supportTypeEntityFound.get().setName(entity.getName() != null ? entity.getName() : supportTypeEntityFound.get().getName());
-              supportTypeEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : supportTypeEntityFound.get().getDescription());
-              supportTypeRepository.save(supportTypeEntityFound.get());
-
-              responseWrapper.setSuccessful(true);
-              responseWrapper.setMessage("SupportType updated");
-              responseWrapper.setData(Collections.singletonList("SupportType updated"));
-              return responseWrapper;
-         }
-
-            responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("SupportType not found");
-            responseWrapper.addError("id","SupportType not found");
-            return responseWrapper;
-    }
-
-    @CacheEvict(value = "supportTypes", allEntries = true)
-    @Override
-    public ResponseWrapper executeDeleteById(SupportTypeEntity entity) {
-        responseWrapper = new ResponseWrapper();
-        Optional<SupportTypeEntity> supportTypeEntityFound = supportTypeRepository.findById(entity.getId());
-
-        supportTypeEntityFound.ifPresent(supportTypeEntity -> {
-            supportTypeEntity.setIsDeleted(true);
-            supportTypeRepository.save(supportTypeEntity);
+        Optional<MeasureUnitEntity> measureUnitEntityFound = measureUnitRepository.findById(measureUnitEntity.getId());
+        measureUnitEntityFound.ifPresent(analysisDocumentTypeEntity -> {
+            analysisDocumentTypeEntity.setIsDeleted(true);
+            measureUnitRepository.save(analysisDocumentTypeEntity);
         });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("SupportType deleted");
-        responseWrapper.setData(Collections.singletonList("SupportType deleted"));
+        responseWrapper.setMessage("Measure unit deleted");
+        responseWrapper.setData(Collections.singletonList("Measure unit deleted"));
         return responseWrapper;
     }
-
-    @Cacheable (value = "supportTypes")
+    @Cacheable(value = "measureUnits")
     @Override
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("SupportTypes found");
-        List<CatalogWrapper> catalogWrapperList = supportTypeRepository.findAllByIsDeletedFalse()
+        responseWrapper.setMessage("Measure units found");
+        List<CatalogWrapper> catalogWrapperList = measureUnitRepository.findAllByIsDeletedFalse()
                 .stream()
                 .map(this::mapToCatalogWrapper)
                 .toList();
@@ -92,7 +91,7 @@ public class SupportTypeServiceProcessingInterceptorCrud extends CrudCatalogServ
     }
 
     @Override
-    protected ResponseWrapper validateForCreation(SupportTypeEntity entity) {
+    protected ResponseWrapper validateForCreation(MeasureUnitEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
@@ -113,7 +112,7 @@ public class SupportTypeServiceProcessingInterceptorCrud extends CrudCatalogServ
     }
 
     @Override
-    protected ResponseWrapper validateForUpdate(SupportTypeEntity entity) {
+    protected ResponseWrapper validateForUpdate(MeasureUnitEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
@@ -130,7 +129,7 @@ public class SupportTypeServiceProcessingInterceptorCrud extends CrudCatalogServ
     }
 
     @Override
-    protected ResponseWrapper validateForDelete(SupportTypeEntity entity) {
+    protected ResponseWrapper validateForDelete(MeasureUnitEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
@@ -146,22 +145,23 @@ public class SupportTypeServiceProcessingInterceptorCrud extends CrudCatalogServ
     }
 
     @Override
-    protected ResponseWrapper validateForRead(SupportTypeEntity entity) {
+    protected ResponseWrapper validateForRead(MeasureUnitEntity entity) {
         return null;
     }
 
+
     @Override
     public String getCatalogName() {
-        return "supportType";
+        return "measureUnit";
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(SupportTypeEntity catalogItem) {
+    public CatalogWrapper mapToCatalogWrapper(MeasureUnitEntity catalogItem) {
         return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
     }
 
     @Override
-    public SupportTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new SupportTypeEntity(catalogDTO.getName(),catalogDTO.getDescription());
+    public MeasureUnitEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new MeasureUnitEntity(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

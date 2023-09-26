@@ -1,11 +1,11 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.DepartmentEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.ExamTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
-import com.example.finalprojectbackend.lab2you.db.repository.DepartmentRepository;
+import com.example.finalprojectbackend.lab2you.db.repository.ExamTypeRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,39 +16,37 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
-@Qualifier("department")
-public class DepartmentProcessingControllerServiceCrud extends CrudCatalogServiceProcessingInterceptor<DepartmentEntity> {
-
-    private final DepartmentRepository departmentRepository;
+@Qualifier("examType")
+public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<ExamTypeEntity> {
+    private final ExamTypeRepository examTypeRepository;
     private  ResponseWrapper responseWrapper;
 
-    public DepartmentProcessingControllerServiceCrud(DepartmentRepository departmentRepository){
-        this.departmentRepository = departmentRepository;
+    public ExamTypeService(ExamTypeRepository examTypeRepository){
+        this.examTypeRepository = examTypeRepository;
     }
 
-    @CacheEvict(value = "departments", allEntries = true)
+    @CacheEvict(value = "examTypes",allEntries = true)
     @Override
-    public ResponseWrapper executeCreation(DepartmentEntity entity) {
+    public ResponseWrapper executeCreation(ExamTypeEntity examTypeEntity) {
         responseWrapper = new ResponseWrapper();
-        departmentRepository.save(entity);
-
+        examTypeRepository.save(examTypeEntity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Department created");
-        responseWrapper.setData(Collections.singletonList("Department created"));
+        responseWrapper.setMessage("Exam type created");
+        responseWrapper.setData(Collections.singletonList("Exam type created"));
         return responseWrapper;
     }
-    @CacheEvict(value = "departments", allEntries = true)
-    @Override
-    public ResponseWrapper executeUpdate(DepartmentEntity entity) {
-        responseWrapper = new ResponseWrapper();
-        Optional<DepartmentEntity> departmentEntityFound = departmentRepository.findById(entity.getId());
 
-        if (departmentEntityFound.isPresent()) {
-            departmentEntityFound.get().setName(entity.getName() != null ? entity.getName() : departmentEntityFound.get().getName());
-            departmentEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : departmentEntityFound.get().getDescription());
-            departmentRepository.save(departmentEntityFound.get());
+    @CacheEvict(value = "examTypes",allEntries = true)
+    @Override
+    public ResponseWrapper executeUpdate(ExamTypeEntity examTypeEntity) {
+        responseWrapper = new ResponseWrapper();
+        Optional<ExamTypeEntity> examTypeFound = examTypeRepository.findById(examTypeEntity.getId());
+
+        if (examTypeFound.isPresent()) {
+            examTypeFound.get().setName(examTypeEntity.getName() != null ? examTypeEntity.getName() : examTypeFound.get().getName());
+            examTypeFound.get().setDescription(examTypeEntity.getDescription() != null ? examTypeEntity.getDescription() : examTypeFound.get().getDescription());
+            examTypeRepository.save(examTypeFound.get());
 
             responseWrapper.setSuccessful(true);
             responseWrapper.setMessage("Department updated");
@@ -57,46 +55,45 @@ public class DepartmentProcessingControllerServiceCrud extends CrudCatalogServic
         }
 
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("Department not found");
-        responseWrapper.addError("id", "Department not found");
+        responseWrapper.setMessage("examTypeEntity not found");
+        responseWrapper.addError("id","examTypeEntity not found");
         return responseWrapper;
-
     }
 
-    @CacheEvict(value = "departments", allEntries = true)
+    @CacheEvict(value = "examTypes",allEntries = true)
     @Override
-    public ResponseWrapper executeDeleteById(DepartmentEntity departmentEntity) {
+    public ResponseWrapper executeDeleteById(ExamTypeEntity examTypeEntity) {
         responseWrapper = new ResponseWrapper();
-        Optional<DepartmentEntity> analysisDocumentTypeEntityFound = departmentRepository.findById(departmentEntity.getId());
+        Optional<ExamTypeEntity> analysisDocumentTypeEntityFound = examTypeRepository.findById(examTypeEntity.getId());
 
         analysisDocumentTypeEntityFound.ifPresent(analysisDocumentTypeEntity -> {
             analysisDocumentTypeEntity.setIsDeleted(true);
-            departmentRepository.save(analysisDocumentTypeEntity);
+            examTypeRepository.save(analysisDocumentTypeEntity);
         });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("AnalysisDocumentType deleted");
-        responseWrapper.setData(Collections.singletonList("AnalysisDocumentType deleted"));
+        responseWrapper.setMessage("Exam type deleted");
+        responseWrapper.setData(Collections.singletonList("Exam Type deleted"));
         return responseWrapper;
     }
-    @Cacheable(value = "departments")
-     @Override
+
+    @Cacheable (value = "examTypes")
+    @Override
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Departments found");
-
-        List<CatalogWrapper> catalogWrapperList = departmentRepository.findAllByIsDeletedFalse()
+        responseWrapper.setMessage("Exam types found");
+        List<CatalogWrapper> catalogWrapperList = examTypeRepository
+                .findAllByIsDeletedFalse()
                 .stream()
                 .map(this::mapToCatalogWrapper)
                 .toList();
-
         responseWrapper.setData(catalogWrapperList);
         return responseWrapper;
     }
 
     @Override
-    protected ResponseWrapper validateForCreation(DepartmentEntity entity) {
+    protected ResponseWrapper validateForCreation(ExamTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
@@ -117,8 +114,8 @@ public class DepartmentProcessingControllerServiceCrud extends CrudCatalogServic
     }
 
     @Override
-    protected ResponseWrapper validateForUpdate(DepartmentEntity entity) {
-        responseWrapper = new ResponseWrapper();
+    protected ResponseWrapper validateForUpdate(ExamTypeEntity entity) {
+         responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
@@ -134,8 +131,7 @@ public class DepartmentProcessingControllerServiceCrud extends CrudCatalogServic
     }
 
     @Override
-    protected ResponseWrapper validateForDelete(DepartmentEntity entity) {
-        responseWrapper = new ResponseWrapper();
+    protected ResponseWrapper validateForDelete(ExamTypeEntity entity) {
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
@@ -146,36 +142,27 @@ public class DepartmentProcessingControllerServiceCrud extends CrudCatalogServic
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
+
         return responseWrapper;
     }
 
     @Override
-    protected ResponseWrapper validateForRead(DepartmentEntity entity) {
+    protected ResponseWrapper validateForRead(ExamTypeEntity entity) {
         return null;
     }
 
-
     @Override
     public String getCatalogName() {
-        return "department";
+        return "examType";
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(DepartmentEntity catalogItem) {
+    public CatalogWrapper mapToCatalogWrapper(ExamTypeEntity catalogItem) {
         return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
     }
 
     @Override
-    public DepartmentEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new DepartmentEntity(catalogDTO.getName(),catalogDTO.getDescription());
-    }
-
-    public DepartmentEntity getDepartmentByName(String name){
-        return this.executeReadAll().getData()
-                .stream()
-                .map(DepartmentEntity.class::cast)
-                .filter(departmentEntity -> departmentEntity.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+    public ExamTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new ExamTypeEntity(catalogDTO.getName(),catalogDTO.getDescription());
     }
 }

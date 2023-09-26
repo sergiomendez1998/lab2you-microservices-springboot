@@ -10,8 +10,8 @@ import com.example.finalprojectbackend.lab2you.db.model.entities.StatusEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.RequestWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestRepository;
-import com.example.finalprojectbackend.lab2you.service.catalogservice.ExamTypeServiceProcessingInterceptorCrud;
-import com.example.finalprojectbackend.lab2you.service.catalogservice.StatusProcessingControllerServiceCrud;
+import com.example.finalprojectbackend.lab2you.service.catalogservice.ExamTypeService;
+import com.example.finalprojectbackend.lab2you.service.catalogservice.StatusService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,14 +30,14 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
     private final RequestRepository requestRepository;
     private final AssigmentService assigmentService;
     private ResponseWrapper responseWrapper;
-    private final StatusProcessingControllerServiceCrud statusProcessingControllerServiceCrud;
-    private final ExamTypeServiceProcessingInterceptorCrud examTypeServiceProcessingInterceptorCrud;
+    private final StatusService statusService;
+    private final ExamTypeService examTypeService;
 
-    public RequestService(RequestRepository requestRepository, AssigmentService assigmentService, StatusProcessingControllerServiceCrud statusProcessingControllerServiceCrud, ExamTypeServiceProcessingInterceptorCrud examTypeServiceProcessingInterceptorCrud) {
+    public RequestService(RequestRepository requestRepository, AssigmentService assigmentService, StatusService statusService, ExamTypeService examTypeService) {
         this.requestRepository = requestRepository;
         this.assigmentService = assigmentService;
-        this.statusProcessingControllerServiceCrud = statusProcessingControllerServiceCrud;
-        this.examTypeServiceProcessingInterceptorCrud = examTypeServiceProcessingInterceptorCrud;
+        this.statusService = statusService;
+        this.examTypeService = examTypeService;
     }
 
     @Override
@@ -152,7 +152,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         requestEntity.setRequestCode(Lab2YouUtils.generateRequestCode(date));
 
-        StatusEntity statusEntity = statusProcessingControllerServiceCrud.executeReadAll()
+        StatusEntity statusEntity = statusService.executeReadAll()
                 .getData()
                 .stream()
                 .map(status -> (StatusEntity) status)
@@ -161,7 +161,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
                 .orElse(null);
         requestEntity.setStatusEntities(Collections.singletonList(statusEntity));
 
-        ExamTypeEntity examTypeEntity = examTypeServiceProcessingInterceptorCrud.executeReadAll()
+        ExamTypeEntity examTypeEntity = examTypeService.executeReadAll()
                 .getData()
                 .stream()
                 .map(exam -> (ExamTypeEntity) exam)
@@ -219,6 +219,10 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
 
         filteredStatusEntities.sort(Comparator.comparing(StatusEntity::getCreatedAt).reversed());
         return filteredStatusEntities.get(0);
+    }
+
+    public RequestEntity getRequestById(Long id) {
+        return requestRepository.findById(id).orElse(null);
     }
 
     @Override
