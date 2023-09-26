@@ -70,8 +70,8 @@ public class Lab2YouConstants {
     }
 
     public enum lab2YouUserTypes {
-        CUSTOMER("internal"),
-        EMPLOYEE("external");
+        CUSTOMER("external"),
+        EMPLOYEE("internal");
         private String userType;
         lab2YouUserTypes(String userType) {
             this.userType = userType;
