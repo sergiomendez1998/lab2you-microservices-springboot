@@ -21,6 +21,7 @@ public class CustomerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String expedientNumber;
     private String cui;
     private String firstName;
     private String lastName;

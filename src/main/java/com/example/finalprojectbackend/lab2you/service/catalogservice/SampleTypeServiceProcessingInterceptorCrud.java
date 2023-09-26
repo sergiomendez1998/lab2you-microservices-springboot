@@ -23,16 +23,16 @@ import java.util.Optional;
 public class SampleTypeServiceProcessingInterceptorCrud extends CrudCatalogServiceProcessingInterceptor<SampleTypeEntity> {
 
     private final SampleTypeRepository sampleTypeRepository;
-    private final ResponseWrapper responseWrapper;
+    private  ResponseWrapper responseWrapper;
 
     public SampleTypeServiceProcessingInterceptorCrud(SampleTypeRepository sampleTypeRepository) {
         this.sampleTypeRepository = sampleTypeRepository;
-        this.responseWrapper = new ResponseWrapper();
     }
 
     @CacheEvict(value = "sampleTypes", allEntries = true)
     @Override
     public ResponseWrapper executeCreation(SampleTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
         sampleTypeRepository.save(entity);
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("SampleType created");
@@ -43,6 +43,7 @@ public class SampleTypeServiceProcessingInterceptorCrud extends CrudCatalogServi
     @CacheEvict(value = "sampleTypes", allEntries = true)
     @Override
     public ResponseWrapper executeUpdate(SampleTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
         Optional<SampleTypeEntity> sampleTypeEntityFound = sampleTypeRepository.findById(entity.getId());
 
         if (sampleTypeEntityFound.isPresent()) {
@@ -64,6 +65,7 @@ public class SampleTypeServiceProcessingInterceptorCrud extends CrudCatalogServi
     @CacheEvict(value = "sampleTypes", allEntries = true)
     @Override
     public ResponseWrapper executeDeleteById(SampleTypeEntity sampleTypeEntity) {
+        responseWrapper = new ResponseWrapper();
         Optional<SampleTypeEntity> sampleTypeEntityFound = sampleTypeRepository.findById(sampleTypeEntity.getId());
 
         sampleTypeEntityFound.ifPresent(
@@ -83,7 +85,7 @@ public class SampleTypeServiceProcessingInterceptorCrud extends CrudCatalogServi
     @Cacheable(value = "sampleTypes")
     @Override
     public ResponseWrapper executeReadAll() {
-
+        responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("SampleTypes found");
         List<CatalogWrapper> sampleTypeEntities = sampleTypeRepository.findAllByIsDeletedFalse()
@@ -97,7 +99,7 @@ public class SampleTypeServiceProcessingInterceptorCrud extends CrudCatalogServi
 
     @Override
     protected ResponseWrapper validateForCreation(SampleTypeEntity entity) {
-
+        responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
@@ -118,6 +120,7 @@ public class SampleTypeServiceProcessingInterceptorCrud extends CrudCatalogServi
 
     @Override
     protected ResponseWrapper validateForUpdate(SampleTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
@@ -134,6 +137,7 @@ public class SampleTypeServiceProcessingInterceptorCrud extends CrudCatalogServi
 
     @Override
     protected ResponseWrapper validateForDelete(SampleTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }

@@ -28,4 +28,5 @@ public class AssignmentEntity {
     @ManyToOne
     @JoinColumn(name = "request_id")
     private RequestEntity request;
+    private String AssignationDate;
 }

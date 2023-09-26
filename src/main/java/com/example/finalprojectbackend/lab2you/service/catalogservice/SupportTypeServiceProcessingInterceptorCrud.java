@@ -21,15 +21,15 @@ import java.util.Optional;
 public class SupportTypeServiceProcessingInterceptorCrud extends CrudCatalogServiceProcessingInterceptor<SupportTypeEntity> {
 
     private final SupportTypeRepository supportTypeRepository;
-    private final ResponseWrapper responseWrapper;
+    private  ResponseWrapper responseWrapper;
     public SupportTypeServiceProcessingInterceptorCrud(SupportTypeRepository supportTypeRepository){
         this.supportTypeRepository = supportTypeRepository;
-        this.responseWrapper = new ResponseWrapper();
     }
 
     @CacheEvict(value = "SupportTypes", allEntries = true)
     @Override
     public ResponseWrapper executeCreation(SupportTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
         supportTypeRepository.save(entity);
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("SupportType created");
@@ -40,6 +40,7 @@ public class SupportTypeServiceProcessingInterceptorCrud extends CrudCatalogServ
     @CacheEvict(value = "supportTypes",allEntries = true)
     @Override
     public ResponseWrapper executeUpdate(SupportTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
        Optional<SupportTypeEntity> supportTypeEntityFound = supportTypeRepository.findById(entity.getId());
 
          if (supportTypeEntityFound.isPresent()) {
@@ -62,6 +63,7 @@ public class SupportTypeServiceProcessingInterceptorCrud extends CrudCatalogServ
     @CacheEvict(value = "supportTypes", allEntries = true)
     @Override
     public ResponseWrapper executeDeleteById(SupportTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
         Optional<SupportTypeEntity> supportTypeEntityFound = supportTypeRepository.findById(entity.getId());
 
         supportTypeEntityFound.ifPresent(supportTypeEntity -> {
@@ -78,6 +80,7 @@ public class SupportTypeServiceProcessingInterceptorCrud extends CrudCatalogServ
     @Cacheable (value = "supportTypes")
     @Override
     public ResponseWrapper executeReadAll() {
+        responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("SupportTypes found");
         List<CatalogWrapper> catalogWrapperList = supportTypeRepository.findAllByIsDeletedFalse()
@@ -90,6 +93,7 @@ public class SupportTypeServiceProcessingInterceptorCrud extends CrudCatalogServ
 
     @Override
     protected ResponseWrapper validateForCreation(SupportTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
@@ -110,6 +114,7 @@ public class SupportTypeServiceProcessingInterceptorCrud extends CrudCatalogServ
 
     @Override
     protected ResponseWrapper validateForUpdate(SupportTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
@@ -126,6 +131,7 @@ public class SupportTypeServiceProcessingInterceptorCrud extends CrudCatalogServ
 
     @Override
     protected ResponseWrapper validateForDelete(SupportTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }

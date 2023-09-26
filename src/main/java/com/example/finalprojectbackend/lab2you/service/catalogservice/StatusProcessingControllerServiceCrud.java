@@ -23,16 +23,16 @@ import java.util.Optional;
 public class StatusProcessingControllerServiceCrud extends CrudCatalogServiceProcessingInterceptor<StatusEntity> {
 
     private final StatusRepository statusRepository;
-    private final ResponseWrapper responseWrapper;
+    private  ResponseWrapper responseWrapper;
 
     public StatusProcessingControllerServiceCrud(StatusRepository statusRepository){
         this.statusRepository = statusRepository;
-        this.responseWrapper = new ResponseWrapper();
     }
 
     @CacheEvict(value = "statuses", allEntries = true)
     @Override
     public ResponseWrapper executeCreation(StatusEntity entity) {
+        responseWrapper = new ResponseWrapper();
         statusRepository.save(entity);
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("Status created");
@@ -43,6 +43,7 @@ public class StatusProcessingControllerServiceCrud extends CrudCatalogServicePro
     @CacheEvict(value = "statuses",allEntries = true)
     @Override
     public ResponseWrapper executeUpdate(StatusEntity entity) {
+        responseWrapper = new ResponseWrapper();
         Optional<StatusEntity> statusEntityFound = statusRepository.findById(entity.getId());
 
         if (statusEntityFound.isPresent()) {
@@ -64,6 +65,7 @@ public class StatusProcessingControllerServiceCrud extends CrudCatalogServicePro
 
     @Override
     public ResponseWrapper executeDeleteById(StatusEntity statusEntity) {
+        responseWrapper = new ResponseWrapper();
         Optional<StatusEntity> statusEntityFound = statusRepository.findById(statusEntity.getId());
 
         statusEntityFound.ifPresent(statusEntity1 -> {
@@ -80,6 +82,7 @@ public class StatusProcessingControllerServiceCrud extends CrudCatalogServicePro
     @Cacheable(value = "statuses")
     @Override
     public ResponseWrapper executeReadAll() {
+        responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("Statuses found");
 
@@ -94,7 +97,7 @@ public class StatusProcessingControllerServiceCrud extends CrudCatalogServicePro
 
     @Override
     protected ResponseWrapper validateForCreation(StatusEntity entity) {
-
+        responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
@@ -115,6 +118,7 @@ public class StatusProcessingControllerServiceCrud extends CrudCatalogServicePro
 
     @Override
     protected ResponseWrapper validateForUpdate(StatusEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
@@ -131,6 +135,7 @@ public class StatusProcessingControllerServiceCrud extends CrudCatalogServicePro
 
     @Override
     protected ResponseWrapper validateForDelete(StatusEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }

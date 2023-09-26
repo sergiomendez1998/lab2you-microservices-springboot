@@ -46,9 +46,10 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
             customerEntityFound.get().setNit(entity.getNit() != null ? entity.getNit() : customerEntityFound.get().getNit());
             customerEntityFound.get().setFirstName(entity.getFirstName() != null ? entity.getFirstName() : customerEntityFound.get().getFirstName());
             customerEntityFound.get().setLastName(entity.getLastName() != null ? entity.getLastName() : customerEntityFound.get().getLastName());
+            customerRepository.save(customerEntityFound.get());
             responseWrapper.setSuccessful(true);
             responseWrapper.setMessage("customer updated successfully");
-            responseWrapper.setData(Collections.singletonList(customerRepository.save(customerEntityFound.get())));
+            responseWrapper.setData(Collections.singletonList("customer updated successfully"));
             return responseWrapper;
         }
         responseWrapper.setSuccessful(false);
@@ -195,6 +196,8 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
 
     private CustomerWrapper mapToCustomerWrapper(CustomerEntity customerEntity) {
         CustomerWrapper customerWrapper = new CustomerWrapper();
+        customerWrapper.setId(customerEntity.getId());
+        customerWrapper.setExpedientNumber(customerEntity.getExpedientNumber());
         customerWrapper.setCui(customerEntity.getCui());
         customerWrapper.setFirstName(customerEntity.getFirstName());
         customerWrapper.setLastName(customerEntity.getLastName());
@@ -210,6 +213,7 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
 
     public CustomerEntity mapToEntityCustomer(CustomerDTO customerDTO){
         CustomerEntity customerEntity = new CustomerEntity();
+        customerEntity.setExpedientNumber(Lab2YouUtils.generateExpedientNumber());
         customerEntity.setCui(customerDTO.getCui());
         customerEntity.setNit(customerDTO.getNit());
         customerEntity.setFirstName(customerDTO.getFirstName());
@@ -219,5 +223,8 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
         customerEntity.setOccupation(customerDTO.getOccupation());
         customerEntity.setGender(customerDTO.getGender());
         return customerEntity;
+    }
+    public CustomerEntity findCustomerById(Long id){
+        return customerRepository.findById(id).orElse(null);
     }
 }

@@ -22,16 +22,16 @@ import java.util.Optional;
 public class DepartmentProcessingControllerServiceCrud extends CrudCatalogServiceProcessingInterceptor<DepartmentEntity> {
 
     private final DepartmentRepository departmentRepository;
-    private final ResponseWrapper responseWrapper;
+    private  ResponseWrapper responseWrapper;
 
     public DepartmentProcessingControllerServiceCrud(DepartmentRepository departmentRepository){
         this.departmentRepository = departmentRepository;
-        this.responseWrapper = new ResponseWrapper();
     }
 
     @CacheEvict(value = "departments", allEntries = true)
     @Override
     public ResponseWrapper executeCreation(DepartmentEntity entity) {
+        responseWrapper = new ResponseWrapper();
         departmentRepository.save(entity);
 
         responseWrapper.setSuccessful(true);
@@ -42,7 +42,7 @@ public class DepartmentProcessingControllerServiceCrud extends CrudCatalogServic
     @CacheEvict(value = "departments", allEntries = true)
     @Override
     public ResponseWrapper executeUpdate(DepartmentEntity entity) {
-
+        responseWrapper = new ResponseWrapper();
         Optional<DepartmentEntity> departmentEntityFound = departmentRepository.findById(entity.getId());
 
         if (departmentEntityFound.isPresent()) {
@@ -66,6 +66,7 @@ public class DepartmentProcessingControllerServiceCrud extends CrudCatalogServic
     @CacheEvict(value = "departments", allEntries = true)
     @Override
     public ResponseWrapper executeDeleteById(DepartmentEntity departmentEntity) {
+        responseWrapper = new ResponseWrapper();
         Optional<DepartmentEntity> analysisDocumentTypeEntityFound = departmentRepository.findById(departmentEntity.getId());
 
         analysisDocumentTypeEntityFound.ifPresent(analysisDocumentTypeEntity -> {
@@ -81,7 +82,7 @@ public class DepartmentProcessingControllerServiceCrud extends CrudCatalogServic
     @Cacheable(value = "departments")
      @Override
     public ResponseWrapper executeReadAll() {
-
+        responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("Departments found");
 
@@ -96,7 +97,7 @@ public class DepartmentProcessingControllerServiceCrud extends CrudCatalogServic
 
     @Override
     protected ResponseWrapper validateForCreation(DepartmentEntity entity) {
-
+        responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
@@ -117,7 +118,7 @@ public class DepartmentProcessingControllerServiceCrud extends CrudCatalogServic
 
     @Override
     protected ResponseWrapper validateForUpdate(DepartmentEntity entity) {
-
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
@@ -134,6 +135,7 @@ public class DepartmentProcessingControllerServiceCrud extends CrudCatalogServic
 
     @Override
     protected ResponseWrapper validateForDelete(DepartmentEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
