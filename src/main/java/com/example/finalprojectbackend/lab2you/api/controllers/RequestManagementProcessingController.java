@@ -1,8 +1,6 @@
 package com.example.finalprojectbackend.lab2you.api.controllers;
 
-import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.AssignmentEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.CustomerEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.RequestEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
@@ -12,7 +10,6 @@ import com.example.finalprojectbackend.lab2you.service.RequestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.*;
 import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.operationTypes.*;
 
 @RestController

@@ -3,7 +3,6 @@ package com.example.finalprojectbackend.lab2you.service;
 import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudServiceProcessingController;
 import com.example.finalprojectbackend.lab2you.db.model.entities.AssignmentEntity;
-import com.example.finalprojectbackend.lab2you.db.model.entities.RequestEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.AssignmentRepository;
 import org.springframework.stereotype.Service;
