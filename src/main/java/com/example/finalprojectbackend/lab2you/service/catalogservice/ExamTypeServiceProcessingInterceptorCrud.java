@@ -29,6 +29,7 @@ public class ExamTypeServiceProcessingInterceptorCrud extends CrudCatalogService
     @CacheEvict(value = "examTypes",allEntries = true)
     @Override
     public ResponseWrapper executeCreation(ExamTypeEntity examTypeEntity) {
+        responseWrapper = new ResponseWrapper();
         examTypeRepository.save(examTypeEntity);
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("Exam type created");
@@ -114,7 +115,7 @@ public class ExamTypeServiceProcessingInterceptorCrud extends CrudCatalogService
 
     @Override
     protected ResponseWrapper validateForUpdate(ExamTypeEntity entity) {
-
+         responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }

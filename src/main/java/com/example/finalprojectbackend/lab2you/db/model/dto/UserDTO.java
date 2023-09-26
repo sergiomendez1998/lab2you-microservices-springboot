@@ -1,6 +1,6 @@
 package com.example.finalprojectbackend.lab2you.db.model.dto;
 
-import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
+
 import lombok.Getter;
 import lombok.Setter;
 

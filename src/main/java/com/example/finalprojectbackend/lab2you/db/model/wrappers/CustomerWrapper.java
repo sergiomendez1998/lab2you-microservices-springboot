@@ -8,6 +8,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class CustomerWrapper {
+
+    private Long id;
+    private String expedientNumber;
     private String cui;
     private String firstName;
     private String lastName;

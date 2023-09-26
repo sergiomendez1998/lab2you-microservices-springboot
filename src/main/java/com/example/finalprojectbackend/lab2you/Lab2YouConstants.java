@@ -96,4 +96,19 @@ public class Lab2YouConstants {
 
     }
 
+    public enum statusTypes {
+        CREATED("Creado");
+
+        String status;
+
+        statusTypes(String status) {
+            this.status = status;
+        }
+
+        public String getStatusType() {
+            return status;
+        }
+
+    }
+
 }

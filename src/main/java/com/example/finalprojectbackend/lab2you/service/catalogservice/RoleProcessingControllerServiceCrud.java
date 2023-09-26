@@ -21,16 +21,16 @@ import java.util.Optional;
 public class RoleProcessingControllerServiceCrud extends CrudCatalogServiceProcessingInterceptor<RoleEntity> {
 
     private final RoleRepository roleRepository;
-    private final ResponseWrapper responseWrapper;
+    private  ResponseWrapper responseWrapper;
 
     public RoleProcessingControllerServiceCrud(RoleRepository roleRepository){
         this.roleRepository = roleRepository;
-        this.responseWrapper = new ResponseWrapper();
     }
 
     @CacheEvict(value = "roles",allEntries = true)
     @Override
     public ResponseWrapper executeCreation(RoleEntity entity) {
+        responseWrapper = new ResponseWrapper();
         roleRepository.save(entity);
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("Role created");
@@ -40,6 +40,7 @@ public class RoleProcessingControllerServiceCrud extends CrudCatalogServiceProce
 
     @Override
     public ResponseWrapper executeUpdate(RoleEntity entity) {
+        responseWrapper = new ResponseWrapper();
         Optional<RoleEntity> roleEntityFound = roleRepository.findById(entity.getId());
 
         if (roleEntityFound.isPresent()) {
@@ -61,7 +62,7 @@ public class RoleProcessingControllerServiceCrud extends CrudCatalogServiceProce
     @CacheEvict(value = "roles",allEntries = true)
     @Override
     public ResponseWrapper executeDeleteById(RoleEntity roleEntity) {
-
+        responseWrapper = new ResponseWrapper();
         Optional<RoleEntity> roleEntityFound = roleRepository.findById(roleEntity.getId());
 
         roleEntityFound.ifPresent(roleEntity1 -> {
@@ -78,6 +79,7 @@ public class RoleProcessingControllerServiceCrud extends CrudCatalogServiceProce
     @Cacheable (value = "roles")
     @Override
     public ResponseWrapper executeReadAll() {
+        responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("Roles found");
 
@@ -91,6 +93,7 @@ public class RoleProcessingControllerServiceCrud extends CrudCatalogServiceProce
 
     @Override
     protected ResponseWrapper validateForCreation(RoleEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
@@ -111,6 +114,7 @@ public class RoleProcessingControllerServiceCrud extends CrudCatalogServiceProce
 
     @Override
     protected ResponseWrapper validateForUpdate(RoleEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
@@ -127,6 +131,7 @@ public class RoleProcessingControllerServiceCrud extends CrudCatalogServiceProce
 
     @Override
     protected ResponseWrapper validateForDelete(RoleEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }

@@ -21,12 +21,11 @@ public class RequestEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String requestCode;
     private String supportNumber;
+    private String email;
     private String remark;
     private Date receptionDate;
-    private Long longitude;
-    private Long latitude;
-    private LocalDateTime createdAt;
     private boolean isDeleted;
     @ManyToOne
     @JoinColumn (name="support_type_id")
@@ -43,8 +42,12 @@ public class RequestEntity {
     @JoinColumn (name="customer_id")
     private CustomerEntity customer;
 
+    @OneToMany(mappedBy = "requestEntity")
+    private List<SampleEntity> samples = new ArrayList<>();
+
     @PrePersist
     public void prePersist(){
-        createdAt = LocalDateTime.now();
+        this.isDeleted = false;
+        this.receptionDate = new Date(System.currentTimeMillis());
     }
 }

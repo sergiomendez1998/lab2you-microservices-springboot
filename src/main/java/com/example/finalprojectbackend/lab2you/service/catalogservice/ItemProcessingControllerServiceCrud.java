@@ -21,11 +21,10 @@ import java.util.Optional;
 @Qualifier("item")
 public class ItemProcessingControllerServiceCrud extends CrudCatalogServiceProcessingInterceptor<ItemEntity> {
     private final ItemRepository itemRepository;
-    private final ResponseWrapper responseWrapper;
+    private  ResponseWrapper responseWrapper;
 
     public ItemProcessingControllerServiceCrud(ItemRepository itemRepository){
         this.itemRepository=itemRepository;
-        this.responseWrapper = new ResponseWrapper();
     }
     @CacheEvict(value = "items",allEntries = true)
     @Override
@@ -39,6 +38,7 @@ public class ItemProcessingControllerServiceCrud extends CrudCatalogServiceProce
     @CacheEvict(value = "items",allEntries = true)
     @Override
     public ResponseWrapper executeUpdate(ItemEntity itemEntity) {
+        responseWrapper = new ResponseWrapper();
         Optional<ItemEntity> itemEntityFound = itemRepository.findById(itemEntity.getId());
 
         if (itemEntityFound.isPresent()) {
@@ -60,6 +60,7 @@ public class ItemProcessingControllerServiceCrud extends CrudCatalogServiceProce
     @CacheEvict(value = "items",allEntries = true)
     @Override
     public ResponseWrapper executeDeleteById(ItemEntity itemEntity) {
+        responseWrapper = new ResponseWrapper();
         Optional<ItemEntity> analysisDocumentTypeEntityFound = itemRepository.findById(itemEntity.getId());
 
         analysisDocumentTypeEntityFound.ifPresent(analysisDocumentTypeEntity -> {
@@ -75,6 +76,7 @@ public class ItemProcessingControllerServiceCrud extends CrudCatalogServiceProce
     @Cacheable(value = "items")
     @Override
     public ResponseWrapper executeReadAll() {
+        responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("items found");
 
@@ -89,6 +91,7 @@ public class ItemProcessingControllerServiceCrud extends CrudCatalogServiceProce
 
     @Override
     protected ResponseWrapper validateForCreation(ItemEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
@@ -109,6 +112,7 @@ public class ItemProcessingControllerServiceCrud extends CrudCatalogServiceProce
 
     @Override
     protected ResponseWrapper validateForUpdate(ItemEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
@@ -125,6 +129,7 @@ public class ItemProcessingControllerServiceCrud extends CrudCatalogServiceProce
 
     @Override
     protected ResponseWrapper validateForDelete(ItemEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }

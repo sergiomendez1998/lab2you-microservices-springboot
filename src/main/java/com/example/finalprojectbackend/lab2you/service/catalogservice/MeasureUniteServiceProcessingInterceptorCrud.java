@@ -22,15 +22,15 @@ import java.util.Optional;
 public class MeasureUniteServiceProcessingInterceptorCrud extends CrudCatalogServiceProcessingInterceptor<MeasureUnitEntity> {
 
     private final MeasureUnitRepository measureUnitRepository;
-    private final ResponseWrapper responseWrapper;
+    private  ResponseWrapper responseWrapper;
 
     public MeasureUniteServiceProcessingInterceptorCrud(MeasureUnitRepository measureUnitRepository){
         this.measureUnitRepository = measureUnitRepository;
-        this.responseWrapper = new ResponseWrapper();
     }
     @CacheEvict(value = "measure units", allEntries = true)
     @Override
     public ResponseWrapper executeCreation(MeasureUnitEntity entity) {
+        responseWrapper = new ResponseWrapper();
         measureUnitRepository.save(entity);
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("Measure unit created");
@@ -40,6 +40,7 @@ public class MeasureUniteServiceProcessingInterceptorCrud extends CrudCatalogSer
     @CacheEvict(value = "measure units",allEntries = true)
     @Override
     public ResponseWrapper executeUpdate(MeasureUnitEntity entity) {
+        responseWrapper = new ResponseWrapper();
 
         Optional<MeasureUnitEntity> measureUnitEntityFound = measureUnitRepository.findById(entity.getId());
 
@@ -63,6 +64,7 @@ public class MeasureUniteServiceProcessingInterceptorCrud extends CrudCatalogSer
     @CacheEvict(value = "measureUnits",allEntries = true)
     @Override
     public ResponseWrapper executeDeleteById(MeasureUnitEntity measureUnitEntity) {
+        responseWrapper = new ResponseWrapper();
         Optional<MeasureUnitEntity> measureUnitEntityFound = measureUnitRepository.findById(measureUnitEntity.getId());
         measureUnitEntityFound.ifPresent(analysisDocumentTypeEntity -> {
             analysisDocumentTypeEntity.setIsDeleted(true);
@@ -77,6 +79,7 @@ public class MeasureUniteServiceProcessingInterceptorCrud extends CrudCatalogSer
     @Cacheable(value = "measureUnits")
     @Override
     public ResponseWrapper executeReadAll() {
+        responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("Measure units found");
         List<CatalogWrapper> catalogWrapperList = measureUnitRepository.findAllByIsDeletedFalse()
@@ -89,6 +92,7 @@ public class MeasureUniteServiceProcessingInterceptorCrud extends CrudCatalogSer
 
     @Override
     protected ResponseWrapper validateForCreation(MeasureUnitEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
@@ -109,6 +113,7 @@ public class MeasureUniteServiceProcessingInterceptorCrud extends CrudCatalogSer
 
     @Override
     protected ResponseWrapper validateForUpdate(MeasureUnitEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
@@ -125,6 +130,7 @@ public class MeasureUniteServiceProcessingInterceptorCrud extends CrudCatalogSer
 
     @Override
     protected ResponseWrapper validateForDelete(MeasureUnitEntity entity) {
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
