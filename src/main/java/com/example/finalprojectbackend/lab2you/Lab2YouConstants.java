@@ -53,7 +53,9 @@ public class Lab2YouConstants {
         ADMIN("admin"),
         USER("user"),
         ANALYST("analyst"),
-        MEDICAL("medical");
+        MEDICAL("medical"),
+        TECHNICIAN("technician"),
+        CENTRALIZER("centralizer");
 
         private String role;
 

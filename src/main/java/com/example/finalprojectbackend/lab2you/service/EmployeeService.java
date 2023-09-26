@@ -1,5 +1,6 @@
 package com.example.finalprojectbackend.lab2you.service;
 
+import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.db.model.dto.EmployeeDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.EmployeeEntity;
@@ -9,9 +10,13 @@ import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper
 import com.example.finalprojectbackend.lab2you.db.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.*;
+import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.lab2YouRoles.*;
 
 @Service
 public class EmployeeService extends CrudServiceProcessingController<EmployeeEntity> {
@@ -186,5 +191,15 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
         employeeEntity.setAddress(employeeDTO.getAddress());
         employeeEntity.setGender(employeeDTO.getGender());
         return employeeEntity;
+    }
+
+    public EmployeeEntity getRandomEmployeeWithRoleTechnician(){
+        List<EmployeeEntity> employeeEntities = new ArrayList<>(employeeRepository.findAll()
+                .stream()
+                .filter(employeeEntity -> employeeEntity.getUser().getRole().getName().equals(TECHNICIAN.getRole()))
+                .toList());
+
+        Collections.shuffle(employeeEntities);
+        return employeeEntities.get(0);
     }
 }

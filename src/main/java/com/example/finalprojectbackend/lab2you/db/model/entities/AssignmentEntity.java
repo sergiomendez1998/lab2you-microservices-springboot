@@ -1,5 +1,7 @@
 package com.example.finalprojectbackend.lab2you.db.model.entities;
 
+
+import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,4 +31,8 @@ public class AssignmentEntity {
     @JoinColumn(name = "request_id")
     private RequestEntity request;
     private String AssignationDate;
+    private transient CurrentUserProvider currentUserProvider;
+    public UserEntity getUserAssignedBy() {
+        return currentUserProvider.getCurrentUser();
+    }
 }
