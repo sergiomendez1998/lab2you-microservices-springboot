@@ -18,12 +18,12 @@ import java.util.Optional;
 
 @Service
 @Qualifier("analysisDocumentType")
-public class AnalysisDocumentTypeServiceProcessingInterceptorCrud extends CrudCatalogServiceProcessingInterceptor<AnalysisDocumentTypeEntity> {
+public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInterceptor<AnalysisDocumentTypeEntity> {
 
     private final AnalysisDocumentTypeRepository analysisDocumentTypeRepository;
     private  ResponseWrapper responseWrapper;
 
-    public AnalysisDocumentTypeServiceProcessingInterceptorCrud(AnalysisDocumentTypeRepository analysisDocumentTypeRepository) {
+    public AnalysisDocumentTypeService(AnalysisDocumentTypeRepository analysisDocumentTypeRepository) {
         this.analysisDocumentTypeRepository = analysisDocumentTypeRepository;
     }
 
@@ -93,6 +93,14 @@ public class AnalysisDocumentTypeServiceProcessingInterceptorCrud extends CrudCa
                 .map(this::mapToCatalogWrapper)
                 .toList();
         responseWrapper.setData(catalogWrapperList);
+
+        if (catalogWrapperList.isEmpty()) {
+            responseWrapper.setSuccessful(false);
+            responseWrapper.setMessage("AnalysisDocumentTypes not found");
+            responseWrapper.setData(new ArrayList<>());
+            responseWrapper.addError("id", "AnalysisDocumentTypes not found");
+            return responseWrapper;
+        }
 
         return responseWrapper;
     }

@@ -19,11 +19,11 @@ import java.util.Optional;
 
 @Service
 @Qualifier("item")
-public class ItemProcessingControllerServiceCrud extends CrudCatalogServiceProcessingInterceptor<ItemEntity> {
+public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEntity> {
     private final ItemRepository itemRepository;
     private  ResponseWrapper responseWrapper;
 
-    public ItemProcessingControllerServiceCrud(ItemRepository itemRepository){
+    public ItemService(ItemRepository itemRepository){
         this.itemRepository=itemRepository;
     }
     @CacheEvict(value = "items",allEntries = true)

@@ -1,11 +1,11 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.MeasureUnitEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
-import com.example.finalprojectbackend.lab2you.db.repository.MeasureUnitRepository;
+import com.example.finalprojectbackend.lab2you.db.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,82 +16,83 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
-@Qualifier("measureUnit")
-public class MeasureUniteServiceProcessingInterceptorCrud extends CrudCatalogServiceProcessingInterceptor<MeasureUnitEntity> {
+@Qualifier("role")
+public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEntity> {
 
-    private final MeasureUnitRepository measureUnitRepository;
+    private final RoleRepository roleRepository;
     private  ResponseWrapper responseWrapper;
 
-    public MeasureUniteServiceProcessingInterceptorCrud(MeasureUnitRepository measureUnitRepository){
-        this.measureUnitRepository = measureUnitRepository;
+    public RoleService(RoleRepository roleRepository){
+        this.roleRepository = roleRepository;
     }
-    @CacheEvict(value = "measure units", allEntries = true)
+
+    @CacheEvict(value = "roles",allEntries = true)
     @Override
-    public ResponseWrapper executeCreation(MeasureUnitEntity entity) {
+    public ResponseWrapper executeCreation(RoleEntity entity) {
         responseWrapper = new ResponseWrapper();
-        measureUnitRepository.save(entity);
+        roleRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Measure unit created");
-        responseWrapper.setData(Collections.singletonList("Measure unit created"));
+        responseWrapper.setMessage("Role created");
+        responseWrapper.setData(Collections.singletonList("Role created"));
         return responseWrapper;
     }
-    @CacheEvict(value = "measure units",allEntries = true)
+
     @Override
-    public ResponseWrapper executeUpdate(MeasureUnitEntity entity) {
+    public ResponseWrapper executeUpdate(RoleEntity entity) {
         responseWrapper = new ResponseWrapper();
+        Optional<RoleEntity> roleEntityFound = roleRepository.findById(entity.getId());
 
-        Optional<MeasureUnitEntity> measureUnitEntityFound = measureUnitRepository.findById(entity.getId());
-
-        if (measureUnitEntityFound.isPresent()) {
-            measureUnitEntityFound.get().setName(entity.getName() != null ? entity.getName() : measureUnitEntityFound.get().getName());
-            measureUnitEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : measureUnitEntityFound.get().getDescription());
-            measureUnitRepository.save(measureUnitEntityFound.get());
+        if (roleEntityFound.isPresent()) {
+            roleEntityFound.get().setName(entity.getName() != null ? entity.getName() : roleEntityFound.get().getName());
+            roleEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : roleEntityFound.get().getDescription());
+            roleRepository.save(roleEntityFound.get());
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Measure unit updated");
-            responseWrapper.setData(Collections.singletonList("Measure unit updated"));
+            responseWrapper.setMessage("Role updated");
+            responseWrapper.setData(Collections.singletonList("Role updated"));
             return responseWrapper;
         }
-
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("Measure unit not found");
-        responseWrapper.addError("id","Measure unit not found");
+        responseWrapper.setMessage("Role not found");
+        responseWrapper.addError("Id","Role not found");
         return responseWrapper;
     }
 
-    @CacheEvict(value = "measureUnits",allEntries = true)
+    @CacheEvict(value = "roles",allEntries = true)
     @Override
-    public ResponseWrapper executeDeleteById(MeasureUnitEntity measureUnitEntity) {
+    public ResponseWrapper executeDeleteById(RoleEntity roleEntity) {
         responseWrapper = new ResponseWrapper();
-        Optional<MeasureUnitEntity> measureUnitEntityFound = measureUnitRepository.findById(measureUnitEntity.getId());
-        measureUnitEntityFound.ifPresent(analysisDocumentTypeEntity -> {
-            analysisDocumentTypeEntity.setIsDeleted(true);
-            measureUnitRepository.save(analysisDocumentTypeEntity);
+        Optional<RoleEntity> roleEntityFound = roleRepository.findById(roleEntity.getId());
+
+        roleEntityFound.ifPresent(roleEntity1 -> {
+            roleEntity1.setIsDeleted(true);
+            roleRepository.save(roleEntity1);
         });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Measure unit deleted");
-        responseWrapper.setData(Collections.singletonList("Measure unit deleted"));
+        responseWrapper.setMessage("Role deleted");
+        responseWrapper.setData(Collections.singletonList("Role deleted"));
         return responseWrapper;
+
     }
-    @Cacheable(value = "measureUnits")
+    @Cacheable (value = "roles")
     @Override
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Measure units found");
-        List<CatalogWrapper> catalogWrapperList = measureUnitRepository.findAllByIsDeletedFalse()
+        responseWrapper.setMessage("Roles found");
+
+        List<CatalogWrapper> catalogWrapperList = roleRepository.findAllByIsDeletedFalse()
                 .stream()
                 .map(this::mapToCatalogWrapper)
                 .toList();
-        responseWrapper.setData(catalogWrapperList);
+       responseWrapper.setData(catalogWrapperList);
         return responseWrapper;
     }
 
     @Override
-    protected ResponseWrapper validateForCreation(MeasureUnitEntity entity) {
+    protected ResponseWrapper validateForCreation(RoleEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
@@ -112,7 +113,7 @@ public class MeasureUniteServiceProcessingInterceptorCrud extends CrudCatalogSer
     }
 
     @Override
-    protected ResponseWrapper validateForUpdate(MeasureUnitEntity entity) {
+    protected ResponseWrapper validateForUpdate(RoleEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
@@ -129,7 +130,7 @@ public class MeasureUniteServiceProcessingInterceptorCrud extends CrudCatalogSer
     }
 
     @Override
-    protected ResponseWrapper validateForDelete(MeasureUnitEntity entity) {
+    protected ResponseWrapper validateForDelete(RoleEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
@@ -145,23 +146,31 @@ public class MeasureUniteServiceProcessingInterceptorCrud extends CrudCatalogSer
     }
 
     @Override
-    protected ResponseWrapper validateForRead(MeasureUnitEntity entity) {
+    protected ResponseWrapper validateForRead(RoleEntity entity) {
         return null;
     }
 
-
     @Override
     public String getCatalogName() {
-        return "measureUnit";
+        return "role";
     }
 
     @Override
-    public CatalogWrapper mapToCatalogWrapper(MeasureUnitEntity catalogItem) {
+    public CatalogWrapper mapToCatalogWrapper(RoleEntity catalogItem) {
         return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
     }
 
     @Override
-    public MeasureUnitEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new MeasureUnitEntity(catalogDTO.getName(),catalogDTO.getDescription());
+    public RoleEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
+        return new RoleEntity(catalogDTO.getName(),catalogDTO.getDescription());
+    }
+
+    public RoleEntity getRoleByName(String name){
+        return this.executeReadAll().getData()
+                .stream()
+                .map(RoleEntity.class::cast)
+                .filter(roleEntity -> roleEntity.getName().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 }

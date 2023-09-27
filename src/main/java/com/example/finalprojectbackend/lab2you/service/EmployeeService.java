@@ -1,6 +1,6 @@
 package com.example.finalprojectbackend.lab2you.service;
 
-import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
+
 import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.db.model.dto.EmployeeDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.EmployeeEntity;
@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.*;
+
 import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.lab2YouRoles.*;
 
 @Service
@@ -201,5 +201,29 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
 
         Collections.shuffle(employeeEntities);
         return employeeEntities.get(0);
+    }
+
+    public EmployeeEntity getRandomEmployeeWithRoleAnalyst(){
+        List<EmployeeEntity> employeeEntities = new ArrayList<>(employeeRepository.findAll()
+                .stream()
+                .filter(employeeEntity -> employeeEntity.getUser().getRole().getName().equals(ANALYST.getRole()))
+                .toList());
+
+        Collections.shuffle(employeeEntities);
+        return employeeEntities.get(0);
+    }
+
+    public EmployeeEntity getRandomEmployeeWithRoleCentralizer(){
+        List<EmployeeEntity> employeeEntities = new ArrayList<>(employeeRepository.findAll()
+                .stream()
+                .filter(employeeEntity -> employeeEntity.getUser().getRole().getName().equals(CENTRALIZER.getRole()))
+                .toList());
+
+        Collections.shuffle(employeeEntities);
+        return employeeEntities.get(0);
+    }
+
+    public EmployeeEntity findEmployeeByUserId(Long userId){
+        return employeeRepository.findByUserId(userId);
     }
 }

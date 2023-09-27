@@ -70,5 +70,15 @@ public class Lab2YouUtils {
     public static int calculateQuantityFromList(List<?> list) {
         return list.size();
     }
+    public static String generateDocumentCode() {
+        Random random = new Random();
+
+        int randomNumber = random.nextInt(10000);
+        String formattedNumber = String.format("%04d", randomNumber);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        String currentDate = dateFormat.format(new Date());
+
+        return "LA10-" + currentDate + "-" + formattedNumber;
+    }
 }
 

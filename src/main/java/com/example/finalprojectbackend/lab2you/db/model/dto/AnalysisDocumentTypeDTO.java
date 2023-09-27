@@ -1,4 +1,4 @@
 package com.example.finalprojectbackend.lab2you.db.model.dto;
 
-public class ExamTypeDTO extends BaseCatalogDTO {
+public class AnalysisDocumentTypeDTO extends BaseCatalogDTO{
 }

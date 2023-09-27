@@ -7,7 +7,6 @@ import com.example.finalprojectbackend.lab2you.db.model.entities.CustomerEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.RequestEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
-import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
 import com.example.finalprojectbackend.lab2you.service.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +35,13 @@ public class RequestManagementProcessingController {
     @GetMapping()
     public ResponseEntity<ResponseWrapper> getAll() {
         return ResponseEntity.ok(requestService.executeReadAll());
+    }
+
+    @GetMapping("/requestStatuses/{requestId}")
+    public ResponseEntity<ResponseWrapper> getById(@PathVariable Long requestId) {
+        responseWrapper = new ResponseWrapper();
+        responseWrapper = requestService.getStatusesByRequestId(requestId);
+        return ResponseEntity.ok(responseWrapper);
     }
 
     @PostMapping

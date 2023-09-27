@@ -9,7 +9,7 @@ import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.service.CustomerService;
 import com.example.finalprojectbackend.lab2you.service.EmailService;
-import com.example.finalprojectbackend.lab2you.service.catalogservice.RoleProcessingControllerServiceCrud;
+import com.example.finalprojectbackend.lab2you.service.catalogservice.RoleService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,13 +23,13 @@ public class CustomerManagementProcessingController {
 
     private final CustomerService customerService;
 
-    private final RoleProcessingControllerServiceCrud roleServiceCRUD;
+    private final RoleService roleServiceCRUD;
 
     private final EmailService emailService;
 
     private ResponseWrapper responseWrapper;
 
-    public CustomerManagementProcessingController(CustomerService customerService, RoleProcessingControllerServiceCrud roleServiceCRUD, EmailService emailService) {
+    public CustomerManagementProcessingController(CustomerService customerService, RoleService roleServiceCRUD, EmailService emailService) {
         this.customerService = customerService;
         this.roleServiceCRUD = roleServiceCRUD;
         this.emailService = emailService;

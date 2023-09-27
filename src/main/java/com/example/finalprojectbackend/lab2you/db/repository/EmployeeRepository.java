@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity,Long> {
     EmployeeEntity findByCui(String cui);
-
+    EmployeeEntity findByUserId(Long roleId);
     EmployeeEntity findByPhoneNumber(String phoneNumber);
 
 }

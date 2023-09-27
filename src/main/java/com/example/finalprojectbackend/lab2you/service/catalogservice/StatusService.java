@@ -20,12 +20,12 @@ import java.util.Optional;
 
 @Service
 @Qualifier("status")
-public class StatusProcessingControllerServiceCrud extends CrudCatalogServiceProcessingInterceptor<StatusEntity> {
+public class StatusService extends CrudCatalogServiceProcessingInterceptor<StatusEntity> {
 
     private final StatusRepository statusRepository;
     private  ResponseWrapper responseWrapper;
 
-    public StatusProcessingControllerServiceCrud(StatusRepository statusRepository){
+    public StatusService(StatusRepository statusRepository){
         this.statusRepository = statusRepository;
     }
 

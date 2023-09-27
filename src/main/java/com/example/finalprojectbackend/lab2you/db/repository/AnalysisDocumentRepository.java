@@ -1,8 +1,10 @@
 package com.example.finalprojectbackend.lab2you.db.repository;
 
-import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentTypeEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AnalysisDocumentRepository extends JpaRepository<AnalysisDocumentTypeEntity, Long> {
+import java.util.List;
 
+public interface AnalysisDocumentRepository extends JpaRepository<AnalysisDocumentEntity, Long> {
+       List<AnalysisDocumentEntity> findAllByIsDeletedFalse();
 }

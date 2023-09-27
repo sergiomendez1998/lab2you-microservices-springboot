@@ -141,7 +141,10 @@ public class WebSecurityConfig {
 
 
     private List<RequestMatcher> permitAllRequestMatchers() {
-        return List.of(new AntPathRequestMatcher("/api/v1/customer/register", "POST"),
+        return List.of(
+                new AntPathRequestMatcher("/api/v1/request/**", "GET"),
+                new AntPathRequestMatcher("/api/v1/request/**", "POST"),
+                new AntPathRequestMatcher("/api/v1/customer/register", "POST"),
                 new AntPathRequestMatcher("/api/v1/catalog/**", "GET"),
                 new AntPathRequestMatcher("/api/v1/catalog/**", "POST"),
                 new AntPathRequestMatcher("/api/v1/catalog/**", "PUT"),
