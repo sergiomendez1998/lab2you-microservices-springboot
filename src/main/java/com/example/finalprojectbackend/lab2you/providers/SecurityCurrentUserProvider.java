@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 public class SecurityCurrentUserProvider implements CurrentUserProvider {
     private final UserService userService;
 
-
     public SecurityCurrentUserProvider(UserService userService) {
         this.userService = userService;
     }
+
     @Override
     public UserEntity getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

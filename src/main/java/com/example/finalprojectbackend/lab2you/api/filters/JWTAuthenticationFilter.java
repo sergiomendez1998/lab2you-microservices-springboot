@@ -3,6 +3,7 @@ package com.example.finalprojectbackend.lab2you.api.filters;
 import com.example.finalprojectbackend.lab2you.config.security.UserDetailsImpl;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.AuthWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapperRequest;
 import com.example.finalprojectbackend.lab2you.TokenUtils;
 import com.example.finalprojectbackend.lab2you.config.security.AuthCredentials;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,10 +61,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             var authResponse = new AuthWrapper(token,
                     userDetails.getRole(), userDetails.getName(), userDetails.getUsername());
 
-            var ResponseWrapper = new ResponseWrapper();
-            ResponseWrapper.setSuccessful(true);
-            ResponseWrapper.setMessage("User authenticated");
-            ResponseWrapper.setData(Collections.singletonList(authResponse));
+            var ResponseWrapper = new ResponseWrapperRequest<AuthWrapper>(authResponse, "User authenticated", true);
 
             response.getWriter().write(new ObjectMapper().writeValueAsString(ResponseWrapper));
             response.setContentType("application/json");

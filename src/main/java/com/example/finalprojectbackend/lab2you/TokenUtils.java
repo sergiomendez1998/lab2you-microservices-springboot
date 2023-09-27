@@ -26,7 +26,7 @@ public class TokenUtils {
      * The token will have the expiration date.
      */
     public static String createToken(String name, String email, Collection<? extends GrantedAuthority> authorities,
-                                     String role, List<ModuleEntity> moduleEntities) {
+            String role, List<ModuleEntity> moduleEntities) {
         long expirationTime = EXPIRATION_TIME * 1000; // Convert to milliseconds
         Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
 
@@ -49,7 +49,7 @@ public class TokenUtils {
      * and authorities.
      * if the token is not valid will return null.
      */
-    @SuppressWarnings("unchecked")
+
     public static UsernamePasswordAuthenticationToken getAuthentication(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
@@ -60,10 +60,8 @@ public class TokenUtils {
 
             String email = claims.getSubject();
 
-            List<Map<String, String>> roles = (List<Map<String, String>>) claims.get("roles");
-
-            List<SimpleGrantedAuthority> authorities = roles.stream()
-                    .map(role -> new SimpleGrantedAuthority(role.get("authority")))
+            List<GrantedAuthority> authorities = ((List<?>) claims.get("authorities")).stream()
+                    .map(authority -> new SimpleGrantedAuthority((String) authority))
                     .collect(Collectors.toList());
 
             return new UsernamePasswordAuthenticationToken(email, null, authorities);
