@@ -9,6 +9,7 @@ import com.example.finalprojectbackend.lab2you.db.model.entities.SampleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.StatusEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.RequestWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.StatusRequestWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestRepository;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.ExamTypeService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.StatusService;
@@ -223,6 +224,27 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
 
     public RequestEntity getRequestById(Long id) {
         return requestRepository.findById(id).orElse(null);
+    }
+    public ResponseWrapper getStatusesByRequestId(Long id) {
+         List<StatusEntity> statusEntities = requestRepository.findStatusesByRequestId(id);
+         StatusRequestWrapper statusRequestWrapper = new StatusRequestWrapper();
+
+         List<StatusRequestWrapper> statusRequestWrappers = statusEntities.stream()
+                 .map(this::mapToStatusRequestWrapper)
+                 .collect(Collectors.toList());
+
+            responseWrapper = new ResponseWrapper();
+            responseWrapper.setSuccessful(true);
+            responseWrapper.setMessage("Statuses found");
+            responseWrapper.setData(statusRequestWrappers);
+            return responseWrapper;
+    }
+
+    private StatusRequestWrapper mapToStatusRequestWrapper(StatusEntity statusEntity) {
+        StatusRequestWrapper statusRequestWrapper = new StatusRequestWrapper();
+        statusRequestWrapper.setStatusName(statusEntity.getName());
+        statusRequestWrapper.setRequestCode(statusEntity.getRequests().get(0).getRequestCode());
+        return statusRequestWrapper;
     }
 
     @Override

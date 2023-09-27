@@ -94,6 +94,14 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
                 .toList();
         responseWrapper.setData(catalogWrapperList);
 
+        if (catalogWrapperList.isEmpty()) {
+            responseWrapper.setSuccessful(false);
+            responseWrapper.setMessage("AnalysisDocumentTypes not found");
+            responseWrapper.setData(new ArrayList<>());
+            responseWrapper.addError("id", "AnalysisDocumentTypes not found");
+            return responseWrapper;
+        }
+
         return responseWrapper;
     }
 

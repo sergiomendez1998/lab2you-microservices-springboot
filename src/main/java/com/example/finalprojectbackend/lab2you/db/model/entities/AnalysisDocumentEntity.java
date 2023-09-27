@@ -16,7 +16,9 @@ public class AnalysisDocumentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String conclusion;
+    private String documentCode;
+    private String resolution;
+    private String path;
     private Boolean isDeleted;
 
     @ManyToOne
