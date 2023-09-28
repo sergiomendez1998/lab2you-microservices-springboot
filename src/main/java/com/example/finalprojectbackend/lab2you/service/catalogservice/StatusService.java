@@ -12,21 +12,19 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 @Qualifier("status")
 public class StatusService extends CrudCatalogServiceProcessingInterceptor<StatusEntity> {
 
     private final StatusRepository statusRepository;
-    private  ResponseWrapper responseWrapper;
+    private ResponseWrapper responseWrapper;
 
-    public StatusService(StatusRepository statusRepository){
+    public StatusService(StatusRepository statusRepository) {
         this.statusRepository = statusRepository;
     }
 
@@ -41,15 +39,17 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
         return responseWrapper;
     }
 
-    @CacheEvict(value = "statuses",allEntries = true)
+    @CacheEvict(value = "statuses", allEntries = true)
     @Override
     public ResponseWrapper executeUpdate(StatusEntity entity) {
         responseWrapper = new ResponseWrapper();
         Optional<StatusEntity> statusEntityFound = statusRepository.findById(entity.getId());
 
         if (statusEntityFound.isPresent()) {
-            statusEntityFound.get().setName(entity.getName() != null ? entity.getName() : statusEntityFound.get().getName());
-            statusEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : statusEntityFound.get().getDescription());
+            statusEntityFound.get()
+                    .setName(entity.getName() != null ? entity.getName() : statusEntityFound.get().getName());
+            statusEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription()
+                    : statusEntityFound.get().getDescription());
             statusEntityFound.get().setUpdatedBy(entity.getUpdatedBy());
             statusRepository.save(statusEntityFound.get());
 
@@ -61,7 +61,7 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
 
         responseWrapper.setSuccessful(false);
         responseWrapper.setMessage("Status not found");
-        responseWrapper.addError("id","Status not found");
+        responseWrapper.addError("id", "Status not found");
         return responseWrapper;
     }
 
@@ -101,11 +101,11 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
     @Override
     protected ResponseWrapper validateForCreation(StatusEntity entity) {
         responseWrapper = new ResponseWrapper();
-        if (entity.getName() ==null || entity.getName().isEmpty()) {
+        if (entity.getName() == null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
 
-        if (entity.getDescription() ==null || entity.getDescription().isEmpty()) {
+        if (entity.getDescription() == null || entity.getDescription().isEmpty()) {
             responseWrapper.addError("descripcion", "la descripcion no puedo ser nullo o vacio");
         }
 
@@ -164,12 +164,12 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
 
     @Override
     public CatalogWrapper mapToCatalogWrapper(StatusEntity catalogItem) {
-        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+        return new CatalogWrapper(catalogItem.getId(), catalogItem.getName(), catalogItem.getDescription());
     }
 
     @Override
     public StatusEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
-        StatusEntity statusEntity = new StatusEntity(catalogDTO.getName(),catalogDTO.getDescription());
+        StatusEntity statusEntity = new StatusEntity(catalogDTO.getName(), catalogDTO.getDescription());
         statusEntity.setCreatedBy(userLogged);
         return statusEntity;
     }
@@ -178,6 +178,8 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
     public StatusEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
         StatusEntity statusEntity = new StatusEntity();
         statusEntity.setId(catalogDTO.getId());
+        statusEntity.setDescription(catalogDTO.getDescription());
+        statusEntity.setName(catalogDTO.getName());
         statusEntity.setUpdatedBy(userLogged);
         return statusEntity;
     }
