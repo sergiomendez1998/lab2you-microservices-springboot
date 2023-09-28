@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.MeasureUnitEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
@@ -47,6 +48,7 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
         if (measureUnitEntityFound.isPresent()) {
             measureUnitEntityFound.get().setName(entity.getName() != null ? entity.getName() : measureUnitEntityFound.get().getName());
             measureUnitEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : measureUnitEntityFound.get().getDescription());
+            measureUnitEntityFound.get().setUpdatedBy(entity.getUpdatedBy());
             measureUnitRepository.save(measureUnitEntityFound.get());
 
             responseWrapper.setSuccessful(true);
@@ -68,6 +70,7 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
         Optional<MeasureUnitEntity> measureUnitEntityFound = measureUnitRepository.findById(measureUnitEntity.getId());
         measureUnitEntityFound.ifPresent(analysisDocumentTypeEntity -> {
             analysisDocumentTypeEntity.setIsDeleted(true);
+            analysisDocumentTypeEntity.setUpdatedBy(measureUnitEntity.getUpdatedBy());
             measureUnitRepository.save(analysisDocumentTypeEntity);
         });
 
@@ -161,7 +164,17 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
     }
 
     @Override
-    public MeasureUnitEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new MeasureUnitEntity(catalogDTO.getName(),catalogDTO.getDescription());
+    public MeasureUnitEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
+        MeasureUnitEntity measureUnitEntity = new MeasureUnitEntity(catalogDTO.getName(),catalogDTO.getDescription());
+        measureUnitEntity.setCreatedBy(userLogged);
+        return measureUnitEntity;
+    }
+
+    @Override
+    public MeasureUnitEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
+        MeasureUnitEntity measureUnitEntity = new MeasureUnitEntity();
+        measureUnitEntity.setId(catalogDTO.getId());
+        measureUnitEntity.setUpdatedBy(userLogged);
+        return measureUnitEntity;
     }
 }

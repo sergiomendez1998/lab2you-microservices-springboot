@@ -1,6 +1,5 @@
 package com.example.finalprojectbackend.lab2you.db.model.entities;
 
-import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,23 +28,13 @@ public class BaseEntity implements Serializable {
     @JoinColumn(name = "created_by")
     private UserEntity createdBy;
 
-    private transient CurrentUserProvider currentUserProvider;
-
     @PrePersist
     public void prePersist() {
-        UserEntity userEntity = currentUserProvider.getCurrentUser();
-        if (userEntity != null) {
-            createdBy = userEntity;
-        }
         createdAt = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        UserEntity userEntity = currentUserProvider.getCurrentUser();
-        if (userEntity != null) {
-            updatedBy = userEntity;
-        }
         updatedAt = LocalDateTime.now();
     }
 }

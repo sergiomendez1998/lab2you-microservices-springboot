@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.DepartmentEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
@@ -48,6 +49,7 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
         if (departmentEntityFound.isPresent()) {
             departmentEntityFound.get().setName(entity.getName() != null ? entity.getName() : departmentEntityFound.get().getName());
             departmentEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : departmentEntityFound.get().getDescription());
+            departmentEntityFound.get().setUpdatedBy(entity.getUpdatedBy());
             departmentRepository.save(departmentEntityFound.get());
 
             responseWrapper.setSuccessful(true);
@@ -71,6 +73,7 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
 
         analysisDocumentTypeEntityFound.ifPresent(analysisDocumentTypeEntity -> {
             analysisDocumentTypeEntity.setIsDeleted(true);
+            analysisDocumentTypeEntity.setUpdatedBy(departmentEntity.getUpdatedBy());
             departmentRepository.save(analysisDocumentTypeEntity);
         });
 
@@ -166,8 +169,18 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
     }
 
     @Override
-    public DepartmentEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new DepartmentEntity(catalogDTO.getName(),catalogDTO.getDescription());
+    public DepartmentEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
+        DepartmentEntity departmentEntity = new DepartmentEntity(catalogDTO.getName(),catalogDTO.getDescription());
+        departmentEntity.setCreatedBy(userLogged);
+        return departmentEntity;
+    }
+
+    @Override
+    public DepartmentEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
+        DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(catalogDTO.getId());
+        departmentEntity.setUpdatedBy(userLogged);
+        return departmentEntity;
     }
 
     public DepartmentEntity getDepartmentByName(String name){

@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.SupportTypeEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
@@ -46,6 +47,7 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
          if (supportTypeEntityFound.isPresent()) {
               supportTypeEntityFound.get().setName(entity.getName() != null ? entity.getName() : supportTypeEntityFound.get().getName());
               supportTypeEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : supportTypeEntityFound.get().getDescription());
+              supportTypeEntityFound.get().setUpdatedBy(entity.getUpdatedBy());
               supportTypeRepository.save(supportTypeEntityFound.get());
 
               responseWrapper.setSuccessful(true);
@@ -68,6 +70,7 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
 
         supportTypeEntityFound.ifPresent(supportTypeEntity -> {
             supportTypeEntity.setIsDeleted(true);
+            supportTypeEntity.setUpdatedBy(entity.getUpdatedBy());
             supportTypeRepository.save(supportTypeEntity);
         });
 
@@ -161,7 +164,17 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
     }
 
     @Override
-    public SupportTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new SupportTypeEntity(catalogDTO.getName(),catalogDTO.getDescription());
+    public SupportTypeEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
+        SupportTypeEntity supportTypeEntity = new SupportTypeEntity(catalogDTO.getName(),catalogDTO.getDescription());
+        supportTypeEntity.setCreatedBy(userLogged);
+        return supportTypeEntity;
+    }
+
+    @Override
+    public SupportTypeEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
+        SupportTypeEntity supportTypeEntity = new SupportTypeEntity();
+        supportTypeEntity.setId(catalogDTO.getId());
+        supportTypeEntity.setUpdatedBy(userLogged);
+        return supportTypeEntity;
     }
 }

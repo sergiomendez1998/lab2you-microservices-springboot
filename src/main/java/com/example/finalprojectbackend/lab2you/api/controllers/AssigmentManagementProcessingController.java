@@ -6,6 +6,7 @@ import com.example.finalprojectbackend.lab2you.db.model.entities.EmployeeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.RequestEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
+import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
 import com.example.finalprojectbackend.lab2you.service.AssigmentService;
 import com.example.finalprojectbackend.lab2you.service.EmployeeService;
 import com.example.finalprojectbackend.lab2you.service.RequestService;
@@ -26,10 +27,13 @@ public class AssigmentManagementProcessingController {
 
     private final EmployeeService employeeService;
 
-    public AssigmentManagementProcessingController(AssigmentService assigmentService, RequestService requestService, EmployeeService employeeService) {
+    private final CurrentUserProvider currentUserProvider;
+
+    public AssigmentManagementProcessingController(AssigmentService assigmentService, RequestService requestService, EmployeeService employeeService, CurrentUserProvider currentUserProvider) {
         this.assigmentService = assigmentService;
         this.requestService = requestService;
         this.employeeService = employeeService;
+        this.currentUserProvider = currentUserProvider;
     }
 
     @PostMapping("/{roleType}/{requestId}")
@@ -40,7 +44,7 @@ public class AssigmentManagementProcessingController {
 
         RequestEntity requestEntity = requestService.getRequestById(requestId);
         EmployeeEntity employeeReceiver = getRandomEmployeeByRoleType(roleType);
-        userAssignedBy = assignmentEntity.getCurrentUserProvider().getCurrentUser();
+        userAssignedBy = currentUserProvider.getCurrentUser();
         EmployeeEntity employeeAssignedBy = employeeService.findEmployeeByUserId(userAssignedBy.getId());
 
         assignmentEntity.setAssignedByEmployee(employeeAssignedBy);

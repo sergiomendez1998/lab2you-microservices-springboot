@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.StatusEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
@@ -49,6 +50,7 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
         if (statusEntityFound.isPresent()) {
             statusEntityFound.get().setName(entity.getName() != null ? entity.getName() : statusEntityFound.get().getName());
             statusEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : statusEntityFound.get().getDescription());
+            statusEntityFound.get().setUpdatedBy(entity.getUpdatedBy());
             statusRepository.save(statusEntityFound.get());
 
             responseWrapper.setSuccessful(true);
@@ -70,6 +72,7 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
 
         statusEntityFound.ifPresent(statusEntity1 -> {
             statusEntity1.setIsDeleted(true);
+            statusEntity1.setUpdatedBy(statusEntity.getUpdatedBy());
             statusRepository.save(statusEntity1);
         });
 
@@ -165,7 +168,17 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
     }
 
     @Override
-    public StatusEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new StatusEntity(catalogDTO.getName(),catalogDTO.getDescription());
+    public StatusEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
+        StatusEntity statusEntity = new StatusEntity(catalogDTO.getName(),catalogDTO.getDescription());
+        statusEntity.setCreatedBy(userLogged);
+        return statusEntity;
+    }
+
+    @Override
+    public StatusEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
+        StatusEntity statusEntity = new StatusEntity();
+        statusEntity.setId(catalogDTO.getId());
+        statusEntity.setUpdatedBy(userLogged);
+        return statusEntity;
     }
 }

@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentTypeEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.AnalysisDocumentTypeRepository;
@@ -47,6 +48,7 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
         if (analysisDocumentTypeEntityFound.isPresent()) {
             analysisDocumentTypeEntityFound.get().setName(entity.getName() != null ? entity.getName() : analysisDocumentTypeEntityFound.get().getName());
             analysisDocumentTypeEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : analysisDocumentTypeEntityFound.get().getDescription());
+            analysisDocumentTypeEntityFound.get().setUpdatedBy(entity.getUpdatedBy());
             analysisDocumentTypeRepository.save(analysisDocumentTypeEntityFound.get());
 
             responseWrapper.setSuccessful(true);
@@ -71,6 +73,7 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
 
         analysisDocumentTypeEntityFound.ifPresent(analysisDocumentTypeEntity -> {
             analysisDocumentTypeEntity.setIsDeleted(true);
+            analysisDocumentTypeEntity.setUpdatedBy(entity.getUpdatedBy());
             analysisDocumentTypeRepository.save(analysisDocumentTypeEntity);
         });
 
@@ -175,8 +178,18 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
     }
 
     @Override
-    public AnalysisDocumentTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new AnalysisDocumentTypeEntity(catalogDTO.getName(), catalogDTO.getDescription());
+    public AnalysisDocumentTypeEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
+        AnalysisDocumentTypeEntity  analysisDocumentType = new AnalysisDocumentTypeEntity(catalogDTO.getName(), catalogDTO.getDescription());
+        analysisDocumentType.setCreatedBy(userLogged);
+        return analysisDocumentType;
+    }
+
+    @Override
+    public AnalysisDocumentTypeEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
+        AnalysisDocumentTypeEntity  analysisDocumentType = new AnalysisDocumentTypeEntity();
+        analysisDocumentType.setId(catalogDTO.getId());
+        analysisDocumentType.setUpdatedBy(userLogged);
+        return analysisDocumentType;
     }
 
 

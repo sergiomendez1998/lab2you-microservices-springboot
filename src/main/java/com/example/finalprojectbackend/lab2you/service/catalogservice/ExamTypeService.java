@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.ExamTypeEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
@@ -20,13 +21,13 @@ import java.util.Optional;
 @Qualifier("examType")
 public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<ExamTypeEntity> {
     private final ExamTypeRepository examTypeRepository;
-    private  ResponseWrapper responseWrapper;
+    private ResponseWrapper responseWrapper;
 
-    public ExamTypeService(ExamTypeRepository examTypeRepository){
+    public ExamTypeService(ExamTypeRepository examTypeRepository) {
         this.examTypeRepository = examTypeRepository;
     }
 
-    @CacheEvict(value = "examTypes",allEntries = true)
+    @CacheEvict(value = "examTypes", allEntries = true)
     @Override
     public ResponseWrapper executeCreation(ExamTypeEntity examTypeEntity) {
         responseWrapper = new ResponseWrapper();
@@ -37,7 +38,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         return responseWrapper;
     }
 
-    @CacheEvict(value = "examTypes",allEntries = true)
+    @CacheEvict(value = "examTypes", allEntries = true)
     @Override
     public ResponseWrapper executeUpdate(ExamTypeEntity examTypeEntity) {
         responseWrapper = new ResponseWrapper();
@@ -46,6 +47,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         if (examTypeFound.isPresent()) {
             examTypeFound.get().setName(examTypeEntity.getName() != null ? examTypeEntity.getName() : examTypeFound.get().getName());
             examTypeFound.get().setDescription(examTypeEntity.getDescription() != null ? examTypeEntity.getDescription() : examTypeFound.get().getDescription());
+            examTypeFound.get().setUpdatedBy(examTypeEntity.getUpdatedBy());
             examTypeRepository.save(examTypeFound.get());
 
             responseWrapper.setSuccessful(true);
@@ -56,11 +58,11 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
 
         responseWrapper.setSuccessful(false);
         responseWrapper.setMessage("examTypeEntity not found");
-        responseWrapper.addError("id","examTypeEntity not found");
+        responseWrapper.addError("id", "examTypeEntity not found");
         return responseWrapper;
     }
 
-    @CacheEvict(value = "examTypes",allEntries = true)
+    @CacheEvict(value = "examTypes", allEntries = true)
     @Override
     public ResponseWrapper executeDeleteById(ExamTypeEntity examTypeEntity) {
         responseWrapper = new ResponseWrapper();
@@ -68,6 +70,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
 
         analysisDocumentTypeEntityFound.ifPresent(analysisDocumentTypeEntity -> {
             analysisDocumentTypeEntity.setIsDeleted(true);
+            analysisDocumentTypeEntity.setUpdatedBy(examTypeEntity.getUpdatedBy());
             examTypeRepository.save(analysisDocumentTypeEntity);
         });
 
@@ -77,7 +80,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         return responseWrapper;
     }
 
-    @Cacheable (value = "examTypes")
+    @Cacheable(value = "examTypes")
     @Override
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
@@ -95,11 +98,11 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
     @Override
     protected ResponseWrapper validateForCreation(ExamTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
-        if (entity.getName() ==null || entity.getName().isEmpty()) {
+        if (entity.getName() == null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
 
-        if (entity.getDescription() ==null || entity.getDescription().isEmpty()) {
+        if (entity.getDescription() == null || entity.getDescription().isEmpty()) {
             responseWrapper.addError("descripcion", "la descripcion no puedo ser nullo o vacio");
         }
 
@@ -115,7 +118,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
 
     @Override
     protected ResponseWrapper validateForUpdate(ExamTypeEntity entity) {
-         responseWrapper = new ResponseWrapper();
+        responseWrapper = new ResponseWrapper();
         if (entity.getId() == null || entity.getId() == 0) {
             responseWrapper.addError("id", "el id no puede ser nulo");
         }
@@ -158,11 +161,21 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
 
     @Override
     public CatalogWrapper mapToCatalogWrapper(ExamTypeEntity catalogItem) {
-        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+        return new CatalogWrapper(catalogItem.getId(), catalogItem.getName(), catalogItem.getDescription());
     }
 
     @Override
-    public ExamTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new ExamTypeEntity(catalogDTO.getName(),catalogDTO.getDescription());
+    public ExamTypeEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
+        ExamTypeEntity examType = new ExamTypeEntity(catalogDTO.getName(), catalogDTO.getDescription());
+        examType.setCreatedBy(userLogged);
+        return examType;
+    }
+
+    @Override
+    public ExamTypeEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
+        ExamTypeEntity examType = new ExamTypeEntity();
+        examType.setId(catalogDTO.getId());
+        examType.setUpdatedBy(userLogged);
+        return examType;
     }
 }

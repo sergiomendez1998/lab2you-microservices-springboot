@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.SampleTypeEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
@@ -49,6 +50,7 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
         if (sampleTypeEntityFound.isPresent()) {
             sampleTypeEntityFound.get().setName(entity.getName() != null ? entity.getName() : sampleTypeEntityFound.get().getName());
             sampleTypeEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : sampleTypeEntityFound.get().getDescription());
+            sampleTypeEntityFound.get().setUpdatedBy(entity.getUpdatedBy());
             sampleTypeRepository.save(sampleTypeEntityFound.get());
 
             responseWrapper.setSuccessful(true);
@@ -71,6 +73,7 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
         sampleTypeEntityFound.ifPresent(
                 sampleTypeEntity1 -> {
                     sampleTypeEntity1.setIsDeleted(true);
+                    sampleTypeEntity1.setUpdatedBy(sampleTypeEntity.getUpdatedBy());
                     sampleTypeRepository.save(sampleTypeEntity1);
                 }
         );
@@ -167,7 +170,17 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
     }
 
     @Override
-    public SampleTypeEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new SampleTypeEntity(catalogDTO.getName(), catalogDTO.getDescription());
+    public SampleTypeEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
+        SampleTypeEntity sampleTypeEntity =  new SampleTypeEntity(catalogDTO.getName(), catalogDTO.getDescription());
+        sampleTypeEntity.setCreatedBy(userLogged);
+        return sampleTypeEntity;
+    }
+
+    @Override
+    public SampleTypeEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
+        SampleTypeEntity sampleTypeEntity =  new SampleTypeEntity();
+        sampleTypeEntity.setId(catalogDTO.getId());
+        sampleTypeEntity.setUpdatedBy(userLogged);
+        return sampleTypeEntity;
     }
 }

@@ -2,8 +2,10 @@ package com.example.finalprojectbackend.lab2you.api.controllers;
 
 import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 
+import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
 import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +21,14 @@ public class CatalogManagementProcessingController<T> {
     private final Map<String, CrudCatalogServiceProcessingInterceptor<T>> catalogServiceMap;
     private ResponseWrapper responseWrapper;
 
+    private final CurrentUserProvider currentUserProvider;
 
-    public CatalogManagementProcessingController(List<CrudCatalogServiceProcessingInterceptor<T>> catalogServices) {
+
+    public CatalogManagementProcessingController(List<CrudCatalogServiceProcessingInterceptor<T>> catalogServices, CurrentUserProvider currentUserProvider) {
         catalogServiceMap = catalogServices.stream()
                 .collect(Collectors.toMap(service -> service.getCatalogName().toLowerCase(), service -> service));
         this.responseWrapper = new ResponseWrapper();
+        this.currentUserProvider = currentUserProvider;
     }
 
     @GetMapping()
@@ -46,7 +51,8 @@ public class CatalogManagementProcessingController<T> {
     public ResponseEntity<ResponseWrapper> create(@PathParam("catalogType") String catalogType,
                                                           @RequestBody CatalogDTO CatalogDTO) {
         CrudCatalogServiceProcessingInterceptor<T> catalogService = getCatalogService(catalogType);
-        T catalogEntity = catalogService.mapToCatalogEntity(CatalogDTO);
+        UserEntity userLogged = currentUserProvider.getCurrentUser();
+        T catalogEntity = catalogService.mapToCatalogEntityForCreation(CatalogDTO, userLogged);
         responseWrapper = catalogService.validate(catalogEntity, Lab2YouConstants.operationTypes.CREATE.getOperationType());
         if (!responseWrapper.getErrors().isEmpty()) {
             return ResponseEntity.badRequest().body(responseWrapper);
@@ -59,8 +65,8 @@ public class CatalogManagementProcessingController<T> {
     public ResponseEntity<ResponseWrapper> update(@PathParam("catalogType") String catalogType,
                                                           @RequestBody CatalogDTO catalogDTO) {
         CrudCatalogServiceProcessingInterceptor<T> catalogService = getCatalogService(catalogType);
-
-        T catalogEntity = catalogService.mapToCatalogEntity(catalogDTO);
+         UserEntity userLogged = currentUserProvider.getCurrentUser();
+        T catalogEntity = catalogService.mapToCatalogEntityForCreation(catalogDTO, userLogged);
         responseWrapper = catalogService.validate(catalogEntity, Lab2YouConstants.operationTypes.UPDATE.getOperationType());
 
         if(!responseWrapper.getErrors().isEmpty()){
@@ -74,8 +80,9 @@ public class CatalogManagementProcessingController<T> {
     @DeleteMapping
     public ResponseEntity<ResponseWrapper> delete(@PathParam("catalogType") String catalogType,
                                                   @RequestBody CatalogDTO catalogDTO) {
+        UserEntity userLogged = currentUserProvider.getCurrentUser();
         CrudCatalogServiceProcessingInterceptor<T> catalogService = getCatalogService(catalogType);
-        T catalogEntity = catalogService.mapToCatalogEntity(catalogDTO);
+        T catalogEntity = catalogService.mapToCatalogEntityForCreation(catalogDTO, userLogged);
         responseWrapper = catalogService.validate(catalogEntity, Lab2YouConstants.operationTypes.DELETE.getOperationType());
         if (!responseWrapper.getErrors().isEmpty()) {
             return ResponseEntity.badRequest().body(responseWrapper);

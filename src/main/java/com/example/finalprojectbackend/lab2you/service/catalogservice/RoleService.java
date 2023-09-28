@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
@@ -46,6 +47,7 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
         if (roleEntityFound.isPresent()) {
             roleEntityFound.get().setName(entity.getName() != null ? entity.getName() : roleEntityFound.get().getName());
             roleEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : roleEntityFound.get().getDescription());
+            roleEntityFound.get().setUpdatedBy(entity.getUpdatedBy());
             roleRepository.save(roleEntityFound.get());
 
             responseWrapper.setSuccessful(true);
@@ -67,6 +69,7 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
 
         roleEntityFound.ifPresent(roleEntity1 -> {
             roleEntity1.setIsDeleted(true);
+            roleEntity1.setUpdatedBy(roleEntity.getUpdatedBy());
             roleRepository.save(roleEntity1);
         });
 
@@ -161,8 +164,18 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
     }
 
     @Override
-    public RoleEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new RoleEntity(catalogDTO.getName(),catalogDTO.getDescription());
+    public RoleEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
+        RoleEntity roleEntity = new RoleEntity(catalogDTO.getName(),catalogDTO.getDescription());
+        roleEntity.setCreatedBy(userLogged);
+        return roleEntity;
+    }
+
+    @Override
+    public RoleEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setId(catalogDTO.getId());
+        roleEntity.setUpdatedBy(userLogged);
+        return roleEntity;
     }
 
     public RoleEntity getRoleByName(String name){

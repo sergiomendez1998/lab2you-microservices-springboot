@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.ItemEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
@@ -44,6 +45,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
         if (itemEntityFound.isPresent()) {
             itemEntityFound.get().setName(itemEntity.getName() != null ? itemEntity.getName() : itemEntityFound.get().getName());
             itemEntityFound.get().setDescription(itemEntity.getDescription() != null ? itemEntity.getDescription() : itemEntityFound.get().getDescription());
+            itemEntityFound.get().setUpdatedBy(itemEntity.getUpdatedBy());
             itemRepository.save(itemEntityFound.get());
 
             responseWrapper.setSuccessful(true);
@@ -65,6 +67,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
 
         analysisDocumentTypeEntityFound.ifPresent(analysisDocumentTypeEntity -> {
             analysisDocumentTypeEntity.setIsDeleted(true);
+            analysisDocumentTypeEntity.setUpdatedBy(itemEntity.getUpdatedBy());
             itemRepository.save(analysisDocumentTypeEntity);
         });
 
@@ -159,7 +162,17 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
     }
 
     @Override
-    public ItemEntity mapToCatalogEntity(CatalogDTO catalogDTO) {
-        return new ItemEntity(catalogDTO.getName(),catalogDTO.getDescription());
+    public ItemEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
+        ItemEntity itemEntity = new ItemEntity(catalogDTO.getName(),catalogDTO.getDescription());
+        itemEntity.setCreatedBy(userLogged);
+        return itemEntity;
+    }
+
+    @Override
+    public ItemEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
+        ItemEntity itemEntity = new ItemEntity();
+        itemEntity.setId(catalogDTO.getId());
+        itemEntity.setUpdatedBy(userLogged);
+        return itemEntity;
     }
 }
