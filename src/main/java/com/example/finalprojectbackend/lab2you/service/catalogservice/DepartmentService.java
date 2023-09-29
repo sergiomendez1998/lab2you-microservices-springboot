@@ -8,7 +8,6 @@ import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServic
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +28,7 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
         this.departmentRepository = departmentRepository;
     }
 
-    @CacheEvict(value = "departments", allEntries = true)
+
     @Override
     public ResponseWrapper executeCreation(DepartmentEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -40,7 +39,7 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
         responseWrapper.setData(Collections.singletonList("Department created"));
         return responseWrapper;
     }
-    @CacheEvict(value = "departments", allEntries = true)
+
     @Override
     public ResponseWrapper executeUpdate(DepartmentEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -65,7 +64,7 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
 
     }
 
-    @CacheEvict(value = "departments", allEntries = true)
+
     @Override
     public ResponseWrapper executeDeleteById(DepartmentEntity departmentEntity) {
         responseWrapper = new ResponseWrapper();
@@ -179,6 +178,8 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
     public DepartmentEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
         DepartmentEntity departmentEntity = new DepartmentEntity();
         departmentEntity.setId(catalogDTO.getId());
+        departmentEntity.setName(catalogDTO.getName());
+        departmentEntity.setDescription(catalogDTO.getDescription());
         departmentEntity.setUpdatedBy(userLogged);
         return departmentEntity;
     }

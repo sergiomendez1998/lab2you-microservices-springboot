@@ -8,7 +8,6 @@ import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServic
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +27,7 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
         this.roleRepository = roleRepository;
     }
 
-    @CacheEvict(value = "roles",allEntries = true)
+
     @Override
     public ResponseWrapper executeCreation(RoleEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -61,7 +60,7 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
         return responseWrapper;
     }
 
-    @CacheEvict(value = "roles",allEntries = true)
+
     @Override
     public ResponseWrapper executeDeleteById(RoleEntity roleEntity) {
         responseWrapper = new ResponseWrapper();
@@ -174,6 +173,8 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
     public RoleEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setId(catalogDTO.getId());
+        roleEntity.setName(catalogDTO.getName());
+        roleEntity.setDescription(catalogDTO.getDescription());
         roleEntity.setUpdatedBy(userLogged);
         return roleEntity;
     }

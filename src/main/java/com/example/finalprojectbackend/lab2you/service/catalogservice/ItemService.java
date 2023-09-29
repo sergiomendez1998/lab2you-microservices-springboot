@@ -27,7 +27,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
     public ItemService(ItemRepository itemRepository){
         this.itemRepository=itemRepository;
     }
-    @CacheEvict(value = "items",allEntries = true)
+
     @Override
     public ResponseWrapper executeCreation(ItemEntity entity) {
         itemRepository.save(entity);
@@ -36,7 +36,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
         responseWrapper.setData(Collections.singletonList("Item created"));
         return responseWrapper;
     }
-    @CacheEvict(value = "items",allEntries = true)
+
     @Override
     public ResponseWrapper executeUpdate(ItemEntity itemEntity) {
         responseWrapper = new ResponseWrapper();
@@ -172,6 +172,8 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
     public ItemEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
         ItemEntity itemEntity = new ItemEntity();
         itemEntity.setId(catalogDTO.getId());
+        itemEntity.setName(catalogDTO.getName());
+        itemEntity.setDescription(catalogDTO.getDescription());
         itemEntity.setUpdatedBy(userLogged);
         return itemEntity;
     }

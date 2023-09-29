@@ -8,7 +8,6 @@ import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServic
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.SampleTypeRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +29,7 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
         this.sampleTypeRepository = sampleTypeRepository;
     }
 
-    @CacheEvict(value = "sampleTypes", allEntries = true)
+
     @Override
     public ResponseWrapper executeCreation(SampleTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -41,7 +40,7 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
         return responseWrapper;
     }
 
-    @CacheEvict(value = "sampleTypes", allEntries = true)
+
     @Override
     public ResponseWrapper executeUpdate(SampleTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -64,7 +63,7 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
         return responseWrapper;
     }
 
-    @CacheEvict(value = "sampleTypes", allEntries = true)
+
     @Override
     public ResponseWrapper executeDeleteById(SampleTypeEntity sampleTypeEntity) {
         responseWrapper = new ResponseWrapper();
@@ -180,6 +179,8 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
     public SampleTypeEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
         SampleTypeEntity sampleTypeEntity =  new SampleTypeEntity();
         sampleTypeEntity.setId(catalogDTO.getId());
+        sampleTypeEntity.setName(catalogDTO.getName());
+        sampleTypeEntity.setDescription(catalogDTO.getDescription());
         sampleTypeEntity.setUpdatedBy(userLogged);
         return sampleTypeEntity;
     }
