@@ -12,11 +12,9 @@ import com.example.finalprojectbackend.lab2you.service.EmployeeService;
 import com.example.finalprojectbackend.lab2you.service.UserService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.DepartmentService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.RoleService;
+import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/employee")
@@ -37,6 +35,12 @@ public class EmployeeManagementProcessingController {
         this.userService = userService;
         this.roleServiceCRUD = roleServiceCRUD;
         this.departmentServiceCRUD = departmentServiceCRUD;
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseWrapper> getAll() {
+        responseWrapper = employeeService.executeReadAll();
+        return ResponseEntity.ok(responseWrapper);
     }
 
     @PostMapping("/register")
@@ -67,6 +71,41 @@ public class EmployeeManagementProcessingController {
         employeeService.execute(employeeEntity, Lab2YouConstants.operationTypes.CREATE.getOperationType());
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage(Lab2YouConstants.lab2YouSuccessCodes.REGISTRATION_SUCCESS.getDescription());
+        return ResponseEntity.ok(responseWrapper);
+    }
+
+    @PutMapping
+    public ResponseEntity<ResponseWrapper> update(@RequestBody EmployeeDTO employeeDTO) {
+        UserEntity userEntity = new UserEntity();
+
+        RoleEntity role = roleServiceCRUD.getRoleByName(employeeDTO.getUser().getRole().getName());
+        userEntity.setEmail(employeeDTO.getUser().getEmail());
+        userEntity.setRole(role);
+
+        EmployeeEntity employeeEntity = employeeService.mapToEntityEmployee(employeeDTO);
+        employeeEntity.setUser(userEntity);
+
+        responseWrapper = employeeService.validate(employeeEntity, Lab2YouConstants.operationTypes.UPDATE.getOperationType());
+
+        if (!responseWrapper.getErrors().isEmpty()) {
+            return ResponseEntity.badRequest().body(responseWrapper);
+        }
+        userService.save(userEntity);
+        employeeService.execute(employeeEntity, Lab2YouConstants.operationTypes.UPDATE.getOperationType());
+        responseWrapper.setSuccessful(true);
+        responseWrapper.setMessage(Lab2YouConstants.lab2YouSuccessCodes.REGISTRATION_SUCCESS.getDescription());
+        return ResponseEntity.ok(responseWrapper);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<ResponseWrapper> delete(@PathParam("id") Long id) {
+        EmployeeEntity employeeEntity = new EmployeeEntity();
+        employeeEntity.setId(id);
+        responseWrapper = employeeService.validate(employeeEntity, Lab2YouConstants.operationTypes.DELETE.getOperationType());
+        if (!responseWrapper.getErrors().isEmpty()) {
+            return ResponseEntity.badRequest().body(responseWrapper);
+        }
+        responseWrapper = employeeService.execute(employeeEntity, Lab2YouConstants.operationTypes.DELETE.getOperationType());
         return ResponseEntity.ok(responseWrapper);
     }
 

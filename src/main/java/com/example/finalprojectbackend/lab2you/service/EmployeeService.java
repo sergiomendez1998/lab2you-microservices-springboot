@@ -168,6 +168,7 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
     }
     private EmployeeWrapper mapToEmployeeWrapper(EmployeeEntity employeeEntity){
         EmployeeWrapper employeeWrapper = new EmployeeWrapper();
+        employeeWrapper.setId(employeeEntity.getId());
         employeeWrapper.setFirstName(employeeEntity.getFirstName());
         employeeWrapper.setLastName(employeeEntity.getLastName());
         employeeWrapper.setCui(employeeEntity.getCui());
