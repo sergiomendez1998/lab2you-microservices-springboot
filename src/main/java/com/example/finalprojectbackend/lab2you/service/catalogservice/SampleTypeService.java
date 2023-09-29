@@ -11,12 +11,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 
 
 @Service
@@ -24,7 +22,7 @@ import java.util.Optional;
 public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<SampleTypeEntity> {
 
     private final SampleTypeRepository sampleTypeRepository;
-    private  ResponseWrapper responseWrapper;
+    private ResponseWrapper responseWrapper;
 
     public SampleTypeService(SampleTypeRepository sampleTypeRepository) {
         this.sampleTypeRepository = sampleTypeRepository;
@@ -103,11 +101,11 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
     @Override
     protected ResponseWrapper validateForCreation(SampleTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
-        if (entity.getName() ==null || entity.getName().isEmpty()) {
+        if (entity.getName() == null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
 
-        if (entity.getDescription() ==null || entity.getDescription().isEmpty()) {
+        if (entity.getDescription() == null || entity.getDescription().isEmpty()) {
             responseWrapper.addError("descripcion", "la descripcion no puedo ser nullo o vacio");
         }
 
@@ -171,16 +169,33 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
 
     @Override
     public SampleTypeEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
-        SampleTypeEntity sampleTypeEntity =  new SampleTypeEntity(catalogDTO.getName(), catalogDTO.getDescription());
+        SampleTypeEntity sampleTypeEntity = new SampleTypeEntity(catalogDTO.getName(), catalogDTO.getDescription());
         sampleTypeEntity.setCreatedBy(userLogged);
         return sampleTypeEntity;
     }
 
     @Override
     public SampleTypeEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
-        SampleTypeEntity sampleTypeEntity =  new SampleTypeEntity();
+        SampleTypeEntity sampleTypeEntity = new SampleTypeEntity();
         sampleTypeEntity.setId(catalogDTO.getId());
         sampleTypeEntity.setUpdatedBy(userLogged);
         return sampleTypeEntity;
+    }
+
+    public SampleTypeEntity findById(Long id) {
+        return executeReadAll().getData()
+                .stream()
+                .filter(item -> item instanceof CatalogWrapper)
+                .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                .filter(catalogWrapper -> catalogWrapper.getId().equals(id))
+                .findFirst()
+                .map(catalogWrapper -> {
+                    SampleTypeEntity entity = new SampleTypeEntity();
+                    entity.setId(catalogWrapper.getId());
+                    entity.setName(catalogWrapper.getName());
+                    entity.setDescription(catalogWrapper.getDescription());
+                    return entity;
+                })
+                .orElse(new SampleTypeEntity());
     }
 }

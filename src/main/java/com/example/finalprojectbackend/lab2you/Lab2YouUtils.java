@@ -27,6 +27,11 @@ public class Lab2YouUtils {
         return nit.matches("^\\d{9}$");
     }
 
+    public static boolean validateQuantity(Long quantity) {
+        String quantityStr = Long.toString(quantity);
+        return quantity != 0 && quantityStr.length() >= 1 && quantityStr.length() <= 4;
+    }
+
     public static boolean isNullOrEmpty(String str) {
         return str == null || str.isEmpty();
     }

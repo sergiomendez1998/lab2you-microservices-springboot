@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,11 +22,12 @@ import java.util.Optional;
 public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor<MeasureUnitEntity> {
 
     private final MeasureUnitRepository measureUnitRepository;
-    private  ResponseWrapper responseWrapper;
+    private ResponseWrapper responseWrapper;
 
-    public MeasureUniteService(MeasureUnitRepository measureUnitRepository){
+    public MeasureUniteService(MeasureUnitRepository measureUnitRepository) {
         this.measureUnitRepository = measureUnitRepository;
     }
+
     @CacheEvict(value = "measure units", allEntries = true)
     @Override
     public ResponseWrapper executeCreation(MeasureUnitEntity entity) {
@@ -38,7 +38,8 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
         responseWrapper.setData(Collections.singletonList("Measure unit created"));
         return responseWrapper;
     }
-    @CacheEvict(value = "measure units",allEntries = true)
+
+    @CacheEvict(value = "measure units", allEntries = true)
     @Override
     public ResponseWrapper executeUpdate(MeasureUnitEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -59,11 +60,11 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
 
         responseWrapper.setSuccessful(false);
         responseWrapper.setMessage("Measure unit not found");
-        responseWrapper.addError("id","Measure unit not found");
+        responseWrapper.addError("id", "Measure unit not found");
         return responseWrapper;
     }
 
-    @CacheEvict(value = "measureUnits",allEntries = true)
+    @CacheEvict(value = "measureUnits", allEntries = true)
     @Override
     public ResponseWrapper executeDeleteById(MeasureUnitEntity measureUnitEntity) {
         responseWrapper = new ResponseWrapper();
@@ -79,6 +80,7 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
         responseWrapper.setData(Collections.singletonList("Measure unit deleted"));
         return responseWrapper;
     }
+
     @Cacheable(value = "measureUnits")
     @Override
     public ResponseWrapper executeReadAll() {
@@ -96,11 +98,11 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
     @Override
     protected ResponseWrapper validateForCreation(MeasureUnitEntity entity) {
         responseWrapper = new ResponseWrapper();
-        if (entity.getName() ==null || entity.getName().isEmpty()) {
+        if (entity.getName() == null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
 
-        if (entity.getDescription() ==null || entity.getDescription().isEmpty()) {
+        if (entity.getDescription() == null || entity.getDescription().isEmpty()) {
             responseWrapper.addError("descripcion", "la descripcion no puedo ser nullo o vacio");
         }
 
@@ -160,12 +162,12 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
 
     @Override
     public CatalogWrapper mapToCatalogWrapper(MeasureUnitEntity catalogItem) {
-        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+        return new CatalogWrapper(catalogItem.getId(), catalogItem.getName(), catalogItem.getDescription());
     }
 
     @Override
     public MeasureUnitEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
-        MeasureUnitEntity measureUnitEntity = new MeasureUnitEntity(catalogDTO.getName(),catalogDTO.getDescription());
+        MeasureUnitEntity measureUnitEntity = new MeasureUnitEntity(catalogDTO.getName(), catalogDTO.getDescription());
         measureUnitEntity.setCreatedBy(userLogged);
         return measureUnitEntity;
     }
@@ -177,4 +179,22 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
         measureUnitEntity.setUpdatedBy(userLogged);
         return measureUnitEntity;
     }
+
+    public MeasureUnitEntity findById(Long id) {
+        return executeReadAll().getData()
+                .stream()
+                .filter(item -> item instanceof CatalogWrapper)
+                .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                .filter(catalogWrapper -> catalogWrapper.getId().equals(id))
+                .findFirst()
+                .map(catalogWrapper -> {
+                    MeasureUnitEntity entity = new MeasureUnitEntity();
+                    entity.setId(catalogWrapper.getId());
+                    entity.setName(catalogWrapper.getName());
+                    entity.setDescription(catalogWrapper.getDescription());
+                    return entity;
+                })
+                .orElse(new MeasureUnitEntity());
+    }
+
 }

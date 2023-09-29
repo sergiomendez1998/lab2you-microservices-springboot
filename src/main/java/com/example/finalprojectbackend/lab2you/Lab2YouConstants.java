@@ -36,6 +36,7 @@ public class Lab2YouConstants {
     public enum lab2YouSuccessCodes {
         EMAIL_SENT("user created and the registration email was sent successfully"),
         USER_CREATED("The user was created successfully"),
+        SAMPLE_CREATED("The user was created successfully"),
         REGISTRATION_SUCCESS("User created successfully");
 
         String description;
