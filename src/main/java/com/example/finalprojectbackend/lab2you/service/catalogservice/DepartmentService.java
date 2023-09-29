@@ -22,9 +22,9 @@ import java.util.Optional;
 public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<DepartmentEntity> {
 
     private final DepartmentRepository departmentRepository;
-    private  ResponseWrapper responseWrapper;
+    private ResponseWrapper responseWrapper;
 
-    public DepartmentService(DepartmentRepository departmentRepository){
+    public DepartmentService(DepartmentRepository departmentRepository) {
         this.departmentRepository = departmentRepository;
     }
 
@@ -81,8 +81,9 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
         responseWrapper.setData(Collections.singletonList("AnalysisDocumentType deleted"));
         return responseWrapper;
     }
+
     @Cacheable(value = "departments")
-     @Override
+    @Override
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
@@ -100,11 +101,11 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
     @Override
     protected ResponseWrapper validateForCreation(DepartmentEntity entity) {
         responseWrapper = new ResponseWrapper();
-        if (entity.getName() ==null || entity.getName().isEmpty()) {
+        if (entity.getName() == null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
 
-        if (entity.getDescription() ==null || entity.getDescription().isEmpty()) {
+        if (entity.getDescription() == null || entity.getDescription().isEmpty()) {
             responseWrapper.addError("descripcion", "la descripcion no puedo ser nullo o vacio");
         }
 
@@ -164,12 +165,12 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
 
     @Override
     public CatalogWrapper mapToCatalogWrapper(DepartmentEntity catalogItem) {
-        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+        return new CatalogWrapper(catalogItem.getId(), catalogItem.getName(), catalogItem.getDescription());
     }
 
     @Override
     public DepartmentEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
-        DepartmentEntity departmentEntity = new DepartmentEntity(catalogDTO.getName(),catalogDTO.getDescription());
+        DepartmentEntity departmentEntity = new DepartmentEntity(catalogDTO.getName(), catalogDTO.getDescription());
         departmentEntity.setCreatedBy(userLogged);
         return departmentEntity;
     }
@@ -184,12 +185,19 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
         return departmentEntity;
     }
 
-    public DepartmentEntity getDepartmentByName(String name){
-        return this.executeReadAll().getData()
-                .stream()
-                .map(DepartmentEntity.class::cast)
-                .filter(departmentEntity -> departmentEntity.getName().equals(name))
-                .findFirst()
-                .orElse(null);
-    }
+    public DepartmentEntity getDepartmentByName(String name) {
+            return executeReadAll().getData().stream()
+                    .filter(item -> item instanceof CatalogWrapper)
+                    .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                    .filter(catalogWrapper -> catalogWrapper.getName().equals(name))
+                    .findFirst()
+                    .map(catalogWrapper -> {
+                        DepartmentEntity entity = new DepartmentEntity();
+                        entity.setId(catalogWrapper.getId());
+                        entity.setName(catalogWrapper.getName());
+                        entity.setDescription(catalogWrapper.getDescription());
+                        return entity;
+                    })
+                    .orElse(new DepartmentEntity());
+        }
 }

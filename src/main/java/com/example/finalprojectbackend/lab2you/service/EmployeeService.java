@@ -5,8 +5,7 @@ import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.db.model.dto.EmployeeDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.EmployeeEntity;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudServiceProcessingController;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.EmployeeWrapper;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.*;
 import com.example.finalprojectbackend.lab2you.db.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
@@ -174,12 +173,11 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
         employeeWrapper.setCui(employeeEntity.getCui());
         employeeWrapper.setPhoneNumber(employeeEntity.getPhoneNumber());
         employeeWrapper.setAddress(employeeEntity.getAddress());
-        employeeWrapper.getUser().setEmail(employeeEntity.getUser().getEmail());
-        employeeWrapper.getUser().getRole().setId(employeeEntity.getUser().getRole().getId());
-        employeeWrapper.getUser().getRole().setName(employeeEntity.getUser().getRole().getName());
-        employeeWrapper.getUser().getRole().setDescription(employeeEntity.getUser().getRole().getDescription());
-        employeeWrapper.getDepartment().setId(employeeEntity.getDepartmentEntity().getId());
-        employeeWrapper.getDepartment().setName(employeeEntity.getDepartmentEntity().getName());
+        RoleWrapper roleWrapper = new RoleWrapper(employeeEntity.getUser().getRole().getId(), employeeEntity.getUser().getRole().getName(), employeeEntity.getUser().getRole().getDescription());
+        UserWrapper userWrapper = new UserWrapper(employeeEntity.getUser().getEmail(), roleWrapper);
+        employeeWrapper.setUser(userWrapper);
+        DepartmentWrapper departmentWrapper = new DepartmentWrapper(employeeEntity.getDepartmentEntity().getId(), employeeEntity.getDepartmentEntity().getName());
+        employeeWrapper.setDepartment(departmentWrapper);
         return employeeWrapper;
     }
 
