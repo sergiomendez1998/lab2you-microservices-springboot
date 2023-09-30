@@ -174,7 +174,7 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
         employeeWrapper.setPhoneNumber(employeeEntity.getPhoneNumber());
         employeeWrapper.setAddress(employeeEntity.getAddress());
         RoleWrapper roleWrapper = new RoleWrapper(employeeEntity.getUser().getRole().getId(), employeeEntity.getUser().getRole().getName(), employeeEntity.getUser().getRole().getDescription());
-        UserWrapper userWrapper = new UserWrapper(employeeEntity.getUser().getEmail(), roleWrapper);
+        UserWrapper userWrapper = new UserWrapper(employeeEntity.getUser().getId(),employeeEntity.getUser().getEmail(), roleWrapper);
         employeeWrapper.setUser(userWrapper);
         DepartmentWrapper departmentWrapper = new DepartmentWrapper(employeeEntity.getDepartmentEntity().getId(), employeeEntity.getDepartmentEntity().getName());
         employeeWrapper.setDepartment(departmentWrapper);

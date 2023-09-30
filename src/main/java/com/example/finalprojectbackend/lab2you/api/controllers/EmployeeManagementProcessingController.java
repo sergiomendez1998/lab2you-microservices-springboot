@@ -79,6 +79,7 @@ public class EmployeeManagementProcessingController {
         UserEntity userEntity = new UserEntity();
 
         RoleEntity role = roleServiceCRUD.getRoleByName(employeeDTO.getUser().getRole().getName());
+        userEntity.setId(employeeDTO.getUser().getId());
         userEntity.setEmail(employeeDTO.getUser().getEmail());
         userEntity.setRole(role);
 
