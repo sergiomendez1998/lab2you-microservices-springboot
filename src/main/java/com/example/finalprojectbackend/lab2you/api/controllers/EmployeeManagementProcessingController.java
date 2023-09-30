@@ -91,7 +91,7 @@ public class EmployeeManagementProcessingController {
         if (!responseWrapper.getErrors().isEmpty()) {
             return ResponseEntity.badRequest().body(responseWrapper);
         }
-        userService.save(userEntity);
+        userService.executeUpdate(userEntity);
         employeeService.execute(employeeEntity, Lab2YouConstants.operationTypes.UPDATE.getOperationType());
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage(Lab2YouConstants.lab2YouSuccessCodes.REGISTRATION_SUCCESS.getDescription());
