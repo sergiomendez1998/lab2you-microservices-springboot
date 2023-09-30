@@ -8,7 +8,6 @@ import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServic
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.ExamTypeRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         this.examTypeRepository = examTypeRepository;
     }
 
-    @CacheEvict(value = "examTypes", allEntries = true)
+
     @Override
     public ResponseWrapper executeCreation(ExamTypeEntity examTypeEntity) {
         responseWrapper = new ResponseWrapper();
@@ -38,7 +37,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         return responseWrapper;
     }
 
-    @CacheEvict(value = "examTypes", allEntries = true)
+
     @Override
     public ResponseWrapper executeUpdate(ExamTypeEntity examTypeEntity) {
         responseWrapper = new ResponseWrapper();
@@ -62,7 +61,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         return responseWrapper;
     }
 
-    @CacheEvict(value = "examTypes", allEntries = true)
+
     @Override
     public ResponseWrapper executeDeleteById(ExamTypeEntity examTypeEntity) {
         responseWrapper = new ResponseWrapper();
@@ -175,6 +174,8 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
     public ExamTypeEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
         ExamTypeEntity examType = new ExamTypeEntity();
         examType.setId(catalogDTO.getId());
+        examType.setName(catalogDTO.getName());
+        examType.setDescription(catalogDTO.getDescription());
         examType.setUpdatedBy(userLogged);
         return examType;
     }

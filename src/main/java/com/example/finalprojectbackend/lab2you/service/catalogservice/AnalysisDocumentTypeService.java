@@ -8,7 +8,6 @@ import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper
 import com.example.finalprojectbackend.lab2you.db.repository.AnalysisDocumentTypeRepository;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +27,7 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
         this.analysisDocumentTypeRepository = analysisDocumentTypeRepository;
     }
 
-    @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
+
     @Override
     public ResponseWrapper executeCreation(AnalysisDocumentTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -39,7 +38,7 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
         return responseWrapper;
     }
 
-    @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
+
     @Override
     public ResponseWrapper executeUpdate(AnalysisDocumentTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -65,7 +64,7 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
         return responseWrapper;
     }
 
-    @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
+
     @Override
     public ResponseWrapper executeDeleteById(AnalysisDocumentTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -188,6 +187,8 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
     public AnalysisDocumentTypeEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
         AnalysisDocumentTypeEntity  analysisDocumentType = new AnalysisDocumentTypeEntity();
         analysisDocumentType.setId(catalogDTO.getId());
+        analysisDocumentType.setName(catalogDTO.getName());
+        analysisDocumentType.setDescription(catalogDTO.getDescription());
         analysisDocumentType.setUpdatedBy(userLogged);
         return analysisDocumentType;
     }

@@ -1,6 +1,7 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
+import com.example.finalprojectbackend.lab2you.db.model.entities.DepartmentEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
@@ -8,7 +9,6 @@ import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServic
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +22,13 @@ import java.util.Optional;
 public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEntity> {
 
     private final RoleRepository roleRepository;
-    private  ResponseWrapper responseWrapper;
+    private ResponseWrapper responseWrapper;
 
-    public RoleService(RoleRepository roleRepository){
+    public RoleService(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
 
-    @CacheEvict(value = "roles",allEntries = true)
+
     @Override
     public ResponseWrapper executeCreation(RoleEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -57,11 +57,11 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
         }
         responseWrapper.setSuccessful(false);
         responseWrapper.setMessage("Role not found");
-        responseWrapper.addError("Id","Role not found");
+        responseWrapper.addError("Id", "Role not found");
         return responseWrapper;
     }
 
-    @CacheEvict(value = "roles",allEntries = true)
+
     @Override
     public ResponseWrapper executeDeleteById(RoleEntity roleEntity) {
         responseWrapper = new ResponseWrapper();
@@ -79,7 +79,8 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
         return responseWrapper;
 
     }
-    @Cacheable (value = "roles")
+
+    @Cacheable(value = "roles")
     @Override
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
@@ -90,18 +91,18 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
                 .stream()
                 .map(this::mapToCatalogWrapper)
                 .toList();
-       responseWrapper.setData(catalogWrapperList);
+        responseWrapper.setData(catalogWrapperList);
         return responseWrapper;
     }
 
     @Override
     protected ResponseWrapper validateForCreation(RoleEntity entity) {
         responseWrapper = new ResponseWrapper();
-        if (entity.getName() ==null || entity.getName().isEmpty()) {
+        if (entity.getName() == null || entity.getName().isEmpty()) {
             responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
         }
 
-        if (entity.getDescription() ==null || entity.getDescription().isEmpty()) {
+        if (entity.getDescription() == null || entity.getDescription().isEmpty()) {
             responseWrapper.addError("descripcion", "la descripcion no puedo ser nullo o vacio");
         }
 
@@ -160,12 +161,12 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
 
     @Override
     public CatalogWrapper mapToCatalogWrapper(RoleEntity catalogItem) {
-        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+        return new CatalogWrapper(catalogItem.getId(), catalogItem.getName(), catalogItem.getDescription());
     }
 
     @Override
     public RoleEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
-        RoleEntity roleEntity = new RoleEntity(catalogDTO.getName(),catalogDTO.getDescription());
+        RoleEntity roleEntity = new RoleEntity(catalogDTO.getName(), catalogDTO.getDescription());
         roleEntity.setCreatedBy(userLogged);
         return roleEntity;
     }
@@ -174,16 +175,25 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
     public RoleEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setId(catalogDTO.getId());
+        roleEntity.setName(catalogDTO.getName());
+        roleEntity.setDescription(catalogDTO.getDescription());
         roleEntity.setUpdatedBy(userLogged);
         return roleEntity;
     }
 
-    public RoleEntity getRoleByName(String name){
-        return this.executeReadAll().getData()
-                .stream()
-                .map(RoleEntity.class::cast)
-                .filter(roleEntity -> roleEntity.getName().equals(name))
+    public RoleEntity getRoleByName(String name) {
+        return executeReadAll().getData().stream()
+                .filter(item -> item instanceof CatalogWrapper)
+                .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                .filter(catalogWrapper -> catalogWrapper.getName().equals(name))
                 .findFirst()
-                .orElse(null);
+                .map(catalogWrapper -> {
+                    RoleEntity entity = new RoleEntity();
+                    entity.setId(catalogWrapper.getId());
+                    entity.setName(catalogWrapper.getName());
+                    entity.setDescription(catalogWrapper.getDescription());
+                    return entity;
+                })
+                .orElse(new RoleEntity());
     }
 }

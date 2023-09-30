@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class EmployeeWrapper {
+    private Long id;
     private String cui;
     private String firstName;
     private String lastName;

@@ -8,7 +8,6 @@ import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServic
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.SupportTypeRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
         this.supportTypeRepository = supportTypeRepository;
     }
 
-    @CacheEvict(value = "SupportTypes", allEntries = true)
+
     @Override
     public ResponseWrapper executeCreation(SupportTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -38,7 +37,7 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
         return responseWrapper;
     }
 
-    @CacheEvict(value = "supportTypes",allEntries = true)
+
     @Override
     public ResponseWrapper executeUpdate(SupportTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -62,7 +61,7 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
             return responseWrapper;
     }
 
-    @CacheEvict(value = "supportTypes", allEntries = true)
+
     @Override
     public ResponseWrapper executeDeleteById(SupportTypeEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -174,6 +173,8 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
     public SupportTypeEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
         SupportTypeEntity supportTypeEntity = new SupportTypeEntity();
         supportTypeEntity.setId(catalogDTO.getId());
+        supportTypeEntity.setName(catalogDTO.getName());
+        supportTypeEntity.setDescription(catalogDTO.getDescription());
         supportTypeEntity.setUpdatedBy(userLogged);
         return supportTypeEntity;
     }

@@ -8,7 +8,6 @@ import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServic
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.MeasureUnitRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
         this.measureUnitRepository = measureUnitRepository;
     }
 
-    @CacheEvict(value = "measure units", allEntries = true)
     @Override
     public ResponseWrapper executeCreation(MeasureUnitEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -39,7 +37,6 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
         return responseWrapper;
     }
 
-    @CacheEvict(value = "measure units", allEntries = true)
     @Override
     public ResponseWrapper executeUpdate(MeasureUnitEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -64,7 +61,7 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
         return responseWrapper;
     }
 
-    @CacheEvict(value = "measureUnits", allEntries = true)
+
     @Override
     public ResponseWrapper executeDeleteById(MeasureUnitEntity measureUnitEntity) {
         responseWrapper = new ResponseWrapper();
@@ -176,6 +173,8 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
     public MeasureUnitEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
         MeasureUnitEntity measureUnitEntity = new MeasureUnitEntity();
         measureUnitEntity.setId(catalogDTO.getId());
+        measureUnitEntity.setName(catalogDTO.getName());
+        measureUnitEntity.setDescription(catalogDTO.getDescription());
         measureUnitEntity.setUpdatedBy(userLogged);
         return measureUnitEntity;
     }

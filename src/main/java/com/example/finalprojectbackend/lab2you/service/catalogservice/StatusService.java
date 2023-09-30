@@ -8,7 +8,6 @@ import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServic
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.StatusRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +27,7 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
         this.statusRepository = statusRepository;
     }
 
-    @CacheEvict(value = "statuses", allEntries = true)
+    
     @Override
     public ResponseWrapper executeCreation(StatusEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -39,7 +38,7 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
         return responseWrapper;
     }
 
-    @CacheEvict(value = "statuses", allEntries = true)
+
     @Override
     public ResponseWrapper executeUpdate(StatusEntity entity) {
         responseWrapper = new ResponseWrapper();
@@ -66,13 +65,13 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
     }
 
     @Override
-    public ResponseWrapper executeDeleteById(StatusEntity statusEntity) {
+    public ResponseWrapper executeDeleteById(StatusEntity entity) {
         responseWrapper = new ResponseWrapper();
-        Optional<StatusEntity> statusEntityFound = statusRepository.findById(statusEntity.getId());
+        Optional<StatusEntity> statusEntityFound = statusRepository.findById(entity.getId());
 
         statusEntityFound.ifPresent(statusEntity1 -> {
             statusEntity1.setIsDeleted(true);
-            statusEntity1.setUpdatedBy(statusEntity.getUpdatedBy());
+            statusEntity1.setUpdatedBy(entity.getUpdatedBy());
             statusRepository.save(statusEntity1);
         });
 
@@ -89,7 +88,7 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("Statuses found");
 
-        List<CatalogWrapper> catalogWrapperList = statusRepository.findAll()
+        List<CatalogWrapper> catalogWrapperList = statusRepository.findAllByIsDeletedFalse()
                 .stream()
                 .map(this::mapToCatalogWrapper)
                 .toList();

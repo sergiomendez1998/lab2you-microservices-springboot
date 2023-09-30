@@ -71,6 +71,13 @@ public class Lab2YouUtils {
         long diff = currentDate.getTime() - dateOfReception.getTime();
         return (int) (diff / (24 * 60 * 60 * 1000));
     }
+    public static String pluralize(String word) {
+        if (word.endsWith("s")) {
+            return word + "es";
+        } else {
+            return word + "s";
+        }
+    }
 
     public static int calculateQuantityFromList(List<?> list) {
         return list.size();
