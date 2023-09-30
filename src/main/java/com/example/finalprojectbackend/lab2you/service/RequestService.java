@@ -4,10 +4,7 @@ import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudServiceProcessingController;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.ExamTypeEntity;
-import com.example.finalprojectbackend.lab2you.db.model.entities.RequestEntity;
-import com.example.finalprojectbackend.lab2you.db.model.entities.SampleEntity;
-import com.example.finalprojectbackend.lab2you.db.model.entities.StatusEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.*;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.RequestWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
@@ -15,6 +12,7 @@ import com.example.finalprojectbackend.lab2you.db.model.wrappers.StatusRequestWr
 import com.example.finalprojectbackend.lab2you.db.repository.RequestRepository;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.ExamTypeService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.StatusService;
+import com.example.finalprojectbackend.lab2you.service.catalogservice.SupportTypeService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,16 +29,18 @@ import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.statusTyp
 public class RequestService extends CrudServiceProcessingController<RequestEntity> {
 
     private final RequestRepository requestRepository;
+    private final SupportTypeService supportTypeService;
     private final AssigmentService assigmentService;
     private ResponseWrapper responseWrapper;
     private final StatusService statusService;
     private final ExamTypeService examTypeService;
 
-    public RequestService(RequestRepository requestRepository, AssigmentService assigmentService, StatusService statusService, ExamTypeService examTypeService) {
+    public RequestService(RequestRepository requestRepository, AssigmentService assigmentService, StatusService statusService, ExamTypeService examTypeService, SupportTypeService supportTypeService) {
         this.requestRepository = requestRepository;
         this.assigmentService = assigmentService;
         this.statusService = statusService;
         this.examTypeService = examTypeService;
+        this.supportTypeService = supportTypeService;
     }
 
     @Override
@@ -154,8 +154,10 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         LocalDateTime localDateTime = LocalDateTime.now();
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         requestEntity.setRequestCode(Lab2YouUtils.generateRequestCode(date));
+        SupportTypeEntity supportTypeEntity = supportTypeService.getSupportByName(requestDTO.getSupportType().getName());
         StatusEntity statusEntity = statusService.findStatusByName(CREATED.getStatusType());
         ExamTypeEntity examTypeEntity = examTypeService.findExamByName(requestDTO.getExamType().getName());
+        requestEntity.setSupportType(supportTypeEntity);
         requestEntity.setStatusEntities(Collections.singletonList(statusEntity));
         requestEntity.setExamType(examTypeEntity);
         return requestEntity;

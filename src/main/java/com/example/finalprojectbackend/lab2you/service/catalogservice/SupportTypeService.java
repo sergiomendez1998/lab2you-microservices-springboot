@@ -1,6 +1,7 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
+import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.SupportTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
@@ -177,5 +178,20 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
         supportTypeEntity.setDescription(catalogDTO.getDescription());
         supportTypeEntity.setUpdatedBy(userLogged);
         return supportTypeEntity;
+    }
+    public SupportTypeEntity getSupportByName(String name){
+        return executeReadAll().getData().stream()
+                .filter(item -> item instanceof CatalogWrapper)
+                .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                .filter(catalogWrapper -> catalogWrapper.getName().equals(name))
+                .findFirst()
+                .map(catalogWrapper -> {
+                    SupportTypeEntity entity = new SupportTypeEntity();
+                    entity.setId(catalogWrapper.getId());
+                    entity.setName(catalogWrapper.getName());
+                    entity.setDescription(catalogWrapper.getDescription());
+                    return entity;
+                })
+                .orElse(new SupportTypeEntity());
     }
 }
