@@ -7,4 +7,5 @@ public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> 
   CustomerEntity findByCui(String cui);
   CustomerEntity findByNit(String nit);
   CustomerEntity findByPhoneNumber(String phoneNumber);
+  CustomerEntity findByUserId(Long userId);
 }

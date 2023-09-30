@@ -56,7 +56,7 @@ public class RequestManagementProcessingController {
         }
 
         assignmentEntity.setAssignedByEmployee(employeeService.getRandomEmployeeWithRoleTechnician());
-        CustomerEntity customerEntity = customerService.findCustomerById(requestDTO.getCustomerID());
+        CustomerEntity customerEntity = customerService.findCustomerByUserId(requestDTO.getUserId());
         RequestEntity requestEntity = requestService.mapToRequestEntity(requestDTO);
         requestEntity.setCustomer(customerEntity);
 

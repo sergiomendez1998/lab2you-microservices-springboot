@@ -224,7 +224,7 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
         customerEntity.setGender(customerDTO.getGender());
         return customerEntity;
     }
-    public CustomerEntity findCustomerById(Long id){
-        return customerRepository.findById(id).orElse(null);
+    public CustomerEntity findCustomerByUserId(Long id){
+        return customerRepository.findByUserId(id);
     }
 }

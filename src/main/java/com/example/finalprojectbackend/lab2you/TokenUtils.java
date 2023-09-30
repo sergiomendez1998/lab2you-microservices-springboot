@@ -25,12 +25,13 @@ public class TokenUtils {
      * The token will have the name as extra information.
      * The token will have the expiration date.
      */
-    public static String createToken(String name, String email, Collection<? extends GrantedAuthority> authorities,
+    public static String createToken(Long userId, String name, String email, Collection<? extends GrantedAuthority> authorities,
             String role, List<ModuleEntity> moduleEntities) {
         long expirationTime = EXPIRATION_TIME * 1000; // Convert to milliseconds
         Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
 
         Map<String, Object> extra = new HashMap<>();
+        extra.put("id", userId);
         extra.put("name", name);
         extra.put("authorities", authorities);
         extra.put("role", role);

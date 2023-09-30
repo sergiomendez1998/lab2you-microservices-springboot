@@ -62,6 +62,9 @@ public class UserDetailsImpl implements UserDetails {
     public String getRole() {
         return userEntity.getRole().getName();
     }
+    public Long getUserId() {
+        return userEntity.getId();
+    }
 
     public List<ModuleEntity> getModules() {
         return userEntity.getRole().getAuthorities().stream()
