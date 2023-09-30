@@ -58,7 +58,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             String token = TokenUtils.createToken(userDetails.getUserId(),userDetails.getName(), userDetails.getUsername(),
                     userDetails.getAuthorities(), userDetails.getRole(), userDetails.getModules());
 
-            var authResponse = new AuthWrapper(token,
+            var authResponse = new AuthWrapper(userDetails.getUserId(),token,
                     userDetails.getRole(), userDetails.getName(), userDetails.getUsername());
 
             var ResponseWrapper = new ResponseWrapperRequest<AuthWrapper>(authResponse, "User authenticated", true);
