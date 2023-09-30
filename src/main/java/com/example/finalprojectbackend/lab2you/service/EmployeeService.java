@@ -183,6 +183,7 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
 
     public EmployeeEntity mapToEntityEmployee(EmployeeDTO employeeDTO){
         EmployeeEntity employeeEntity = new EmployeeEntity();
+        employeeEntity.setId(employeeDTO.getId());
         employeeEntity.setFirstName(employeeDTO.getFirstName());
         employeeEntity.setLastName(employeeDTO.getLastName());
         employeeEntity.setCui(employeeDTO.getCui());
