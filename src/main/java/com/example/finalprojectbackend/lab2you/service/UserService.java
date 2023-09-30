@@ -102,7 +102,7 @@ public class UserService extends CrudServiceProcessingController<UserEntity> {
             responseWrapper.addError("email","email es requiredo");
         }
 
-        if (Lab2YouUtils.verifyEmailFormat(entity.getEmail())) {
+        if (!Lab2YouUtils.verifyEmailFormat(entity.getEmail())) {
             responseWrapper.addError("email","formato del email no es valido");
         }
 
