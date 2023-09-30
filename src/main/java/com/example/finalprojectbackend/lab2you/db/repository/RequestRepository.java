@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface RequestRepository extends JpaRepository<RequestEntity, Long> {
        List<RequestEntity> findAllByIsDeletedFalse();
+       RequestEntity findByRequestCode(String requestCode);
        @Query("SELECT r.statusEntities FROM RequestEntity r WHERE r.id = :requestId")
        List<StatusEntity> findStatusesByRequestId(@Param("requestId") Long requestId);
 }

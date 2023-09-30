@@ -240,4 +240,8 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
     protected ResponseWrapper validateForRead(RequestEntity entity) {
         return null;
     }
+
+    public RequestEntity findRequestByRequestCode(String requestCode) {
+        return requestRepository.findByRequestCode(requestCode);
+    }
 }

@@ -55,7 +55,7 @@ public class RequestManagementProcessingController {
             assignmentEntity.setAssignedByEmployee(userAssignedBySystem.getEmployee());
         }
 
-        assignmentEntity.setAssignedByEmployee(employeeService.getRandomEmployeeWithRoleTechnician());
+        assignmentEntity.setAssignedToEmployee(employeeService.getRandomEmployeeWithRoleTechnician());
         CustomerEntity customerEntity = customerService.findCustomerByUserId(requestDTO.getUserId());
         RequestEntity requestEntity = requestService.mapToRequestEntity(requestDTO);
         requestEntity.setCustomer(customerEntity);
@@ -66,6 +66,11 @@ public class RequestManagementProcessingController {
         }
 
         responseWrapper = requestService.execute(requestEntity, CREATE.getOperationType());
+        if (!responseWrapper.isSuccessful()) {
+            return ResponseEntity.badRequest().body(responseWrapper);
+        }
+        RequestEntity requestToAssign = requestService.findRequestByRequestCode(requestEntity.getRequestCode());
+        assignmentEntity.setRequest(requestToAssign);
         assigmentService.executeCreation(assignmentEntity);
         return ResponseEntity.ok(responseWrapper);
     }
