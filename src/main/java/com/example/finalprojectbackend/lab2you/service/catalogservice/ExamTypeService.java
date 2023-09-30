@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.ExamTypeEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
@@ -178,5 +179,21 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         examType.setDescription(catalogDTO.getDescription());
         examType.setUpdatedBy(userLogged);
         return examType;
+    }
+
+    public ExamTypeEntity findExamByName(String name){
+        return executeReadAll().getData().stream()
+                .filter(item -> item instanceof CatalogWrapper)
+                .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                .filter(catalogWrapper -> catalogWrapper.getName().equals(name))
+                .findFirst()
+                .map(catalogWrapper -> {
+                    ExamTypeEntity entity = new ExamTypeEntity();
+                    entity.setId(catalogWrapper.getId());
+                    entity.setName(catalogWrapper.getName());
+                    entity.setDescription(catalogWrapper.getDescription());
+                    return entity;
+                })
+                .orElse(new ExamTypeEntity());
     }
 }

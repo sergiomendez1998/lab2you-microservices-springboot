@@ -1,5 +1,6 @@
 package com.example.finalprojectbackend.lab2you.service;
 
+import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudServiceProcessingController;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
@@ -7,6 +8,7 @@ import com.example.finalprojectbackend.lab2you.db.model.entities.ExamTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.RequestEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.SampleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.StatusEntity;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.RequestWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.StatusRequestWrapper;
@@ -152,24 +154,9 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         LocalDateTime localDateTime = LocalDateTime.now();
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         requestEntity.setRequestCode(Lab2YouUtils.generateRequestCode(date));
-
-        StatusEntity statusEntity = statusService.executeReadAll()
-                .getData()
-                .stream()
-                .map(status -> (StatusEntity) status)
-                .filter(status -> status.getName().equals(CREATED.getStatusType()))
-                .findFirst()
-                .orElse(null);
+        StatusEntity statusEntity = statusService.findStatusByName(CREATED.getStatusType());
+        ExamTypeEntity examTypeEntity = examTypeService.findExamByName(requestDTO.getExamType().getName());
         requestEntity.setStatusEntities(Collections.singletonList(statusEntity));
-
-        ExamTypeEntity examTypeEntity = examTypeService.executeReadAll()
-                .getData()
-                .stream()
-                .map(exam -> (ExamTypeEntity) exam)
-                .filter(exam -> exam.getName().equals(requestDTO.getExamType().getName()))
-                .findFirst()
-                .orElse(null);
-
         requestEntity.setExamType(examTypeEntity);
         return requestEntity;
     }

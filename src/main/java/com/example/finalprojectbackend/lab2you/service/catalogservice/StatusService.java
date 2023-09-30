@@ -1,6 +1,7 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
+import com.example.finalprojectbackend.lab2you.db.model.entities.ExamTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.StatusEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
@@ -181,5 +182,21 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
         statusEntity.setName(catalogDTO.getName());
         statusEntity.setUpdatedBy(userLogged);
         return statusEntity;
+    }
+
+    public StatusEntity findStatusByName(String name){
+        return executeReadAll().getData().stream()
+                .filter(item -> item instanceof CatalogWrapper)
+                .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                .filter(catalogWrapper -> catalogWrapper.getName().equals(name))
+                .findFirst()
+                .map(catalogWrapper -> {
+                    StatusEntity entity = new StatusEntity();
+                    entity.setId(catalogWrapper.getId());
+                    entity.setName(catalogWrapper.getName());
+                    entity.setDescription(catalogWrapper.getDescription());
+                    return entity;
+                })
+                .orElse(new StatusEntity());
     }
 }
