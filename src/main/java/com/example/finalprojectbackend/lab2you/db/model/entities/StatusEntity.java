@@ -23,13 +23,7 @@ public class StatusEntity extends BaseEntity{
     private Long id;
     private String name;
     private String description;
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "request_status",
-            joinColumns = @JoinColumn(name = "status_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id")
-    )
+    @ManyToMany(mappedBy = "statusEntities", fetch = FetchType.LAZY)
     private List<RequestEntity> requests = new ArrayList<>();
 
     public StatusEntity(String name, String description) {

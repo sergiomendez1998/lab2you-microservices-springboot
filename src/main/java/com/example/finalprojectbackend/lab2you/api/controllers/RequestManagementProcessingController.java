@@ -51,7 +51,7 @@ public class RequestManagementProcessingController {
         UserEntity userAssignedBy = currentUserProvider.getCurrentUser();
 
         if (userAssignedBy==null || userAssignedBy.getUserType().equals(Lab2YouConstants.lab2YouUserTypes.CUSTOMER.getUserType())) {
-            UserEntity userAssignedBySystem = userService.findByEmail("system@system.com");
+            UserEntity userAssignedBySystem = userService.findByEmail("application@application.com");
             assignmentEntity.setAssignedByEmployee(userAssignedBySystem.getEmployee());
         }
 
@@ -72,6 +72,7 @@ public class RequestManagementProcessingController {
         RequestEntity requestToAssign = requestService.findRequestByRequestCode(requestEntity.getRequestCode());
         assignmentEntity.setRequest(requestToAssign);
         assigmentService.executeCreation(assignmentEntity);
+        responseWrapper.setMessage("Solicitud No. " + requestEntity.getRequestCode() + " creada exitosamente");
         return ResponseEntity.ok(responseWrapper);
     }
 

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Qualifier("examType")
@@ -181,19 +182,26 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         return examType;
     }
 
-    public ExamTypeEntity findExamByName(String name){
-        return executeReadAll().getData().stream()
-                .filter(item -> item instanceof CatalogWrapper)
-                .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
-                .filter(catalogWrapper -> catalogWrapper.getName().equals(name))
-                .findFirst()
-                .map(catalogWrapper -> {
-                    ExamTypeEntity entity = new ExamTypeEntity();
-                    entity.setId(catalogWrapper.getId());
-                    entity.setName(catalogWrapper.getName());
-                    entity.setDescription(catalogWrapper.getDescription());
-                    return entity;
-                })
-                .orElse(new ExamTypeEntity());
+    public List<ExamTypeEntity> findExamByNames(List<String> names) {
+        List<ExamTypeEntity> result = new ArrayList<>();
+
+        for (String name : names) {
+            List<CatalogWrapper> catalogWrappers = executeReadAll().getData().stream()
+                    .filter(item -> item instanceof CatalogWrapper)
+                    .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                    .filter(catalogWrapper -> catalogWrapper.getName().equals(name))
+                    .toList();
+
+            if (!catalogWrappers.isEmpty()) {
+                ExamTypeEntity entity = new ExamTypeEntity();
+                CatalogWrapper catalogWrapper = catalogWrappers.get(0); // Tomamos el primero si hay múltiples coincidencias
+                entity.setId(catalogWrapper.getId());
+                entity.setName(catalogWrapper.getName());
+                entity.setDescription(catalogWrapper.getDescription());
+                result.add(entity);
+            }
+        }
+
+        return result;
     }
 }

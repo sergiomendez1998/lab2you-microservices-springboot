@@ -1,11 +1,9 @@
 package com.example.finalprojectbackend.lab2you.service;
 
-import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudServiceProcessingController;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.RequestWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.StatusRequestWrapper;
@@ -17,10 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.statusTypes.*;
@@ -84,10 +79,8 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         if (Lab2YouUtils.isObjectNullOrEmpty(entity.getCustomer())) {
             responseWrapper.addError("cliente", "el cliente solicitante no debe de ser nulo");
         }
-        if (Lab2YouUtils.isObjectNullOrEmpty(entity.getExamType())) {
-            responseWrapper.addError("tipo de examen", "el tipo de examen solicitado no debe de ser nulo");
-        }
-        if (Lab2YouUtils.isObjectNullOrEmpty(entity.getExamType())) {
+
+        if (entity.getExamTypes() == null || entity.getExamTypes().isEmpty()) {
             responseWrapper.addError("tipo de examen", "el tipo de examen solicitado no debe de ser nulo");
         }
         if (Lab2YouUtils.isObjectNullOrEmpty(entity.getSupportType())) {
@@ -148,6 +141,8 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
 
     public RequestEntity mapToRequestEntity(RequestDTO requestDTO) {
         RequestEntity requestEntity = new RequestEntity();
+        List<String> examNames = new ArrayList<>();
+        requestDTO.getExamType().forEach(examTypeDTO -> examNames.add(examTypeDTO.getName()));
         requestEntity.setSupportNumber(requestDTO.getSupportNumber());
         requestEntity.setEmail(requestDTO.getEmail());
         requestEntity.setRemark(requestDTO.getRemark());
@@ -156,10 +151,10 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         requestEntity.setRequestCode(Lab2YouUtils.generateRequestCode(date));
         SupportTypeEntity supportTypeEntity = supportTypeService.getSupportByName(requestDTO.getSupportType().getName());
         StatusEntity statusEntity = statusService.findStatusByName(CREATED.getStatusType());
-        ExamTypeEntity examTypeEntity = examTypeService.findExamByName(requestDTO.getExamType().getName());
+        List<ExamTypeEntity> examTypes = examTypeService.findExamByNames(examNames);
         requestEntity.setSupportType(supportTypeEntity);
-        requestEntity.setStatusEntities(Collections.singletonList(statusEntity));
-        requestEntity.setExamType(examTypeEntity);
+        requestEntity.getStatusEntities().add(statusEntity);
+        requestEntity.getExamTypes().addAll(examTypes);
         return requestEntity;
     }
 
@@ -173,7 +168,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         requestWrapper.setCustomerNit(requestEntity.getCustomer().getNit());
         requestWrapper.setCustomerExpedientNumber(requestEntity.getCustomer().getExpedientNumber());
         requestWrapper.setCreationDate(requestEntity.getReceptionDate());
-        requestWrapper.setExamType(requestEntity.getExamType().getName());
+//        requestWrapper.setExamType(requestEntity.getExamType().getName());
         requestWrapper.setSupportNumber(requestEntity.getSupportNumber());
 
         StatusEntity mostRecentStatus = getMostRecentStatusForRequest(requestEntity);
