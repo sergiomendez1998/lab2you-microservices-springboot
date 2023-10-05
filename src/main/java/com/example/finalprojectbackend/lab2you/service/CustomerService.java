@@ -157,11 +157,11 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
             responseWrapper.addError("lastName", "el apellido es requerido");
         }
 
-        if (Lab2YouUtils.isNullOrEmpty(entity.getCui())) {//esta llamando al método getCui pero el mensaje es para nit, lo cambie al cui
+        if (Lab2YouUtils.isNullOrEmpty(entity.getCui())) {
             responseWrapper.addError("cui", "el cui es requerido");
         }
 
-        if (Lab2YouUtils.isObjectNullOrEmpty(entity.getNit())){//agregue la validación para que el nit sea obligatorio porque vi que no estaba, o por lo menos yo no lo vi
+        if (Lab2YouUtils.isObjectNullOrEmpty(entity.getNit())){
             responseWrapper.addError("nit", "el nit es requerido");
         }
 

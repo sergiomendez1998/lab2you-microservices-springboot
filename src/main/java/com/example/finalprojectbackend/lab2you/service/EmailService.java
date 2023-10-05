@@ -25,7 +25,7 @@ public class EmailService {
                 + "Tu usuario es: "
                 + customerDTO.getUser().getEmail() + "\n" + "Tu Contraseña: "
                 + customerDTO.getUser().getPassword() + "\n\n" + "Gracias por elegir lab2you donde te hacemos la vida facil en tus laboratorios!\n\n"
-                + "Salduos Coordiales,\n"
+                + "Saludos Coordiales,\n"
                 + "Equipo lab2you");
         javaMailSender.send(message);
     }
