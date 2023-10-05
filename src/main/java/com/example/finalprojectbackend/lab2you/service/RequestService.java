@@ -195,7 +195,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
 
             responseWrapper = new ResponseWrapper();
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Statuses found");
+            responseWrapper.setMessage("Request detail");
             responseWrapper.setData(statusRequestWrappers);
             return responseWrapper;
     }
