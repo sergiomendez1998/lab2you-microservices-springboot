@@ -110,11 +110,11 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
     @Override
     public ResponseWrapper validateForCreation(AnalysisDocumentTypeEntity entity) {
         if (entity.getName() ==null || entity.getName().isEmpty()) {
-            responseWrapper.addError("name", "el nombre no puedo ser nullo o vacio");
+            responseWrapper.addError("name", "el nombre no puedo ser nulo o vacio");
         }
 
         if (entity.getDescription() ==null || entity.getDescription().isEmpty()) {
-            responseWrapper.addError("description", "la descripcion no puedo ser nullo o vacio");
+            responseWrapper.addError("description", "la descripcion no puedo ser nulo o vacio");
         }
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {

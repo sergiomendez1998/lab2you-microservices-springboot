@@ -72,26 +72,23 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
     protected ResponseWrapper validateForCreation(RequestEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (Lab2YouUtils.isObjectNullOrEmpty(entity.getCustomer())) {
-            responseWrapper.addError("cliente", "el cliente solicitante no debe de ser nulo");
+            responseWrapper.addError("customer", "el cliente solicitante no debe de ser nulo");
         }
 
          if (entity.getRequestDetails().isEmpty()) {
             responseWrapper.addError("requestDetails", "el requestDetails solicitado no debe de ser nulo");
         }
         if (Lab2YouUtils.isObjectNullOrEmpty(entity.getSupportType())) {
-            responseWrapper.addError("tipo de soporte", "el tipo de soporte solicitado no debe de ser nulo");
+            responseWrapper.addError("supportType", "el tipo de soporte solicitado no debe de ser nulo");
         }
         if (Lab2YouUtils.isNullOrEmpty(entity.getSupportNumber())) {
-            responseWrapper.addError("numero de soporte", "el numero de soporte solicitado no debe de ser nulo");
+            responseWrapper.addError("supportNumber", "el numero de soporte solicitado no debe de ser nulo");
         }
         if (Lab2YouUtils.isNullOrEmpty(entity.getEmail())) {
-            responseWrapper.addError("numero de soporte", "el numero de soporte solicitado no debe de ser nulo");
-        }
-        if (Lab2YouUtils.isNullOrEmpty(entity.getSupportNumber())) {
-            responseWrapper.addError("numero de soporte", "el numero de soporte solicitado no debe de ser nulo");
+            responseWrapper.addError("email", "el email no debe de ser nulo");
         }
         if (!Lab2YouUtils.validatePhoneNumber(entity.getSupportNumber())) {
-            responseWrapper.addError("numero de soporte", "el numero de soporte debe de tener 8 digitos");
+            responseWrapper.addError("supportNumber", "el numero de soporte debe de tener 8 digitos");
         }
         if (!Lab2YouUtils.verifyEmailFormat(entity.getEmail())) {
             responseWrapper.addError("email", "el email no tiene un formato valido");
@@ -107,16 +104,13 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
             responseWrapper.addError("id", "el id no debe de ser nulo");
         }
         if (Lab2YouUtils.isNullOrEmpty(entity.getSupportNumber())) {
-            responseWrapper.addError("numero de soporte", "el numero de soporte solicitado no debe de ser nulo");
+            responseWrapper.addError("supportNumber", "el numero de soporte solicitado no debe de ser nulo");
         }
         if (Lab2YouUtils.isNullOrEmpty(entity.getEmail())) {
-            responseWrapper.addError("numero de soporte", "el numero de soporte solicitado no debe de ser nulo");
-        }
-        if (Lab2YouUtils.isNullOrEmpty(entity.getSupportNumber())) {
-            responseWrapper.addError("numero de soporte", "el numero de soporte solicitado no debe de ser nulo");
+            responseWrapper.addError("email", "el email no debe de ser nulo");
         }
         if (!Lab2YouUtils.validatePhoneNumber(entity.getSupportNumber())) {
-            responseWrapper.addError("numero de soporte", "el numero de soporte debe de tener 8 digitos");
+            responseWrapper.addError("supportNumber", "el numero de soporte debe de tener 8 digitos");
         }
         if (!Lab2YouUtils.verifyEmailFormat(entity.getEmail())) {
             responseWrapper.addError("email", "el email no tiene un formato valido");

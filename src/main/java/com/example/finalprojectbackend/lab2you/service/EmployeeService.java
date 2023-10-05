@@ -97,10 +97,10 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
 
         responseWrapper = new ResponseWrapper();
         if (Lab2YouUtils.isNullOrEmpty(entity.getFirstName())) {
-            responseWrapper.addError("nombre", "el nombre es requerido");
+            responseWrapper.addError("firstName", "el nombre es requerido");
         }
         if (Lab2YouUtils.isNullOrEmpty(entity.getLastName())) {
-            responseWrapper.addError("apellido", "el apellido es requerido");
+            responseWrapper.addError("lastName", "el apellido es requerido");
         }
         if (!Lab2YouUtils.validateCui(entity.getCui())) {
             responseWrapper.addError("cui", "el cui debe tener 13 digitos");
@@ -109,10 +109,10 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
             responseWrapper.addError("telefono", "el telefono es requerido");
         }
         if(!Lab2YouUtils.validatePhoneNumber(entity.getPhoneNumber())){
-            responseWrapper.addError("telefono", "el telefono debe tener 8 digitos");
+            responseWrapper.addError("phoneNumber", "el telefono debe tener 8 digitos");
         }
         if(Lab2YouUtils.isNullOrEmpty(entity.getAddress())){
-            responseWrapper.addError("direccion", "la direccion es requerida");
+            responseWrapper.addError("address", "la direccion es requerida");
         }
         EmployeeEntity cuiExist = employeeRepository.findByCui(entity.getCui());
         EmployeeEntity phoneNumberExist = employeeRepository.findByPhoneNumber(entity.getPhoneNumber());
@@ -120,7 +120,7 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
             responseWrapper.addError("cui", "el cui ya existe");
         }
         if(phoneNumberExist != null){
-            responseWrapper.addError("telefono", "el telefono ya existe");
+            responseWrapper.addError("phoneNumber", "el telefono ya existe");
         }
         ResponseWrapper validationResponseForUser = userService.validateForCreation(entity.getUser());
         if(!validationResponseForUser.getErrors().isEmpty()){
@@ -142,7 +142,7 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
             responseWrapper.addError("email", "el email es requerido");
         }
         if (Lab2YouUtils.isNullOrEmpty(entity.getUser().getRole().getName())) {
-            responseWrapper.addError("rol", "el rol es requerido");
+            responseWrapper.addError("role", "el rol es requerido");
         }
 
         ResponseWrapper validationResponseForUser = userService.validateForUpdate(entity.getUser());

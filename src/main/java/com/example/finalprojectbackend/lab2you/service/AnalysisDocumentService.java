@@ -87,19 +87,19 @@ public class AnalysisDocumentService extends CrudServiceProcessingController<Ana
     protected ResponseWrapper validateForCreation(AnalysisDocumentEntity entity) {
         responseWrapper = new ResponseWrapper();
         if(Lab2YouUtils.isNullOrEmpty(entity.getPath())){
-            responseWrapper.addError("path","path no debe de ser nulo");
+            responseWrapper.addError("path","la ruta no debe de ser nulo");
         }
 
         if(Lab2YouUtils.isNullOrEmpty(entity.getResolution())){
-            responseWrapper.addError("conclusion","conclusion no debe de ser nulo");
+            responseWrapper.addError("resolution","la conclusion no debe de ser nulo");
         }
 
         if(Lab2YouUtils.isObjectNullOrEmpty(entity.getSample())){
-            responseWrapper.addError("observation","observation no debe de ser nulo");
+            responseWrapper.addError("observation","la observacion no debe de ser nulo");
         }
 
         if(Lab2YouUtils.isObjectNullOrEmpty(entity.getAnalysisDocumentType())){
-            responseWrapper.addError("analysisDocumentType","analysisDocumentType no debe de ser nulo");
+            responseWrapper.addError("analysisDocumentType","el tipo de documento de analisis no debe de ser nulo");
         }
 
         return responseWrapper;

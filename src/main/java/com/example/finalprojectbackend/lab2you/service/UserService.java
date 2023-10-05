@@ -76,15 +76,15 @@ public class UserService extends CrudServiceProcessingController<UserEntity> {
         }
 
         if (entity.getEmail() == null) {
-            responseWrapper.addError("email","email es requiredo");
+            responseWrapper.addError("email","email es requerido");
         }
 
         if (entity.getPassword() == null) {
-            responseWrapper.addError("password","password es requiredo");
+            responseWrapper.addError("password","password es requerido");
         }
 
         if (entity.getRole() == null) {
-            responseWrapper.addError("role","role es requiredo");
+            responseWrapper.addError("role","role es requerido");
         }
 
        UserEntity  userEntityFound = userRepository.findByEmail(entity.getEmail());
@@ -99,7 +99,7 @@ public class UserService extends CrudServiceProcessingController<UserEntity> {
     protected ResponseWrapper validateForUpdate(UserEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getEmail() == null) {
-            responseWrapper.addError("email","email es requiredo");
+            responseWrapper.addError("email","email es requerido");
         }
 
         if (!Lab2YouUtils.verifyEmailFormat(entity.getEmail())) {

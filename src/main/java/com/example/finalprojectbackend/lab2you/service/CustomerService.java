@@ -94,11 +94,11 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
 
         responseWrapper = new ResponseWrapper();
         if (Lab2YouUtils.isNullOrEmpty(entity.getFirstName())) {
-            responseWrapper.addError("nombre", "el nombre es requerido");
+            responseWrapper.addError("firstName", "el nombre es requerido");
         }
 
         if (Lab2YouUtils.isNullOrEmpty(entity.getLastName())) {
-            responseWrapper.addError("apellido", "el apellido es requerido");
+            responseWrapper.addError("lastName", "el apellido es requerido");
         }
 
         if (!Lab2YouUtils.validateCui(entity.getCui())) {
@@ -110,15 +110,15 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
         }
 
         if (Lab2YouUtils.isNullOrEmpty(entity.getPhoneNumber())) {
-            responseWrapper.addError("telefono", "el telefono es requerido");
+            responseWrapper.addError("phoneNumber", "el telefono es requerido");
         }
 
         if (!Lab2YouUtils.validatePhoneNumber(entity.getPhoneNumber())) {
-            responseWrapper.addError("telefono", "el telefono debe de tener 8 digitos");
+            responseWrapper.addError("phoneNumber", "el telefono debe de tener 8 digitos");
         }
 
         if (Lab2YouUtils.isNullOrEmpty(entity.getAddress())) {
-            responseWrapper.addError("direccion", "la direccion es requerida");
+            responseWrapper.addError("address", "la direccion es requerida");
         }
 
         CustomerEntity nitExist = customerRepository.findByNit(entity.getNit());
@@ -130,7 +130,7 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
         }
 
         if (phoneNumberExist != null) {
-            responseWrapper.addError("telefono", "el telefono ya existe");
+            responseWrapper.addError("phoneNumber", "el telefono ya existe");
         }
 
         if (cuiExist != null) {
@@ -150,14 +150,18 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
     protected ResponseWrapper validateForUpdate(CustomerEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (Lab2YouUtils.isNullOrEmpty(entity.getFirstName())) {
-            responseWrapper.addError("nombre", "el nombre es requerido");
+            responseWrapper.addError("firstName", "el nombre es requerido");
         }
 
         if (Lab2YouUtils.isNullOrEmpty(entity.getLastName())) {
-            responseWrapper.addError("apellido", "el apellido es requerido");
+            responseWrapper.addError("lastName", "el apellido es requerido");
         }
 
-        if (Lab2YouUtils.isNullOrEmpty(entity.getCui())) {
+        if (Lab2YouUtils.isNullOrEmpty(entity.getCui())) {//esta llamando al método getCui pero el mensaje es para nit, lo cambie al cui
+            responseWrapper.addError("cui", "el cui es requerido");
+        }
+
+        if (Lab2YouUtils.isObjectNullOrEmpty(entity.getNit())){//agregue la validación para que el nit sea obligatorio porque vi que no estaba, o por lo menos yo no lo vi
             responseWrapper.addError("nit", "el nit es requerido");
         }
 

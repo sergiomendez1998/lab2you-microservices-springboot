@@ -48,15 +48,15 @@ public class AssigmentService extends CrudServiceProcessingController<Assignment
     protected ResponseWrapper validateForCreation(AssignmentEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (Lab2YouUtils.isObjectNullOrEmpty(entity.getRequest())) {
-            responseWrapper.addError("solictud", "la solicitud no debe de ser nula");
+            responseWrapper.addError("request", "la solicitud no debe de ser nula");
         }
 
         if (Lab2YouUtils.isObjectNullOrEmpty(entity.getAssignedByEmployee())) {
-            responseWrapper.addError("empleado", "el empleado que asigna no debe de ser nulo");
+            responseWrapper.addError("employee", "el empleado que asigna no debe de ser nulo");
         }
 
         if (Lab2YouUtils.isObjectNullOrEmpty(entity.getAssignedToEmployee())) {
-            responseWrapper.addError("empleado", "el empleado que recibe no debe de ser nulo");
+            responseWrapper.addError("employee", "el empleado que recibe no debe de ser nulo");
         }
 
         return responseWrapper;

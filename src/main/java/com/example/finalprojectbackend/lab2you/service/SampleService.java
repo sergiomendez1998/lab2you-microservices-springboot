@@ -74,11 +74,11 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
         responseWrapper = new ResponseWrapper();
 
         if(Lab2YouUtils.isNullOrEmpty(entity.getPresentation())){
-            responseWrapper.addError("presentacion", "la presentacion es requerida");
+            responseWrapper.addError("presentation", "la presentacion es requerida");
         }
 
         if(entity.getQuantity() == null){
-            responseWrapper.addError("cantidad", "la cantidad es requerida");
+            responseWrapper.addError("quantity", "la cantidad es requerida");
         }
 
         if (Lab2YouUtils.isObjectNullOrEmpty(entity.getRequestDetail())){
@@ -86,15 +86,15 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
         }
 
         if (entity.getExpirationDate() == null){
-            responseWrapper.addError("fecha de expiracion", "la fecha de expiracion es requerida: ");
+            responseWrapper.addError("expirationDate", "la fecha de expiracion es requerida: ");
         }
 
         if (!Lab2YouUtils.validateQuantity(entity.getQuantity())){
-            responseWrapper.addError("cantidad", "la cantidad debe tener entre 1 y 4 digitos");
+            responseWrapper.addError("quantity", "la cantidad debe tener entre 1 y 4 digitos");
         }
 
         if (Lab2YouUtils.isObjectNullOrEmpty(entity.getSampleTypeEntity())){
-            responseWrapper.addError("tipo de muestra", "el tipo de muestra es requerido");
+            responseWrapper.addError("sampleType", "el tipo de muestra es requerido");
         }
 
 

@@ -96,11 +96,11 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
     protected ResponseWrapper validateForCreation(ItemEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (entity.getName() ==null || entity.getName().isEmpty()) {
-            responseWrapper.addError("nombre", "el nombre no puedo ser nullo o vacio");
+            responseWrapper.addError("name", "el nombre no puedo ser nulo o vacio");
         }
 
         if (entity.getDescription() ==null || entity.getDescription().isEmpty()) {
-            responseWrapper.addError("descripcion", "la descripcion no puedo ser nullo o vacio");
+            responseWrapper.addError("description", "la descripcion no puedo ser nulo o vacio");
         }
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
