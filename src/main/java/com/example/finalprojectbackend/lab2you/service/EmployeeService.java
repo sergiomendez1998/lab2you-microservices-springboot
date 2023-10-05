@@ -106,7 +106,7 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
             responseWrapper.addError("cui", "el cui debe tener 13 digitos");
         }
         if(Lab2YouUtils.isNullOrEmpty(entity.getPhoneNumber())){
-            responseWrapper.addError("telefono", "el telefono es requerido");
+            responseWrapper.addError("phoneNumber", "el telefono es requerido");
         }
         if(!Lab2YouUtils.validatePhoneNumber(entity.getPhoneNumber())){
             responseWrapper.addError("phoneNumber", "el telefono debe tener 8 digitos");
