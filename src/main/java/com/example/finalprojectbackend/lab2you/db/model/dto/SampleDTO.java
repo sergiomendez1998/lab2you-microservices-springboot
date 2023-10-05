@@ -13,6 +13,6 @@ public class SampleDTO {
     private Long quantity;
     private SampleTypeDTO sampleType;
     private MeasureUnitDTO measureUnit;
-    private Long requestId;
+    private Long requestDetailId;
     private Date expirationDate;
 }

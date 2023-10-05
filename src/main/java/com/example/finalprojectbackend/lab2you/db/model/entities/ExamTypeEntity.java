@@ -24,9 +24,8 @@ public class ExamTypeEntity extends BaseEntity {
     private Long id;
     private String name;
     private String description;
-
-    @ManyToMany (mappedBy = "examTypes")
-    private List<RequestEntity> requestEntities = new ArrayList<>();
+    @OneToMany(mappedBy = "examType")
+    private List<RequestDetailEntity> requestDetails = new ArrayList<>();
 
     public ExamTypeEntity(String name, String description) {
         this.name = name;

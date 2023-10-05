@@ -9,7 +9,6 @@ import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.StatusRequestWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestRepository;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.ExamTypeService;
-import com.example.finalprojectbackend.lab2you.service.catalogservice.StatusService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.SupportTypeService;
 import org.springframework.stereotype.Service;
 
@@ -18,22 +17,18 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.statusTypes.*;
 
 @Service
 public class RequestService extends CrudServiceProcessingController<RequestEntity> {
 
     private final RequestRepository requestRepository;
     private final SupportTypeService supportTypeService;
-    private final AssigmentService assigmentService;
     private ResponseWrapper responseWrapper;
-    private final StatusService statusService;
+
     private final ExamTypeService examTypeService;
 
-    public RequestService(RequestRepository requestRepository, AssigmentService assigmentService, StatusService statusService, ExamTypeService examTypeService, SupportTypeService supportTypeService) {
+    public RequestService(RequestRepository requestRepository, ExamTypeService examTypeService, SupportTypeService supportTypeService) {
         this.requestRepository = requestRepository;
-        this.assigmentService = assigmentService;
-        this.statusService = statusService;
         this.examTypeService = examTypeService;
         this.supportTypeService = supportTypeService;
     }
@@ -80,8 +75,8 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
             responseWrapper.addError("cliente", "el cliente solicitante no debe de ser nulo");
         }
 
-        if (entity.getExamTypes() == null || entity.getExamTypes().isEmpty()) {
-            responseWrapper.addError("tipo de examen", "el tipo de examen solicitado no debe de ser nulo");
+         if (entity.getRequestDetails().isEmpty()) {
+            responseWrapper.addError("requestDetails", "el requestDetails solicitado no debe de ser nulo");
         }
         if (Lab2YouUtils.isObjectNullOrEmpty(entity.getSupportType())) {
             responseWrapper.addError("tipo de soporte", "el tipo de soporte solicitado no debe de ser nulo");
@@ -150,17 +145,14 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         requestEntity.setRequestCode(Lab2YouUtils.generateRequestCode(date));
         SupportTypeEntity supportTypeEntity = supportTypeService.getSupportByName(requestDTO.getSupportType().getName());
-        StatusEntity statusEntity = statusService.findStatusByName(CREATED.getStatusType());
         List<ExamTypeEntity> examTypes = examTypeService.findExamByNames(examNames);
+        examTypes.forEach(requestEntity::addExamType);
         requestEntity.setSupportType(supportTypeEntity);
-        requestEntity.getStatusEntities().add(statusEntity);
-        requestEntity.getExamTypes().addAll(examTypes);
         return requestEntity;
     }
 
     private RequestWrapper mapToRequestWrapper(RequestEntity requestEntity) {
         RequestWrapper requestWrapper = new RequestWrapper();
-
         requestWrapper.setId(requestEntity.getId());
         requestWrapper.setRequestCode(requestEntity.getRequestCode());
         requestWrapper.setCustomerFirstName(requestEntity.getCustomer().getFirstName());
@@ -168,50 +160,35 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         requestWrapper.setCustomerNit(requestEntity.getCustomer().getNit());
         requestWrapper.setCustomerExpedientNumber(requestEntity.getCustomer().getExpedientNumber());
         requestWrapper.setCreationDate(requestEntity.getReceptionDate());
-//        requestWrapper.setExamType(requestEntity.getExamType().getName());
         requestWrapper.setSupportNumber(requestEntity.getSupportNumber());
-
         StatusEntity mostRecentStatus = getMostRecentStatusForRequest(requestEntity);
         if (mostRecentStatus != null) {
             requestWrapper.setStatus(mostRecentStatus.getName());
         }
-
-        requestWrapper.setSampleQuantity(Lab2YouUtils.calculateQuantityFromList(requestEntity.getSamples()));
-        requestWrapper.setItemQuantity(Lab2YouUtils.calculateQuantityFromList(requestEntity.getSamples().stream()
-                .map(SampleEntity::getItemEntities)
-                .flatMap(List::stream)
-                .collect(Collectors.toList())));
-        requestWrapper.setUserAssigned(assigmentService.findAllByRequestId(requestEntity.getId()).get(0).getAssignedToEmployee().getFirstName());
-
-        requestWrapper.setDocumentQuantity(Lab2YouUtils.calculateQuantityFromList(requestEntity.getSamples().stream()
-                .map(SampleEntity::getAnalysisDocumentEntities)
-                .flatMap(List::stream)
-                .collect(Collectors.toList())));
-
-        requestWrapper.setExpirationDays(Lab2YouUtils.calculateExpirationDays(requestEntity.getReceptionDate()));
         return requestWrapper;
     }
 
     public StatusEntity getMostRecentStatusForRequest(RequestEntity request) {
 
-        List<StatusEntity> filteredStatusEntities = request.getStatusEntities().stream()
-                .filter(status -> status.getRequests().contains(request))
+        List<RequestStatusEntity> filteredStatusEntities =
+            request.getRequestStatuses().stream()
+                .filter(requestStatusEntity -> requestStatusEntity.getRequest().getId().equals(request.getId()))
                 .collect(Collectors.toList());
 
         if (filteredStatusEntities.isEmpty()) {
             return null;
         }
 
-        filteredStatusEntities.sort(Comparator.comparing(StatusEntity::getCreatedAt).reversed());
-        return filteredStatusEntities.get(0);
+        filteredStatusEntities.sort(Comparator.comparing(RequestStatusEntity::getCreatedAt).reversed());
+
+        return filteredStatusEntities.get(0).getStatus();
     }
 
     public RequestEntity getRequestById(Long id) {
         return requestRepository.findById(id).orElse(null);
     }
     public ResponseWrapper getStatusesByRequestId(Long id) {
-         List<StatusEntity> statusEntities = requestRepository.findStatusesByRequestId(id);
-         StatusRequestWrapper statusRequestWrapper = new StatusRequestWrapper();
+         List<RequestStatusEntity> statusEntities = requestRepository.findStatusesByRequestId(id);
 
          List<StatusRequestWrapper> statusRequestWrappers = statusEntities.stream()
                  .map(this::mapToStatusRequestWrapper)
@@ -224,10 +201,12 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
             return responseWrapper;
     }
 
-    private StatusRequestWrapper mapToStatusRequestWrapper(StatusEntity statusEntity) {
+    private StatusRequestWrapper mapToStatusRequestWrapper(RequestStatusEntity requestStatusEntity) {
         StatusRequestWrapper statusRequestWrapper = new StatusRequestWrapper();
-        statusRequestWrapper.setStatusName(statusEntity.getName());
-        statusRequestWrapper.setRequestCode(statusEntity.getRequests().get(0).getRequestCode());
+        statusRequestWrapper.setId(requestStatusEntity.getId());
+        statusRequestWrapper.setStatusName(requestStatusEntity.getStatus().getName());
+        statusRequestWrapper.setRequestCode(requestStatusEntity.getRequest().getRequestCode());
+        statusRequestWrapper.setAssignedDate(requestStatusEntity.getCreatedAt());
         return statusRequestWrapper;
     }
 

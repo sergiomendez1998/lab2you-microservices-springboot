@@ -199,4 +199,20 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
                 })
                 .orElse(new StatusEntity());
     }
+
+    public StatusEntity findStatusById(Long id){
+        return executeReadAll().getData().stream()
+                .filter(item -> item instanceof CatalogWrapper)
+                .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                .filter(catalogWrapper -> catalogWrapper.getId().equals(id))
+                .findFirst()
+                .map(catalogWrapper -> {
+                    StatusEntity entity = new StatusEntity();
+                    entity.setId(catalogWrapper.getId());
+                    entity.setName(catalogWrapper.getName());
+                    entity.setDescription(catalogWrapper.getDescription());
+                    return entity;
+                })
+                .orElse(new StatusEntity());
+    }
 }

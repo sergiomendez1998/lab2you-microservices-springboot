@@ -81,8 +81,8 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
             responseWrapper.addError("cantidad", "la cantidad es requerida");
         }
 
-        if (Lab2YouUtils.isObjectNullOrEmpty(entity.getRequestEntity())){
-            responseWrapper.addError("id de la solicitud", "el id de la solicitud es requerido");
+        if (Lab2YouUtils.isObjectNullOrEmpty(entity.getRequestDetail())){
+            responseWrapper.addError("RequestDetail", "el id del de la solicitud detalle es requerido");
         }
 
         if (entity.getExpirationDate() == null){
@@ -127,14 +127,12 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
         sampleWrapper.setPresentation(sampleEntity.getPresentation());
         sampleWrapper.setQuantity(sampleEntity.getQuantity());
         sampleWrapper.setExpirationDate(sampleEntity.getExpirationDate());
-        sampleWrapper.getRequest().setId(sampleEntity.getRequestEntity().getId());
         sampleWrapper.getSampleType().setId(sampleEntity.getSampleTypeEntity().getId());
         sampleWrapper.getSampleType().setName(sampleEntity.getSampleTypeEntity().getName());
         sampleWrapper.getSampleType().setDescription(sampleEntity.getSampleTypeEntity().getDescription());
         sampleWrapper.getMeasureUnit().setId(sampleEntity.getMeasureUnitEntity().getId());
         sampleWrapper.getMeasureUnit().setName(sampleEntity.getMeasureUnitEntity().getName());
         sampleWrapper.getMeasureUnit().setDescription(sampleEntity.getMeasureUnitEntity().getDescription());
-        sampleWrapper.getRequest().setId(sampleEntity.getRequestEntity().getId());
         return sampleWrapper;
     }
 

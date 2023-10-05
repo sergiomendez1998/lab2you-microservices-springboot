@@ -36,8 +36,8 @@ public class SampleEntity {
     private SampleTypeEntity sampleTypeEntity;
 
     @ManyToOne
-    @JoinColumn (name = "request_id")
-    private RequestEntity requestEntity;
+    @JoinColumn (name = "request_detail_id")
+    private RequestDetailEntity requestDetail;
 
     @OneToMany(mappedBy = "sample")
     private List<AnalysisDocumentEntity> analysisDocumentEntities = new ArrayList<>();

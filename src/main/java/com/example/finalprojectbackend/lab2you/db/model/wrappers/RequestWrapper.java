@@ -14,13 +14,7 @@ public class RequestWrapper {
     private String customerLastName;
     private String customerExpedientNumber;
     private String customerNit;
-    private String examType;
     private String supportNumber;
     private String status;
     private Date creationDate;
-    private int sampleQuantity;
-    private int itemQuantity;
-    private int documentQuantity;
-    private String userAssigned;
-    private int expirationDays;
 }

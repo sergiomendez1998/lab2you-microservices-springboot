@@ -133,10 +133,10 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
     protected ResponseWrapper validateForUpdate(EmployeeEntity entity) {
         responseWrapper = new ResponseWrapper();
         if (Lab2YouUtils.isNullOrEmpty(entity.getFirstName())) {
-            responseWrapper.addError("nombre", "el nombre es requerido");
+            responseWrapper.addError("firstName", "el nombre es requerido");
         }
         if (Lab2YouUtils.isNullOrEmpty(entity.getLastName())) {
-            responseWrapper.addError("apellido", "el apellido es requerido");
+            responseWrapper.addError("LastName", "el apellido es requerido");
         }
         if (Lab2YouUtils.isNullOrEmpty(entity.getUser().getEmail())) {
             responseWrapper.addError("email", "el email es requerido");

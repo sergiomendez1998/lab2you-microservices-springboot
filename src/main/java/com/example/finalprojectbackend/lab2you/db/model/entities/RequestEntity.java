@@ -32,37 +32,26 @@ public class RequestEntity {
     @JoinColumn(name = "support_type_id")
     private SupportTypeEntity supportType;
 
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "request_detail",
-            joinColumns =
-            @JoinColumn(name = "request_id", referencedColumnName = "id"),
-            inverseJoinColumns =
-            @JoinColumn(name = "exam_type_id", referencedColumnName = "id")
-    )
-    private List<ExamTypeEntity> examTypes = new ArrayList<>();
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "request_status",
-            joinColumns =
-            @JoinColumn(name = "request_id", referencedColumnName = "id"),
-            inverseJoinColumns =
-            @JoinColumn(name = "status_id", referencedColumnName = "id")
-    )
-    private List<StatusEntity> statusEntities = new ArrayList<>();
+    @OneToMany(mappedBy = "request")
+    private List<RequestDetailEntity> requestDetails = new ArrayList<>();
+
+    @OneToMany(mappedBy = "request")
+    private List<RequestStatusEntity> requestStatuses = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private CustomerEntity customer;
 
-    @OneToMany(mappedBy = "requestEntity")
-    private List<SampleEntity> samples = new ArrayList<>();
-
     @PrePersist
     public void prePersist() {
         this.isDeleted = false;
         this.receptionDate = new Date(System.currentTimeMillis());
+    }
+
+    public void addExamType(ExamTypeEntity examTypeEntity) {
+        RequestDetailEntity requestDetailEntity = new RequestDetailEntity();
+        requestDetailEntity.setExamType(examTypeEntity);
+        requestDetailEntity.setRequest(this);
+        this.requestDetails.add(requestDetailEntity);
     }
 }
