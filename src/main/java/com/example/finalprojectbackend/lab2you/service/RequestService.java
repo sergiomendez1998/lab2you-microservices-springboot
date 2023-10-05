@@ -2,11 +2,10 @@ package com.example.finalprojectbackend.lab2you.service;
 
 import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudServiceProcessingController;
+import com.example.finalprojectbackend.lab2you.db.model.dto.ExamTypeDTO;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.RequestWrapper;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.StatusRequestWrapper;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.*;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestRepository;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.ExamTypeService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.SupportTypeService;
@@ -201,6 +200,21 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
             return responseWrapper;
     }
 
+    public ResponseWrapper getAllExamsByRequestId(Long id){
+        List<RequestDetailEntity> requestDetailEntities = requestRepository.findDetailsByRequestId(id);
+
+        List<RequestDetailWrapper> requestDetailWrappers = requestDetailEntities.stream()
+                .map(this::mapToRequestDetailWrapper)
+                .collect(Collectors.toList());
+
+        responseWrapper = new ResponseWrapper();
+        responseWrapper.setSuccessful(true);
+        responseWrapper.setMessage("Exams found");
+        responseWrapper.setData(requestDetailWrappers);
+        return responseWrapper;
+
+    }
+
     private StatusRequestWrapper mapToStatusRequestWrapper(RequestStatusEntity requestStatusEntity) {
         StatusRequestWrapper statusRequestWrapper = new StatusRequestWrapper();
         statusRequestWrapper.setId(requestStatusEntity.getId());
@@ -208,6 +222,19 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         statusRequestWrapper.setRequestCode(requestStatusEntity.getRequest().getRequestCode());
         statusRequestWrapper.setAssignedDate(requestStatusEntity.getCreatedAt());
         return statusRequestWrapper;
+    }
+
+    public RequestDetailWrapper mapToRequestDetailWrapper(RequestDetailEntity requestDetail){
+        ExamTypeWrapper examTypeWrapper = new ExamTypeWrapper();
+        examTypeWrapper.setId(requestDetail.getExamType().getId());
+        examTypeWrapper.setName(requestDetail.getExamType().getName());
+        examTypeWrapper.setDescription(requestDetail.getExamType().getDescription());
+
+        RequestDetailWrapper requestDetailWrapper = new RequestDetailWrapper();
+        requestDetailWrapper.setId(requestDetail.getId());
+        requestDetailWrapper.setExamType(examTypeWrapper);
+        requestDetailWrapper.setRequestId(requestDetail.getRequest().getId());
+        return requestDetailWrapper;
     }
 
     @Override
