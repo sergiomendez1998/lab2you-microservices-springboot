@@ -59,6 +59,13 @@ public class RequestManagementProcessingController {
         return ResponseEntity.ok(responseWrapper);
     }
 
+    @GetMapping("/exams/{requestId}")
+    public ResponseEntity<ResponseWrapper> getExamsByRequestId(@PathVariable Long requestId) {
+        responseWrapper = new ResponseWrapper();
+        responseWrapper = requestService.getAllExamsByRequestId(requestId);
+        return ResponseEntity.ok(responseWrapper);
+    }
+
     @PostMapping
     public ResponseEntity<ResponseWrapper> create(@RequestBody RequestDTO requestDTO) {
         AssignmentEntity assignmentEntity = new AssignmentEntity();
