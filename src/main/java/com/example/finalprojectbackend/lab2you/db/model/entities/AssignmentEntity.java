@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @DynamicUpdate
@@ -29,6 +31,6 @@ public class AssignmentEntity {
     @ManyToOne
     @JoinColumn(name = "request_id")
     private RequestEntity request;
-    private String AssignationDate;
+    private LocalDate AssignationDate;
 
 }

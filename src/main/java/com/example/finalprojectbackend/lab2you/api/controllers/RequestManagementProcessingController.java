@@ -4,6 +4,7 @@ import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapperRequest;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestDetailRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestStatusRepository;
 import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
@@ -11,6 +12,8 @@ import com.example.finalprojectbackend.lab2you.service.*;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.StatusService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.operationTypes.*;
 
@@ -64,6 +67,12 @@ public class RequestManagementProcessingController {
         responseWrapper = new ResponseWrapper();
         responseWrapper = requestService.getAllExamsByRequestId(requestId);
         return ResponseEntity.ok(responseWrapper);
+    }
+
+    @GetMapping("/requestGeneralInfo/{requestId}")
+    public ResponseEntity<ResponseWrapperRequest<Map<String,String>>> getRequestGeneralInfo(@PathVariable Long requestId) {
+        var request = requestService.getGeneralInformationByRequestId(requestId);
+        return ResponseEntity.ok(request);
     }
 
     @PostMapping

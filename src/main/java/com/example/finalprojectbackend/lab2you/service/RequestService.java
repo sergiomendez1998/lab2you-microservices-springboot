@@ -2,7 +2,6 @@ package com.example.finalprojectbackend.lab2you.service;
 
 import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudServiceProcessingController;
-import com.example.finalprojectbackend.lab2you.db.model.dto.ExamTypeDTO;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.*;
@@ -26,10 +25,13 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
 
     private final ExamTypeService examTypeService;
 
-    public RequestService(RequestRepository requestRepository, ExamTypeService examTypeService, SupportTypeService supportTypeService) {
+    private final AssigmentService assigmentService;
+
+    public RequestService(RequestRepository requestRepository, ExamTypeService examTypeService, SupportTypeService supportTypeService, AssigmentService assigmentService) {
         this.requestRepository = requestRepository;
         this.examTypeService = examTypeService;
         this.supportTypeService = supportTypeService;
+        this.assigmentService = assigmentService;
     }
 
     @Override
@@ -209,6 +211,12 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
 
     }
 
+    public ResponseWrapperRequest<Map<String,String>> getGeneralInformationByRequestId(Long id){
+        RequestDetailEntity requestDetailEntity = requestRepository.findDetailsByRequestId(id).get(0);
+        Map<String, String> generalInformation = MapToGeneralInformationWrapper(requestDetailEntity);
+        return new ResponseWrapperRequest<Map<String, String>>(generalInformation, "General information found",true);
+    }
+
     private StatusRequestWrapper mapToStatusRequestWrapper(RequestStatusEntity requestStatusEntity) {
         StatusRequestWrapper statusRequestWrapper = new StatusRequestWrapper();
         statusRequestWrapper.setId(requestStatusEntity.getId());
@@ -229,6 +237,39 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         requestDetailWrapper.setExamType(examTypeWrapper);
         requestDetailWrapper.setRequestId(requestDetail.getRequest().getId());
         return requestDetailWrapper;
+    }
+
+    public Map<String, String> MapToGeneralInformationWrapper(RequestDetailEntity requestDetail) {
+
+        Map<String, String> generalInformation = new HashMap<>();
+        generalInformation.put("Código solicitud", requestDetail.getRequest().getRequestCode());
+        generalInformation.put("No. expediente", requestDetail.getRequest().getRequestCode());
+        generalInformation.put("Nit", requestDetail.getRequest().getCustomer().getNit());
+        generalInformation.put("No. soport", requestDetail.getRequest().getSupportNumber());
+        generalInformation.put("Tipo soporte", requestDetail.getRequest().getSupportType().getName());
+        generalInformation.put("Tipo solicitante", requestDetail.getRequest().getCustomer().getUser().getUserType());
+        List<AssignmentEntity> assignmentEntities = assigmentService.findAllByRequestId(requestDetail.getRequest().getId());
+         assignmentEntities.sort(Comparator.comparing(AssignmentEntity::getAssignationDate).reversed());
+
+        if (assignmentEntities.isEmpty()) {
+            generalInformation.put("Usuario asignación", "No asignado");
+        } else {
+            generalInformation.put("Usuario asignación", assignmentEntities.get(0).getAssignedToEmployee().getFirstName()+" "+assignmentEntities.get(0).getAssignedToEmployee().getLastName());
+        }
+        List<RequestStatusEntity> statusEntities = requestRepository.findStatusesByRequestId(requestDetail.getRequest().getId());
+        statusEntities.sort(Comparator.comparing(RequestStatusEntity::getCreatedAt).reversed());
+        if (statusEntities.isEmpty()) {
+            generalInformation.put("Estado", "No asignado");
+        } else {
+            generalInformation.put("Estado", statusEntities.get(0).getStatus().getName());
+        }
+        generalInformation.put("Fecha de recepción", requestDetail.getRequest().getReceptionDate().toString());
+        generalInformation.put("Descripción", requestDetail.getRequest().getRemark());
+        generalInformation.put("Solicitante", requestDetail.getRequest().getCustomer().getFirstName()+" "+requestDetail.getRequest().getCustomer().getLastName());
+        generalInformation.put("Email", requestDetail.getRequest().getEmail());
+        generalInformation.put("Teléfono", requestDetail.getRequest().getSupportNumber());
+
+        return generalInformation;
     }
 
     @Override
