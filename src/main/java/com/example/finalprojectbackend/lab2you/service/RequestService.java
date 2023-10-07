@@ -76,7 +76,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
             responseWrapper.addError("customer", "el cliente solicitante no debe de ser nulo");
         }
 
-         if (entity.getRequestDetails().isEmpty()) {
+        if (entity.getRequestDetails().isEmpty()) {
             responseWrapper.addError("requestDetails", "el requestDetails solicitado no debe de ser nulo");
         }
         if (Lab2YouUtils.isObjectNullOrEmpty(entity.getSupportType())) {
@@ -166,9 +166,9 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
     public StatusEntity getMostRecentStatusForRequest(RequestEntity request) {
 
         List<RequestStatusEntity> filteredStatusEntities =
-            request.getRequestStatuses().stream()
-                .filter(requestStatusEntity -> requestStatusEntity.getRequest().getId().equals(request.getId()))
-                .collect(Collectors.toList());
+                request.getRequestStatuses().stream()
+                        .filter(requestStatusEntity -> requestStatusEntity.getRequest().getId().equals(request.getId()))
+                        .collect(Collectors.toList());
 
         if (filteredStatusEntities.isEmpty()) {
             return null;
@@ -182,21 +182,22 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
     public RequestEntity getRequestById(Long id) {
         return requestRepository.findById(id).orElse(null);
     }
+
     public ResponseWrapper getStatusesByRequestId(Long id) {
-         List<RequestStatusEntity> statusEntities = requestRepository.findStatusesByRequestId(id);
+        List<RequestStatusEntity> statusEntities = requestRepository.findStatusesByRequestId(id);
 
-         List<StatusRequestWrapper> statusRequestWrappers = statusEntities.stream()
-                 .map(this::mapToStatusRequestWrapper)
-                 .collect(Collectors.toList());
+        List<StatusRequestWrapper> statusRequestWrappers = statusEntities.stream()
+                .map(this::mapToStatusRequestWrapper)
+                .collect(Collectors.toList());
 
-            responseWrapper = new ResponseWrapper();
-            responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Request detail");
-            responseWrapper.setData(statusRequestWrappers);
-            return responseWrapper;
+        responseWrapper = new ResponseWrapper();
+        responseWrapper.setSuccessful(true);
+        responseWrapper.setMessage("Request detail");
+        responseWrapper.setData(statusRequestWrappers);
+        return responseWrapper;
     }
 
-    public ResponseWrapper getAllExamsByRequestId(Long id){
+    public ResponseWrapper getAllExamsByRequestId(Long id) {
         List<RequestDetailEntity> requestDetailEntities = requestRepository.findDetailsByRequestId(id);
 
         List<RequestDetailWrapper> requestDetailWrappers = requestDetailEntities.stream()
@@ -211,10 +212,10 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
 
     }
 
-    public ResponseWrapperRequest<Map<String,String>> getGeneralInformationByRequestId(Long id){
+    public ResponseWrapperRequest<Map<String, String>> getGeneralInformationByRequestId(Long id) {
         RequestDetailEntity requestDetailEntity = requestRepository.findDetailsByRequestId(id).get(0);
         Map<String, String> generalInformation = MapToGeneralInformationWrapper(requestDetailEntity);
-        return new ResponseWrapperRequest<Map<String, String>>(generalInformation, "General information found",true);
+        return new ResponseWrapperRequest<Map<String, String>>(generalInformation, "General information found", true);
     }
 
     private StatusRequestWrapper mapToStatusRequestWrapper(RequestStatusEntity requestStatusEntity) {
@@ -226,7 +227,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         return statusRequestWrapper;
     }
 
-    public RequestDetailWrapper mapToRequestDetailWrapper(RequestDetailEntity requestDetail){
+    public RequestDetailWrapper mapToRequestDetailWrapper(RequestDetailEntity requestDetail) {
         ExamTypeWrapper examTypeWrapper = new ExamTypeWrapper();
         examTypeWrapper.setId(requestDetail.getExamType().getId());
         examTypeWrapper.setName(requestDetail.getExamType().getName());
@@ -235,6 +236,41 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         RequestDetailWrapper requestDetailWrapper = new RequestDetailWrapper();
         requestDetailWrapper.setId(requestDetail.getId());
         requestDetailWrapper.setExamType(examTypeWrapper);
+
+        List<SampleWrapper> sampleWrappers = requestDetail.getSample().stream()
+                .map(sampleEntity -> {
+                    SampleWrapper sampleWrapper = new SampleWrapper();
+                    sampleWrapper.setPresentation(sampleEntity.getPresentation());
+                    sampleWrapper.setQuantity(sampleEntity.getQuantity());
+                    sampleWrapper.setSampleType(new SampleTypeWrapper(
+                                    sampleEntity.getSampleTypeEntity().getId(),
+                                    sampleEntity.getSampleTypeEntity().getName(),
+                                    sampleEntity.getSampleTypeEntity().getDescription()
+                            )
+                    );
+                    sampleWrapper.setMeasureUnit(new MeasureUnitWrapper(
+                                    sampleEntity.getMeasureUnitEntity().getId(),
+                                    sampleEntity.getMeasureUnitEntity().getName(),
+                                    sampleEntity.getMeasureUnitEntity().getDescription()
+                            )
+                    );
+                    sampleWrapper.setExpirationDate(sampleEntity.getExpirationDate());
+                    sampleWrapper.setLabel(sampleEntity.getLabel());
+                    sampleWrapper.setItems(sampleEntity.getItemEntities().stream()
+                            .map(itemEntity -> {
+                                ItemWrapper itemWrapper = new ItemWrapper();
+                                itemWrapper.setId(itemEntity.getId());
+                                itemWrapper.setName(itemEntity.getName());
+                                itemWrapper.setDescription(itemEntity.getDescription());
+                                return itemWrapper;
+                            })
+                            .collect(Collectors.toList())
+                    );
+                    return sampleWrapper;
+                })
+                .collect(Collectors.toList());
+
+        requestDetailWrapper.getExamType().setSamples(sampleWrappers);
         requestDetailWrapper.setRequestId(requestDetail.getRequest().getId());
         return requestDetailWrapper;
     }
@@ -249,12 +285,12 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         generalInformation.put("Tipo soporte", requestDetail.getRequest().getSupportType().getName());
         generalInformation.put("Tipo solicitante", requestDetail.getRequest().getCustomer().getUser().getUserType());
         List<AssignmentEntity> assignmentEntities = assigmentService.findAllByRequestId(requestDetail.getRequest().getId());
-         assignmentEntities.sort(Comparator.comparing(AssignmentEntity::getAssignationDate).reversed());
+        assignmentEntities.sort(Comparator.comparing(AssignmentEntity::getAssignationDate).reversed());
 
         if (assignmentEntities.isEmpty()) {
             generalInformation.put("Usuario asignación", "No asignado");
         } else {
-            generalInformation.put("Usuario asignación", assignmentEntities.get(0).getAssignedToEmployee().getFirstName()+" "+assignmentEntities.get(0).getAssignedToEmployee().getLastName());
+            generalInformation.put("Usuario asignación", assignmentEntities.get(0).getAssignedToEmployee().getFirstName() + " " + assignmentEntities.get(0).getAssignedToEmployee().getLastName());
         }
         List<RequestStatusEntity> statusEntities = requestRepository.findStatusesByRequestId(requestDetail.getRequest().getId());
         statusEntities.sort(Comparator.comparing(RequestStatusEntity::getCreatedAt).reversed());
@@ -265,7 +301,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         }
         generalInformation.put("Fecha de recepción", requestDetail.getRequest().getReceptionDate().toString());
         generalInformation.put("Descripción", requestDetail.getRequest().getRemark());
-        generalInformation.put("Solicitante", requestDetail.getRequest().getCustomer().getFirstName()+" "+requestDetail.getRequest().getCustomer().getLastName());
+        generalInformation.put("Solicitante", requestDetail.getRequest().getCustomer().getFirstName() + " " + requestDetail.getRequest().getCustomer().getLastName());
         generalInformation.put("Email", requestDetail.getRequest().getEmail());
         generalInformation.put("Teléfono", requestDetail.getRequest().getSupportNumber());
 

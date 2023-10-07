@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,6 +15,6 @@ public class SampleWrapper {
     private Long quantity;
     private SampleTypeWrapper sampleType;
     private MeasureUnitWrapper measureUnit;
-    private RequestWrapper request;
     private Date expirationDate;
+    private List<ItemWrapper> items;
     }
