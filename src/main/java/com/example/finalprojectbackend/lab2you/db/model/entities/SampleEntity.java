@@ -41,7 +41,6 @@ public class SampleEntity {
 
     @OneToMany(mappedBy = "sample")
     private List<AnalysisDocumentEntity> analysisDocumentEntities = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "samples")
-    private List<ItemEntity> itemEntities;
+    @OneToMany(mappedBy = "sample")
+    private List<SampleItemEntity> sampleItemEntities = new ArrayList<>();
 }

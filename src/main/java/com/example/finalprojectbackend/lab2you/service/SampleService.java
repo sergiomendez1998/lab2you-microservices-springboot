@@ -121,6 +121,10 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public SampleEntity findSampleById(Long id){
+        return sampleRepository.findById(id).orElse(null);
+    }
+
     private SampleWrapper mapToSampleWrapper(SampleEntity sampleEntity){
         SampleWrapper sampleWrapper = new SampleWrapper();
         sampleWrapper.setLabel(sampleEntity.getLabel());

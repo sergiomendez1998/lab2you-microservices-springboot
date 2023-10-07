@@ -1,9 +1,9 @@
 package com.example.finalprojectbackend.lab2you.db.model.dto;
 
-import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.catalina.User;
+
 
 
 @Getter

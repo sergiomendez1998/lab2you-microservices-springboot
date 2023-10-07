@@ -27,9 +27,8 @@ public class ItemEntity extends BaseEntity {
     private String description;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "sample_item",joinColumns = @JoinColumn(name = "sample_id",referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name="item_id",referencedColumnName="id"))
-    private List<SampleEntity> samples =new ArrayList<>();
+    @OneToMany(mappedBy = "item")
+    private List<SampleItemEntity> sampleItemEntities = new ArrayList<>();
 
     public ItemEntity(String name, String description) {
         this.name = name;

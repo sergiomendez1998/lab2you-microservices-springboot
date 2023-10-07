@@ -32,6 +32,6 @@ public class RequestDetailEntity {
     private ExamTypeEntity examType;
     @OneToMany(mappedBy = "requestDetail")
     private List<SampleEntity> sample = new ArrayList<>();
-
     private LocalDate createdAt;
+    private Boolean isDeleted;
 }

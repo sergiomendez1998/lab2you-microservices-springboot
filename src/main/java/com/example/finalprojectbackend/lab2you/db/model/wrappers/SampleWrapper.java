@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 public class SampleWrapper {
 
+    private Long id;
     private String label;
     private String presentation;
     private Long quantity;

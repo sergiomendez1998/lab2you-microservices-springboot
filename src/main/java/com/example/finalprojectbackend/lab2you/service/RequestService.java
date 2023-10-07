@@ -198,7 +198,10 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
     }
 
     public ResponseWrapper getAllExamsByRequestId(Long id) {
-        List<RequestDetailEntity> requestDetailEntities = requestRepository.findDetailsByRequestId(id);
+        List<RequestDetailEntity> requestDetailEntities = requestRepository.findDetailsByRequestId(id)
+                .stream()
+                .filter(requestDetailEntity -> !requestDetailEntity.getIsDeleted())
+                .toList();
 
         List<RequestDetailWrapper> requestDetailWrappers = requestDetailEntities.stream()
                 .map(this::mapToRequestDetailWrapper)
@@ -238,6 +241,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         requestDetailWrapper.setExamType(examTypeWrapper);
 
         List<SampleWrapper> sampleWrappers = requestDetail.getSample().stream()
+                .filter(sampleEntity -> !sampleEntity.isDeleted())
                 .map(sampleEntity -> {
                     SampleWrapper sampleWrapper = new SampleWrapper();
                     sampleWrapper.setPresentation(sampleEntity.getPresentation());
@@ -256,16 +260,16 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
                     );
                     sampleWrapper.setExpirationDate(sampleEntity.getExpirationDate());
                     sampleWrapper.setLabel(sampleEntity.getLabel());
-                    sampleWrapper.setItems(sampleEntity.getItemEntities().stream()
-                            .map(itemEntity -> {
-                                ItemWrapper itemWrapper = new ItemWrapper();
-                                itemWrapper.setId(itemEntity.getId());
-                                itemWrapper.setName(itemEntity.getName());
-                                itemWrapper.setDescription(itemEntity.getDescription());
-                                return itemWrapper;
-                            })
-                            .collect(Collectors.toList())
-                    );
+                    sampleWrapper.setId(sampleEntity.getId());
+                    sampleWrapper.setItems(sampleEntity.getSampleItemEntities().stream()
+                                    .filter(sampleItemEntity -> {
+                                        return !sampleItemEntity.isDeleted() && sampleEntity.getId().equals(sampleWrapper.getId());
+                                    })
+                            .map(sampleItemEntity -> new ItemWrapper(
+                                    sampleItemEntity.getItem().getId(),
+                                    sampleItemEntity.getItem().getName(),
+                                    sampleItemEntity.getItem().getDescription()))
+                            .collect(Collectors.toList()));
                     return sampleWrapper;
                 })
                 .collect(Collectors.toList());

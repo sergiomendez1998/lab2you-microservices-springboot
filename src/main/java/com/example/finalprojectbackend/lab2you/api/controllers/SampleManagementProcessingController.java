@@ -1,21 +1,18 @@
 package com.example.finalprojectbackend.lab2you.api.controllers;
 
 
+import com.example.finalprojectbackend.lab2you.db.model.dto.ItemDTO;
 import com.example.finalprojectbackend.lab2you.db.model.dto.SampleDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.MeasureUnitEntity;
-import com.example.finalprojectbackend.lab2you.db.model.entities.RequestDetailEntity;
-import com.example.finalprojectbackend.lab2you.db.model.entities.SampleEntity;
-import com.example.finalprojectbackend.lab2you.db.model.entities.SampleTypeEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.*;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestDetailRepository;
+import com.example.finalprojectbackend.lab2you.db.repository.SampleItemRepository;
 import com.example.finalprojectbackend.lab2you.service.SampleService;
+import com.example.finalprojectbackend.lab2you.service.catalogservice.ItemService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.MeasureUniteService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.SampleTypeService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,15 +29,21 @@ public class SampleManagementProcessingController {
     private final SampleTypeService sampleTypeService;
     private final MeasureUniteService measureUniteService;
     private final RequestDetailRepository requestDetailRepository;
+    private final ItemService itemService;
+    private final SampleItemRepository sampleItemRepository;
 
     private final Map<Long, RequestDetailEntity> requestDetailMap = new HashMap<>();
     private ResponseWrapper responseWrapper;
 
-    public SampleManagementProcessingController(SampleService sampleService, SampleTypeService sampleTypeService, MeasureUniteService measureUniteService, RequestDetailRepository requestDetailRepository) {
+    public SampleManagementProcessingController(SampleService sampleService, SampleTypeService sampleTypeService,
+                                                MeasureUniteService measureUniteService,
+                                                RequestDetailRepository requestDetailRepository, SampleItemRepository sampleItemRepository, ItemService itemService) {
         this.sampleService = sampleService;
         this.sampleTypeService = sampleTypeService;
         this.measureUniteService = measureUniteService;
         this.requestDetailRepository = requestDetailRepository;
+        this.sampleItemRepository = sampleItemRepository;
+        this.itemService = itemService;
     }
 
     @PostMapping("/create")
@@ -77,6 +80,28 @@ public class SampleManagementProcessingController {
         }
 
         return ResponseEntity.ok(responseWrapper);
+    }
+
+    @PostMapping("/associate-item/{sampleId}")
+    public ResponseEntity<ResponseWrapper> associateItem(@PathVariable Long sampleId, @RequestBody List<ItemDTO> items) {
+
+        if (sampleId == null) {
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, "el id de la muestra es requerido", null));
+        }
+
+        SampleEntity sampleEntity = sampleService.findSampleById(sampleId);
+
+
+
+        for (ItemDTO item : items) {
+            ItemEntity itemEntity = itemService.findById(item.getId());
+            SampleItemEntity sampleItemEntity = new SampleItemEntity();
+            sampleItemEntity.setSample(sampleEntity);
+            sampleItemEntity.setItem(itemEntity);
+            sampleItemRepository.save(sampleItemEntity);
+        }
+
+        return ResponseEntity.ok(new ResponseWrapper(true, "Items asociados correctamente", null));
     }
 
     private RequestDetailEntity getRequestDetail(Long requestDetailId) {

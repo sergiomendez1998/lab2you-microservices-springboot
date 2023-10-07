@@ -177,4 +177,21 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
         itemEntity.setUpdatedBy(userLogged);
         return itemEntity;
     }
+
+    public ItemEntity findById(Long id) {
+        return executeReadAll().getData()
+                .stream()
+                .filter(item -> item instanceof CatalogWrapper)
+                .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                .filter(catalogWrapper -> catalogWrapper.getId().equals(id))
+                .findFirst()
+                .map(catalogWrapper -> {
+                    ItemEntity entity = new ItemEntity();
+                    entity.setId(catalogWrapper.getId());
+                    entity.setName(catalogWrapper.getName());
+                    entity.setDescription(catalogWrapper.getDescription());
+                    return entity;
+                })
+                .orElse(new ItemEntity());
+    }
 }
