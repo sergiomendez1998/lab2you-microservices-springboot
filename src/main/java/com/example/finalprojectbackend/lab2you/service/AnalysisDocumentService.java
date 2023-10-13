@@ -20,11 +20,15 @@ public class AnalysisDocumentService extends CrudServiceProcessingController<Ana
 
     private final AnalysisDocumentRepository analysisDocumentRepository;
     private final AnalysisDocumentTypeService analysisDocumentTypeService;
+
+    private final SampleService sampleService;
     private ResponseWrapper responseWrapper;
 
-    public AnalysisDocumentService(AnalysisDocumentRepository analysisDocumentRepository, AnalysisDocumentTypeService analysisDocumentTypeService) {
+    public AnalysisDocumentService(AnalysisDocumentRepository analysisDocumentRepository,
+                                   AnalysisDocumentTypeService analysisDocumentTypeService, SampleService sampleService) {
         this.analysisDocumentRepository = analysisDocumentRepository;
         this.analysisDocumentTypeService = analysisDocumentTypeService;
+        this.sampleService = sampleService;
     }
 
     @Override
@@ -128,17 +132,25 @@ public class AnalysisDocumentService extends CrudServiceProcessingController<Ana
         return analysisDocumentRepository.findById(id).orElse(null);
     }
 
+    public ResponseWrapper findAllDocumentsBySampleId(Long sampleId){
+        responseWrapper = new ResponseWrapper();
+        List<AnalysisDocumentEntity> analysisDocumentEntityList = analysisDocumentRepository.findAllBySampleIdAndIsDeletedFalse(sampleId);
+
+        List<AnalysisDocumentWrapper> analysisDocumentWrapperList = analysisDocumentEntityList.stream()
+                .map(this::mapToAnalysisDocumentWrapper)
+                .toList();
+
+        responseWrapper.setSuccessful(true);
+        responseWrapper.setMessage("AnalysisDocument found");
+        responseWrapper.setData(analysisDocumentWrapperList);
+        return responseWrapper;
+    }
+
     public AnalysisDocumentEntity mapToEntityAnalysisDocument(AnalysisDocumentDTO analysisDocumentDTO){
         AnalysisDocumentEntity analysisDocumentEntity = new AnalysisDocumentEntity();
-        AnalysisDocumentTypeEntity analysisDocumentType = analysisDocumentTypeService.executeReadAll()
-                .getData()
-                .stream()
-                .map(analysisDocumentTypeEntity -> (AnalysisDocumentTypeEntity) analysisDocumentTypeEntity)
-                .filter(analysisDocumentTypeEntity -> analysisDocumentTypeEntity.getId().equals(analysisDocumentDTO.getAnalysisDocumentType().getId()))
-                .findFirst()
-                .orElse(null);
 
-        analysisDocumentEntity.setAnalysisDocumentType(analysisDocumentType);
+        analysisDocumentEntity.setAnalysisDocumentType(analysisDocumentTypeService.findById(analysisDocumentDTO.getAnalysisDocumentTypeId()));
+        analysisDocumentEntity.setSample(sampleService.findSampleById(analysisDocumentDTO.getSampleId()));
         analysisDocumentEntity.setResolution(analysisDocumentDTO.getResolution());
         analysisDocumentEntity.setDocumentCode(Lab2YouUtils.generateDocumentCode());
         return analysisDocumentEntity;
@@ -152,6 +164,7 @@ public class AnalysisDocumentService extends CrudServiceProcessingController<Ana
         analysisDocumentWrapper.setDocumentType(analysisDocumentEntity.getAnalysisDocumentType().getName());
         analysisDocumentWrapper.setCustomerNit(analysisDocumentEntity.getSample().getRequestDetail().getRequest().getCustomer().getNit());
         analysisDocumentWrapper.setRequestCode(analysisDocumentEntity.getSample().getRequestDetail().getRequest().getRequestCode());
+        analysisDocumentWrapper.setCreatedAt(analysisDocumentEntity.getCreatedAt());
         return  analysisDocumentWrapper;
     }
 }

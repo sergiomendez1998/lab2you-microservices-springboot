@@ -1,10 +1,10 @@
 package com.example.finalprojectbackend.lab2you.api.controllers;
 
+import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.db.model.dto.AnalysisDocumentDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.service.AnalysisDocumentService;
-import jakarta.websocket.server.PathParam;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +37,12 @@ public class AnalysisDocumentManagementProcessingController {
         return ResponseEntity.ok(responseWrapper);
     }
 
+    @GetMapping("/{sampleId}")
+    public ResponseEntity<ResponseWrapper> getDocumentsBySampleId(@PathVariable Long sampleId) {
+         ResponseWrapper responseWrapper = analysisDocumentService.findAllDocumentsBySampleId(sampleId);
+        return ResponseEntity.ok(responseWrapper);
+    }
+
     @GetMapping("/download/{documentId}")
     public ResponseEntity<Resource> downloadAnalysisDocument(@PathVariable Long documentId) {
         try {
@@ -44,6 +50,13 @@ public class AnalysisDocumentManagementProcessingController {
             AnalysisDocumentEntity analysisDocumentEntity = analysisDocumentService.findById(documentId);
 
             if (analysisDocumentEntity == null) {
+                return ResponseEntity.notFound().build();
+            }
+            if (analysisDocumentEntity.getIsDeleted()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            if (analysisDocumentEntity.getSample().isDeleted()) {
                 return ResponseEntity.notFound().build();
             }
 
@@ -70,15 +83,27 @@ public class AnalysisDocumentManagementProcessingController {
 
 
     @PostMapping("/upload")
-    public ResponseEntity<ResponseWrapper> upload(@PathParam("file") MultipartFile file, @RequestBody AnalysisDocumentDTO analysisDocumentDTO) {
+    public ResponseEntity<ResponseWrapper> upload(@RequestParam("file") MultipartFile file,
+                                                  @RequestParam("sampleId") Long sampleId,
+                                                  @RequestParam("resolution") String resolution,
+                                                  @RequestParam("analysisDocumentType") Long analysisDocumentTypeId) {
+
         try {
+
+
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body(new ResponseWrapper(false, "File is empty", null));
             }
 
-            Path filePath = getPath(file, analysisDocumentDTO);
+            if (Lab2YouUtils.isFileEncryptedOrEmptyBody(file)) {
+                return ResponseEntity.badRequest().body(new ResponseWrapper(false, "el archivo podria estar encriptado, o su contenido esta vacio", null));
+            }
+
+            AnalysisDocumentDTO analysisDocumentDTO = new AnalysisDocumentDTO(sampleId, resolution, analysisDocumentTypeId);
 
             AnalysisDocumentEntity analysisDocumentEntity = analysisDocumentService.mapToEntityAnalysisDocument(analysisDocumentDTO);
+
+            Path filePath = getPath(file, sampleId);
             analysisDocumentEntity.setPath(filePath.toString());
 
             ResponseWrapper responseWrapper = analysisDocumentService.validate(analysisDocumentEntity, CREATE.getOperationType());
@@ -97,9 +122,10 @@ public class AnalysisDocumentManagementProcessingController {
         }
     }
 
-    private Path getPath(MultipartFile file, AnalysisDocumentDTO analysisDocumentDTO) throws IOException {
+
+    private Path getPath(MultipartFile file, Long sampleId) throws IOException {
         String fileName = file.getOriginalFilename();
-        String uniqueFilename = generateUniqueFilename(fileName, analysisDocumentDTO.getSampleId());
+        String uniqueFilename = generateUniqueFilename(fileName, sampleId);
         Path uploadPath = Paths.get("files/uploads"); // Corrected directory path
         Path filePath = uploadPath.resolve(uniqueFilename);
 

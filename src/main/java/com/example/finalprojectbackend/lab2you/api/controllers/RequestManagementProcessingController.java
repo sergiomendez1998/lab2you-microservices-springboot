@@ -117,4 +117,16 @@ public class RequestManagementProcessingController {
         return ResponseEntity.ok(responseWrapper);
     }
 
+    @PutMapping("delete/{requestId}")
+    public ResponseEntity<ResponseWrapper> delete(@PathVariable Long requestId) {
+
+        if(requestId == null) {
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, "El id de la solicitud no puede ser nulo", null));
+        }
+
+        RequestEntity requestEntity = requestService.getRequestById(requestId);
+
+        responseWrapper = requestService.execute(requestEntity, DELETE.getOperationType());
+        return ResponseEntity.ok(responseWrapper);
+    }
 }

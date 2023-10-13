@@ -1,7 +1,12 @@
 package com.example.finalprojectbackend.lab2you;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -10,11 +15,13 @@ import java.util.Random;
 public class Lab2YouUtils {
 
     public static String encodePassword(String password) {
-        return  new BCryptPasswordEncoder().encode(password);
+        return new BCryptPasswordEncoder().encode(password);
     }
+
     public static boolean verifyEmailFormat(String email) {
         return email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
     }
+
     public static boolean validatePhoneNumber(String phoneNumber) {
         return phoneNumber.matches("^\\d{8}$");
     }
@@ -35,6 +42,7 @@ public class Lab2YouUtils {
     public static boolean isNullOrEmpty(String str) {
         return str == null || str.isEmpty();
     }
+
     public static boolean isObjectNullOrEmpty(Object obj) {
         return obj == null;
     }
@@ -66,11 +74,13 @@ public class Lab2YouUtils {
         int numbers = random.nextInt(100000);
         return String.format("%s-%s-%05d", letters, date, numbers);
     }
+
     public static int calculateExpirationDays(Date dateOfReception) {
         Date currentDate = new Date();
         long diff = currentDate.getTime() - dateOfReception.getTime();
         return (int) (diff / (24 * 60 * 60 * 1000));
     }
+
     public static String pluralize(String word) {
         if (word.endsWith("s")) {
             return word + "es";
@@ -82,6 +92,7 @@ public class Lab2YouUtils {
     public static int calculateQuantityFromList(List<?> list) {
         return list.size();
     }
+
     public static String generateDocumentCode() {
         Random random = new Random();
 
@@ -91,6 +102,16 @@ public class Lab2YouUtils {
         String currentDate = dateFormat.format(new Date());
 
         return "LA10-" + currentDate + "-" + formattedNumber;
+    }
+
+    public static boolean isFileEncryptedOrEmptyBody(MultipartFile file) throws IOException {
+        File tempFile = File.createTempFile("temp", ".pdf");
+        file.transferTo(tempFile);
+        try (PDDocument pdDocument = PDDocument.load(new File(tempFile.getAbsolutePath()))) {
+            return pdDocument.isEncrypted();
+        } catch (Exception e) {
+            return true;
+        }
     }
 }
 

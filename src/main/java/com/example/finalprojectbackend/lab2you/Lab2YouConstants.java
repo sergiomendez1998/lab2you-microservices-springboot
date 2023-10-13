@@ -34,10 +34,10 @@ public class Lab2YouConstants {
     }
 
     public enum lab2YouSuccessCodes {
-        EMAIL_SENT("user created and the registration email was sent successfully"),
-        USER_CREATED("The user was created successfully"),
-        SAMPLE_CREATED("The user was created successfully"),
-        REGISTRATION_SUCCESS("User created successfully");
+        EMAIL_SENT("el correo de confirmacion fue enviado a su correo electronico"),
+        USER_CREATED("Usuario creado exitosamente"),
+        SAMPLE_CREATED("La muestra se agrego exitosamente"),
+        REGISTRATION_SUCCESS("Usuario registrado exitosamente");
 
         String description;
 
@@ -53,10 +53,10 @@ public class Lab2YouConstants {
     public enum lab2YouRoles {
         ADMIN("admin"),
         USER("user"),
-        ANALYST("analyst"),
-        MEDICAL("medical"),
-        TECHNICIAN("technician"),
-        CENTRALIZER("centralizer");
+        ANALYST("Analista"),
+        MEDICAL("Medico"),
+        TECHNICIAN("Tecnico"),
+        CENTRALIZER("Centralizador");
 
         private String role;
 
@@ -71,8 +71,8 @@ public class Lab2YouConstants {
     }
 
     public enum lab2YouUserTypes {
-        CUSTOMER("external"),
-        EMPLOYEE("internal");
+        CUSTOMER("externo"),
+        EMPLOYEE("interno");
         private String userType;
         lab2YouUserTypes(String userType) {
             this.userType = userType;

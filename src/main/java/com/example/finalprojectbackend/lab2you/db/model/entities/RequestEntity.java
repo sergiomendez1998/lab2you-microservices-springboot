@@ -1,6 +1,6 @@
 package com.example.finalprojectbackend.lab2you.db.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

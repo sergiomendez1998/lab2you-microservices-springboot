@@ -10,7 +10,6 @@ import com.example.finalprojectbackend.lab2you.db.repository.SampleRepository;
 import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SampleService extends CrudServiceProcessingController<SampleEntity> {
@@ -41,17 +40,25 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
     @Override
     public ResponseWrapper executeDeleteById(SampleEntity entity) {
         responseWrapper = new ResponseWrapper();
-        Optional<SampleEntity> sampleEntityFound = sampleRepository.findById(entity.getId());
-        if (sampleEntityFound.isPresent()) {
-            sampleEntityFound.get().setDeleted(false);
-            sampleRepository.save(sampleEntityFound.get());
-            responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("sample deleted successfully");
-            return responseWrapper;
-        }
-        responseWrapper.setSuccessful(false);
-        responseWrapper.addError("sample","sample not found");
+
+        entity.setDeleted(true);
+        entity.getSampleItemEntities().forEach(sampleItemEntity -> {
+            sampleItemEntity.setDeleted(true);
+        });
+
+        sampleRepository.save(entity);
+        responseWrapper.setSuccessful(true);
+        responseWrapper.setMessage("muestra eliminada exitosamente");
         return responseWrapper;
+    }
+
+    public void disassociateItem(SampleEntity sampleEntity, Long itemId){
+        sampleEntity.getSampleItemEntities().forEach(sampleItemEntity -> {
+            if(sampleItemEntity.getItem().getId().equals(itemId)){
+                sampleItemEntity.setDeleted(true);
+            }
+        });
+        sampleRepository.save(sampleEntity);
     }
 
     @Override

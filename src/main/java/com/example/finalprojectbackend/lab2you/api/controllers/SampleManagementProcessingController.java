@@ -11,6 +11,7 @@ import com.example.finalprojectbackend.lab2you.service.SampleService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.ItemService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.MeasureUniteService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.SampleTypeService;
+import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -91,8 +92,6 @@ public class SampleManagementProcessingController {
 
         SampleEntity sampleEntity = sampleService.findSampleById(sampleId);
 
-
-
         for (ItemDTO item : items) {
             ItemEntity itemEntity = itemService.findById(item.getId());
             SampleItemEntity sampleItemEntity = new SampleItemEntity();
@@ -102,6 +101,36 @@ public class SampleManagementProcessingController {
         }
 
         return ResponseEntity.ok(new ResponseWrapper(true, "Items asociados correctamente", null));
+    }
+
+    @PutMapping("delete/{sampleId}")
+    public ResponseEntity<ResponseWrapper> delete(@PathVariable Long sampleId) {
+
+        if (sampleId == null) {
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, "El id de la muestra no puede ser nulo", null));
+        }
+
+        SampleEntity sampleEntity = sampleService.findSampleById(sampleId);
+
+        responseWrapper = sampleService.execute(sampleEntity, DELETE.getOperationType());
+        return ResponseEntity.ok(responseWrapper);
+    }
+
+    @PutMapping("disassociate-item/{sampleId}")
+    public ResponseEntity<ResponseWrapper> deleteItem(@PathVariable Long sampleId, @PathParam("itemId") Long itemId) {
+
+        if (sampleId == null) {
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, "El id de la muestra es requerido", null));
+        }
+        if (itemId == null) {
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, "El id del item es requerido", null));
+        }
+
+        SampleEntity sampleEntity = sampleService.findSampleById(sampleId);
+
+
+        sampleService.disassociateItem(sampleEntity, itemId);
+        return ResponseEntity.ok(new ResponseWrapper(true, "Item desasociado exitosamente", null));
     }
 
     private RequestDetailEntity getRequestDetail(Long requestDetailId) {

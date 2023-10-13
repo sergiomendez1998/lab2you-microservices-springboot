@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AnalysisDocumentRepository extends JpaRepository<AnalysisDocumentEntity, Long> {
        List<AnalysisDocumentEntity> findAllByIsDeletedFalse();
+       List<AnalysisDocumentEntity> findAllBySampleIdAndIsDeletedFalse(Long sampleId);
 }

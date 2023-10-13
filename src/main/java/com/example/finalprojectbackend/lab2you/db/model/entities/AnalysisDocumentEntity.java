@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @DynamicUpdate
@@ -28,4 +30,5 @@ public class AnalysisDocumentEntity {
     @ManyToOne
     @JoinColumn (name = "analysis_document_type_id")
     private AnalysisDocumentTypeEntity analysisDocumentType;
+    private LocalDateTime createdAt;
 }

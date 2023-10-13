@@ -39,19 +39,38 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         responseWrapper = new ResponseWrapper();
         requestRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("request created successfully");
-        responseWrapper.setData(Collections.singletonList("request created successfully"));
         return responseWrapper;
     }
 
     @Override
     public ResponseWrapper executeUpdate(RequestEntity entity) {
-        return null;
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     @Override
     public ResponseWrapper executeDeleteById(RequestEntity entity) {
-        return null;
+        entity.setDeleted(true);
+
+        entity.getRequestDetails().forEach(requestDetailEntity -> requestDetailEntity.setIsDeleted(true));
+
+        if (!entity.getRequestDetails().isEmpty()) {
+
+            entity.getRequestDetails()
+                    .forEach(requestDetailEntity -> requestDetailEntity.getSample()
+                            .forEach(sampleEntity -> sampleEntity.getSampleItemEntities()
+                                    .forEach(sampleItemEntity -> sampleItemEntity.setDeleted(true))));
+
+            entity.getRequestDetails()
+                    .forEach(requestDetailEntity -> requestDetailEntity.getSample()
+                            .forEach(sampleEntity -> sampleEntity.setDeleted(true)));
+        }
+
+        requestRepository.save(entity);
+        responseWrapper = new ResponseWrapper();
+        responseWrapper.setSuccessful(true);
+        responseWrapper.setMessage("Solicitud No. " + entity.getRequestCode() + " eliminada exitosamente");
+        return responseWrapper;
+
     }
 
     @Override
@@ -262,9 +281,9 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
                     sampleWrapper.setLabel(sampleEntity.getLabel());
                     sampleWrapper.setId(sampleEntity.getId());
                     sampleWrapper.setItems(sampleEntity.getSampleItemEntities().stream()
-                                    .filter(sampleItemEntity -> {
-                                        return !sampleItemEntity.isDeleted() && sampleEntity.getId().equals(sampleWrapper.getId());
-                                    })
+                            .filter(sampleItemEntity -> {
+                                return !sampleItemEntity.isDeleted() && sampleEntity.getId().equals(sampleWrapper.getId());
+                            })
                             .map(sampleItemEntity -> new ItemWrapper(
                                     sampleItemEntity.getItem().getId(),
                                     sampleItemEntity.getItem().getName(),

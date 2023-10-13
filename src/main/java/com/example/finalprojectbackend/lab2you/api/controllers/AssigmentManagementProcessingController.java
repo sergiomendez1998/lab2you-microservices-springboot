@@ -21,7 +21,6 @@ import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.operation
 @RestController
 @RequestMapping("/api/v1/assigment")
 public class AssigmentManagementProcessingController {
-
     private final AssigmentService assigmentService;
     private final RequestService requestService;
 
@@ -60,11 +59,10 @@ public class AssigmentManagementProcessingController {
     }
 
     private EmployeeEntity getRandomEmployeeByRoleType(String roleType) {
-        String type = roleType.toLowerCase();
-        return switch (type) {
-            case "centralizer" -> employeeService.getRandomEmployeeWithRoleCentralizer();
-            case "technician" -> employeeService.getRandomEmployeeWithRoleTechnician();
-            case "analyst" -> employeeService.getRandomEmployeeWithRoleAnalyst();
+        return switch (roleType) {
+            case "Centralizador" -> employeeService.getRandomEmployeeWithRoleCentralizer();
+            case "Tecnico" -> employeeService.getRandomEmployeeWithRoleTechnician();
+            case "Analista" -> employeeService.getRandomEmployeeWithRoleAnalyst();
             default -> null;
         };
     }

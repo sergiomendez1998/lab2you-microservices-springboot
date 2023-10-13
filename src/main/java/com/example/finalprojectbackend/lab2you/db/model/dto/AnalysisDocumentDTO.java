@@ -9,5 +9,11 @@ public class AnalysisDocumentDTO {
 
     private Long sampleId;
     private String resolution;
-    private AnalysisDocumentTypeDTO analysisDocumentType;
+    private Long analysisDocumentTypeId;
+
+    public AnalysisDocumentDTO(Long sampleId, String resolution, Long analysisDocumentTypeId) {
+        this.sampleId = sampleId;
+        this.resolution = resolution;
+        this.analysisDocumentTypeId = analysisDocumentTypeId;
+    }
 }
