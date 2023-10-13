@@ -1,7 +1,11 @@
 package com.example.finalprojectbackend.lab2you.db.repository;
 
-import com.example.finalprojectbackend.lab2you.db.model.entities.Item;
+
+import com.example.finalprojectbackend.lab2you.db.model.entities.ItemEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ItemRepository extends JpaRepository<Item, Long> {
+import java.util.List;
+
+public interface ItemRepository extends JpaRepository<ItemEntity, Long> {
+    List<ItemEntity> findAllByIsDeletedFalse();
 }

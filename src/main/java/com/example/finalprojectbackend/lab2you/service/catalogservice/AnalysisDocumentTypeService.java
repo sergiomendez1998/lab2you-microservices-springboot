@@ -1,66 +1,214 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
-import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentType;
+import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
+import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentTypeEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.SampleTypeEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.AnalysisDocumentTypeRepository;
-import com.example.finalprojectbackend.lab2you.db.repository.CatalogService;;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
+import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Service
-public class AnalysisDocumentTypeService implements CatalogService<AnalysisDocumentType> {
+@Qualifier("analysisDocumentType")
+public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInterceptor<AnalysisDocumentTypeEntity> {
 
     private final AnalysisDocumentTypeRepository analysisDocumentTypeRepository;
+    private  ResponseWrapper responseWrapper;
 
-    @Autowired
     public AnalysisDocumentTypeService(AnalysisDocumentTypeRepository analysisDocumentTypeRepository) {
         this.analysisDocumentTypeRepository = analysisDocumentTypeRepository;
     }
 
 
-    @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
     @Override
-    public AnalysisDocumentType executeCreation(AnalysisDocumentType entity) {
-        return analysisDocumentTypeRepository.save(entity);
+    public ResponseWrapper executeCreation(AnalysisDocumentTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
+        analysisDocumentTypeRepository.save(entity);
+        responseWrapper.setSuccessful(true);
+        responseWrapper.setMessage("AnalysisDocumentType created");
+        responseWrapper.setData(Collections.singletonList("AnalysisDocumentType created"));
+        return responseWrapper;
     }
 
 
-    @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
     @Override
-    public AnalysisDocumentType executeUpdate(AnalysisDocumentType entity) {
-        AnalysisDocumentType analysisDocumentTypeFound = executeReadAll()
-                .stream()
-                .filter(analysisDocumentType -> analysisDocumentType.getId().equals(entity.getId())).findFirst().orElse(null);
+    public ResponseWrapper executeUpdate(AnalysisDocumentTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
+        Optional<AnalysisDocumentTypeEntity> analysisDocumentTypeEntityFound = analysisDocumentTypeRepository.findById(entity.getId());
 
-        if (analysisDocumentTypeFound != null) {
-            analysisDocumentTypeFound.setName(entity.getName() != null ? entity.getName() : analysisDocumentTypeFound.getName());
-            analysisDocumentTypeFound.setDescription(entity.getDescription() != null ? entity.getDescription() : analysisDocumentTypeFound.getDescription());
-            analysisDocumentTypeRepository.save(analysisDocumentTypeFound);
+        if (analysisDocumentTypeEntityFound.isPresent()) {
+            analysisDocumentTypeEntityFound.get().setName(entity.getName() != null ? entity.getName() : analysisDocumentTypeEntityFound.get().getName());
+            analysisDocumentTypeEntityFound.get().setDescription(entity.getDescription() != null ? entity.getDescription() : analysisDocumentTypeEntityFound.get().getDescription());
+            analysisDocumentTypeEntityFound.get().setUpdatedBy(entity.getUpdatedBy());
+            analysisDocumentTypeRepository.save(analysisDocumentTypeEntityFound.get());
+
+            responseWrapper.setSuccessful(true);
+            responseWrapper.setMessage("AnalysisDocumentType updated");
+            responseWrapper.setData(Collections.singletonList("AnalysisDocumentType updated"));
+            return responseWrapper;
         }
-        return analysisDocumentTypeFound;
+
+        responseWrapper.setSuccessful(false);
+        responseWrapper.setMessage("AnalysisDocumentType not found");
+        responseWrapper.setData(new ArrayList<>());
+        responseWrapper.addError("id", "AnalysisDocumentType not found");
+
+        return responseWrapper;
     }
 
 
-
-    @CacheEvict(value = "analysisDocumentTypes", allEntries = true)
     @Override
-    public void executeDeleteById(Long id) {
+    public ResponseWrapper executeDeleteById(AnalysisDocumentTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
+        Optional<AnalysisDocumentTypeEntity> analysisDocumentTypeEntityFound = analysisDocumentTypeRepository.findById(entity.getId());
 
-        AnalysisDocumentType analysisDocumentTypeFound = executeReadAll()
-                .stream()
-                .filter(analysisDocumentType -> analysisDocumentType.getId().equals(id)).findFirst().orElse(null);
+        analysisDocumentTypeEntityFound.ifPresent(analysisDocumentTypeEntity -> {
+            analysisDocumentTypeEntity.setIsDeleted(true);
+            analysisDocumentTypeEntity.setUpdatedBy(entity.getUpdatedBy());
+            analysisDocumentTypeRepository.save(analysisDocumentTypeEntity);
+        });
 
-        if (analysisDocumentTypeFound != null) {
-            analysisDocumentTypeFound.setIsActive(false);
-            analysisDocumentTypeRepository.save(analysisDocumentTypeFound);
-        }
+        responseWrapper.setSuccessful(true);
+        responseWrapper.setMessage("AnalysisDocumentType deleted");
+        responseWrapper.setData(Collections.singletonList("AnalysisDocumentType deleted"));
+        return responseWrapper;
     }
+
     @Cacheable(value = "analysisDocumentTypes")
     @Override
-    public List<AnalysisDocumentType> executeReadAll() {
-        return analysisDocumentTypeRepository.findAllByIsActiveTrue();
+    public ResponseWrapper executeReadAll() {
+        responseWrapper = new ResponseWrapper();
+        responseWrapper.setSuccessful(true);
+        responseWrapper.setMessage("AnalysisDocumentTypes found");
+
+        List<CatalogWrapper> catalogWrapperList = analysisDocumentTypeRepository
+                .findAllByIsDeletedFalse()
+                .stream()
+                .map(this::mapToCatalogWrapper)
+                .toList();
+        responseWrapper.setData(catalogWrapperList);
+
+        if (catalogWrapperList.isEmpty()) {
+            responseWrapper.setSuccessful(false);
+            responseWrapper.setMessage("AnalysisDocumentTypes not found");
+            responseWrapper.setData(new ArrayList<>());
+            responseWrapper.addError("id", "AnalysisDocumentTypes not found");
+            return responseWrapper;
+        }
+
+        return responseWrapper;
     }
+
+    @Override
+    public ResponseWrapper validateForCreation(AnalysisDocumentTypeEntity entity) {
+        if (entity.getName() ==null || entity.getName().isEmpty()) {
+            responseWrapper.addError("name", "el nombre no puedo ser nulo o vacio");
+        }
+
+        if (entity.getDescription() ==null || entity.getDescription().isEmpty()) {
+            responseWrapper.addError("description", "la descripcion no puedo ser nulo o vacio");
+        }
+
+        if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
+            responseWrapper.setSuccessful(false);
+            responseWrapper.setMessage("Error validating");
+            responseWrapper.setData(new ArrayList<>());
+            return responseWrapper;
+        }
+
+        return responseWrapper;
+    }
+
+    @Override
+    public ResponseWrapper validateForUpdate(AnalysisDocumentTypeEntity entity) {
+        responseWrapper = new ResponseWrapper();
+        if (entity.getId() == null || entity.getId() == 0) {
+            responseWrapper.addError("id", "el id no puede ser nulo");
+        }
+
+        if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
+            responseWrapper.setSuccessful(false);
+            responseWrapper.setMessage("Error validating");
+            responseWrapper.setData(new ArrayList<>());
+            return responseWrapper;
+        }
+
+        return responseWrapper;
+
+    }
+
+    @Override
+    public ResponseWrapper validateForDelete(AnalysisDocumentTypeEntity entity) {
+           responseWrapper = new ResponseWrapper();
+        if (entity.getId() == null || entity.getId() == 0) {
+            responseWrapper.addError("id", "el id no puede ser nulo");
+        }
+
+        if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
+            responseWrapper.setSuccessful(false);
+            responseWrapper.setMessage("Error validating");
+            responseWrapper.setData(new ArrayList<>());
+            return responseWrapper;
+        }
+        return responseWrapper;
+    }
+
+    @Override
+    public ResponseWrapper validateForRead(AnalysisDocumentTypeEntity entity) {
+        return null;
+    }
+
+    @Override
+    public String getCatalogName() {
+        return "analysisDocumentType";
+    }
+
+    @Override
+    public CatalogWrapper mapToCatalogWrapper(AnalysisDocumentTypeEntity catalogItem) {
+        return new CatalogWrapper(catalogItem.getId(), catalogItem.getName(), catalogItem.getDescription());
+    }
+
+    @Override
+    public AnalysisDocumentTypeEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
+        AnalysisDocumentTypeEntity  analysisDocumentType = new AnalysisDocumentTypeEntity(catalogDTO.getName(), catalogDTO.getDescription());
+        analysisDocumentType.setCreatedBy(userLogged);
+        return analysisDocumentType;
+    }
+
+    @Override
+    public AnalysisDocumentTypeEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
+        AnalysisDocumentTypeEntity  analysisDocumentType = new AnalysisDocumentTypeEntity();
+        analysisDocumentType.setId(catalogDTO.getId());
+        analysisDocumentType.setName(catalogDTO.getName());
+        analysisDocumentType.setDescription(catalogDTO.getDescription());
+        analysisDocumentType.setUpdatedBy(userLogged);
+        return analysisDocumentType;
+    }
+
+    public AnalysisDocumentTypeEntity findById(Long id) {
+        return executeReadAll().getData()
+                .stream()
+                .filter(item -> item instanceof CatalogWrapper)
+                .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                .filter(catalogWrapper -> catalogWrapper.getId().equals(id))
+                .findFirst()
+                .map(catalogWrapper -> {
+                    AnalysisDocumentTypeEntity entity = new AnalysisDocumentTypeEntity();
+                    entity.setId(catalogWrapper.getId());
+                    entity.setName(catalogWrapper.getName());
+                    entity.setDescription(catalogWrapper.getDescription());
+                    return entity;
+                })
+                .orElse(new AnalysisDocumentTypeEntity());
+    }
+
 }

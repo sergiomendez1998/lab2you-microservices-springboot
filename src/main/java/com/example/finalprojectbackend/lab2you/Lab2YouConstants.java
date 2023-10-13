@@ -34,8 +34,10 @@ public class Lab2YouConstants {
     }
 
     public enum lab2YouSuccessCodes {
-        EMAIL_SENT("user created and the registration email was sent successfully"),
-        USER_CREATED("The user was created successfully");
+        EMAIL_SENT("el correo de confirmacion fue enviado a su correo electronico"),
+        USER_CREATED("Usuario creado exitosamente"),
+        SAMPLE_CREATED("La muestra se agrego exitosamente"),
+        REGISTRATION_SUCCESS("Usuario registrado exitosamente");
 
         String description;
 
@@ -49,10 +51,12 @@ public class Lab2YouConstants {
     }
 
     public enum lab2YouRoles {
-        ADMIN("ROLE_ADMIN"),
-        USER("ROLE_USER"),
-        ANALYST("ROLE_ANALYST"),
-        MEDICAL("ROLE_MEDICAL");
+        ADMIN("admin"),
+        USER("user"),
+        ANALYST("Analista"),
+        MEDICAL("Medico"),
+        TECHNICIAN("Tecnico"),
+        CENTRALIZER("Centralizador");
 
         private String role;
 
@@ -62,6 +66,50 @@ public class Lab2YouConstants {
 
         public String getRole() {
             return role;
+        }
+
+    }
+
+    public enum lab2YouUserTypes {
+        CUSTOMER("externo"),
+        EMPLOYEE("interno");
+        private String userType;
+        lab2YouUserTypes(String userType) {
+            this.userType = userType;
+        }
+
+        public String getUserType() {
+            return userType;
+        }
+
+    }
+
+    public enum operationTypes {
+        CREATE("CREATE"),
+        UPDATE("UPDATE"),
+        DELETE("DELETE"),
+        READ("READ");
+        private String operation;
+        operationTypes(String operation) {
+            this.operation = operation;
+        }
+        public String getOperationType() {
+            return operation;
+        }
+
+    }
+
+    public enum statusTypes {
+        CREATED("Creado");
+
+        String status;
+
+        statusTypes(String status) {
+            this.status = status;
+        }
+
+        public String getStatusType() {
+            return status;
         }
 
     }

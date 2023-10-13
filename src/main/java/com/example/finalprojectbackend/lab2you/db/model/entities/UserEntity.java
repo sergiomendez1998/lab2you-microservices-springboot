@@ -8,36 +8,32 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Entity
 @Getter
 @Setter
 @DynamicUpdate
 @DynamicInsert
+@Entity
 @Table(name = "users")
 public class UserEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String nickName;
     private String password;
     private String email;
     private  boolean enabled;
+    private boolean confirmed;
+    private String userType;
+    private String resetPasswordToken;
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private List<Role> roles = new ArrayList<>();
-
-    public void addRole(Role role){
-        roles.add(role);
-    }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private RoleEntity role;
 
     @OneToOne(mappedBy = "user")
-    private Customer customer;
+    private CustomerEntity customer;
 
     @OneToOne(mappedBy = "user")
-    private Employee employee;
+    private EmployeeEntity employee;
 
 }

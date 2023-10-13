@@ -62,15 +62,15 @@ build/
 .idea/**/libraries
 
 # Gradle and Maven with auto-import
-# When using Gradle or Maven with auto-import, you should exclude module files,
+# When using Gradle or Maven with auto-import, you should exclude moduleEntity files,
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
 # .idea/artifacts
 # .idea/compiler.xml
 # .idea/jarRepositories.xml
-# .idea/modules.xml
+# .idea/moduleEntities.xml
 # .idea/*.iml
-# .idea/modules
+# .idea/moduleEntities
 # *.iml
 # *.ipr
 
@@ -133,15 +133,15 @@ fabric.properties
 .idea/**/libraries
 
 # Gradle and Maven with auto-import
-# When using Gradle or Maven with auto-import, you should exclude module files,
+# When using Gradle or Maven with auto-import, you should exclude moduleEntity files,
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
 # .idea/artifacts
 # .idea/compiler.xml
 # .idea/jarRepositories.xml
-# .idea/modules.xml
+# .idea/moduleEntities.xml
 # .idea/*.iml
-# .idea/modules
+# .idea/moduleEntities
 # *.iml
 # *.ipr
 
@@ -199,3 +199,7 @@ buildNumber.properties
 **logs
 **.factorypath
 **/bin
+
+#ignore application properties
+**/application.properties
+.env    
