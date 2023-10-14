@@ -166,7 +166,7 @@
             </plugin>
             
         </plugins>
-             <finalName>lab2you-service</finalName>
+             <finalName>${artifactId}</finalName>
     </build>
 
 </project>
