@@ -32,8 +32,8 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
     public ResponseWrapper executeCreation(ItemEntity entity) {
         itemRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Item created");
-        responseWrapper.setData(Collections.singletonList("Item created"));
+        responseWrapper.setMessage("Item creado");
+        responseWrapper.setData(Collections.singletonList("Item creado"));
         return responseWrapper;
     }
 
@@ -49,14 +49,14 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
             itemRepository.save(itemEntityFound.get());
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Item updated");
-            responseWrapper.setData(Collections.singletonList("Item updated"));
+            responseWrapper.setMessage("Item actualizado");
+            responseWrapper.setData(Collections.singletonList("Item actualizado"));
             return responseWrapper;
         }
 
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("Item not found");
-        responseWrapper.addError("id", "Item not found");
+        responseWrapper.setMessage("Item no encontrado");
+        responseWrapper.addError("id", "Item no encontrado");
         return responseWrapper;
     }
     @CacheEvict(value = "items",allEntries = true)
@@ -72,8 +72,8 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
         });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Item deleted");
-        responseWrapper.setData(Collections.singletonList("item deleted"));
+        responseWrapper.setMessage("Item eliminado");
+        responseWrapper.setData(Collections.singletonList("item eliminado"));
         return responseWrapper;
     }
     @Cacheable(value = "items")
@@ -81,7 +81,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("items found");
+        responseWrapper.setMessage("items encontrados");
 
         List<CatalogWrapper> catalogWrapperList = itemRepository.findAllByIsDeletedFalse()
                 .stream()
@@ -105,7 +105,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -122,7 +122,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -139,7 +139,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }

@@ -41,7 +41,7 @@ public class CatalogManagementProcessingController<T> {
         responseWrapper = new ResponseWrapper();
         if (catalogType.isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Catalog type not found");
+            responseWrapper.setMessage("Catalogo no encontrado");
             responseWrapper.addError("Tipo de Catalogo", "el nombre del catalogo es requerido");
             return ResponseEntity.badRequest().body(responseWrapper);
         }

@@ -34,8 +34,8 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
         responseWrapper = new ResponseWrapper();
         analysisDocumentTypeRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("AnalysisDocumentType created");
-        responseWrapper.setData(Collections.singletonList("AnalysisDocumentType created"));
+        responseWrapper.setMessage("Tipo de documento de analisis creado");
+        responseWrapper.setData(Collections.singletonList("Tipo de documento de analisis creado"));
         return responseWrapper;
     }
 
@@ -52,15 +52,15 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
             analysisDocumentTypeRepository.save(analysisDocumentTypeEntityFound.get());
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("AnalysisDocumentType updated");
-            responseWrapper.setData(Collections.singletonList("AnalysisDocumentType updated"));
+            responseWrapper.setMessage("Tipo de documento de analisis actualizado");
+            responseWrapper.setData(Collections.singletonList("Tipo de documento de analisis actualizado"));
             return responseWrapper;
         }
 
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("AnalysisDocumentType not found");
+        responseWrapper.setMessage("Tipo de documento de analisis no encontrado");
         responseWrapper.setData(new ArrayList<>());
-        responseWrapper.addError("id", "AnalysisDocumentType not found");
+        responseWrapper.addError("id", "Tipo de documento de analisis no encontrado");
 
         return responseWrapper;
     }
@@ -78,8 +78,8 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
         });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("AnalysisDocumentType deleted");
-        responseWrapper.setData(Collections.singletonList("AnalysisDocumentType deleted"));
+        responseWrapper.setMessage("Tipo de documento de analisis eliminado");
+        responseWrapper.setData(Collections.singletonList("Tipo de documento de analisis eliminado"));
         return responseWrapper;
     }
 
@@ -88,7 +88,7 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("AnalysisDocumentTypes found");
+        responseWrapper.setMessage("Tipo de documento de analisis encontrado");
 
         List<CatalogWrapper> catalogWrapperList = analysisDocumentTypeRepository
                 .findAllByIsDeletedFalse()
@@ -99,9 +99,9 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
 
         if (catalogWrapperList.isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("AnalysisDocumentTypes not found");
+            responseWrapper.setMessage("Tipo de documento de analisis no encontrado");
             responseWrapper.setData(new ArrayList<>());
-            responseWrapper.addError("id", "AnalysisDocumentTypes not found");
+            responseWrapper.addError("id", "Tipo de documento de analisis no encontrado");
             return responseWrapper;
         }
 
@@ -120,7 +120,7 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -137,7 +137,7 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -155,7 +155,7 @@ public class AnalysisDocumentTypeService extends CrudCatalogServiceProcessingInt
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }

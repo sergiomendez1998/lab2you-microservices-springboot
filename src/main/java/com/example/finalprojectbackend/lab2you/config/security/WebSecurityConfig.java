@@ -77,7 +77,7 @@ public class WebSecurityConfig {
                     ex.authenticationEntryPoint((request, response, failed) -> {
                         var responseWrapper = new ResponseWrapper();
                         responseWrapper.setSuccessful(false);
-                        responseWrapper.setMessage("Authentication failed");
+                        responseWrapper.setMessage("Autenticacion fallida");
                         responseWrapper.setData(Collections.emptyList());
 
                         response.getWriter().write(
@@ -90,7 +90,7 @@ public class WebSecurityConfig {
                     ex.accessDeniedHandler((request, response, failed) -> {
                         var responseWrapper = new ResponseWrapper();
                         responseWrapper.setSuccessful(false);
-                        responseWrapper.setMessage("Access denied");
+                        responseWrapper.setMessage("Acceso denegado");
                         responseWrapper.setData(Collections.emptyList());
 
                         response.getWriter().write(

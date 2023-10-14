@@ -34,8 +34,8 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         responseWrapper = new ResponseWrapper();
         examTypeRepository.save(examTypeEntity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Exam type created");
-        responseWrapper.setData(Collections.singletonList("Exam type created"));
+        responseWrapper.setMessage("Tipo de examen creado");
+        responseWrapper.setData(Collections.singletonList("Tipo de examen creado"));
         return responseWrapper;
     }
 
@@ -52,14 +52,14 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
             examTypeRepository.save(examTypeFound.get());
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Department updated");
-            responseWrapper.setData(Collections.singletonList("Department updated"));
+            responseWrapper.setMessage("Tipo de examen actualizado");
+            responseWrapper.setData(Collections.singletonList("Tipo de examen actualizado"));
             return responseWrapper;
         }
 
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("examTypeEntity not found");
-        responseWrapper.addError("id", "examTypeEntity not found");
+        responseWrapper.setMessage("Tipo de examen no encontrado");
+        responseWrapper.addError("id", "Tipo de examen no encontrado");
         return responseWrapper;
     }
 
@@ -76,8 +76,8 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Exam type deleted");
-        responseWrapper.setData(Collections.singletonList("Exam Type deleted"));
+        responseWrapper.setMessage("Tipo de examen eliminado");
+        responseWrapper.setData(Collections.singletonList("Tipo de examen eliminado"));
         return responseWrapper;
     }
 
@@ -86,7 +86,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Exam types found");
+        responseWrapper.setMessage("Tipos de examenes encontrados");
         List<CatalogWrapper> catalogWrapperList = examTypeRepository
                 .findAllByIsDeletedFalse()
                 .stream()
@@ -109,7 +109,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -126,7 +126,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -142,7 +142,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }

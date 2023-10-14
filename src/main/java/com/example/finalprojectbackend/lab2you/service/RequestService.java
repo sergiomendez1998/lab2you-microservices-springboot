@@ -82,7 +82,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
                 .collect(Collectors.toList());
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("requests retrieved successfully");
+        responseWrapper.setMessage("solicitudes recuperadas exitosamente");
         responseWrapper.setData(requestWrappers);
 
         return responseWrapper;
@@ -304,7 +304,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         generalInformation.put("Código solicitud", requestDetail.getRequest().getRequestCode());
         generalInformation.put("No. expediente", requestDetail.getRequest().getRequestCode());
         generalInformation.put("Nit", requestDetail.getRequest().getCustomer().getNit());
-        generalInformation.put("No. soport", requestDetail.getRequest().getSupportNumber());
+        generalInformation.put("No. soporte", requestDetail.getRequest().getSupportNumber());
         generalInformation.put("Tipo soporte", requestDetail.getRequest().getSupportType().getName());
         generalInformation.put("Tipo solicitante", requestDetail.getRequest().getCustomer().getUser().getUserType());
         List<AssignmentEntity> assignmentEntities = assigmentService.findAllByRequestId(requestDetail.getRequest().getId());

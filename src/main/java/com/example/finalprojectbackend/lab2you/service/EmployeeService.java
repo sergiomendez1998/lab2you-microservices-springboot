@@ -34,8 +34,8 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
         responseWrapper = new ResponseWrapper();
         employeeRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("employee created successfully");
-        responseWrapper.setData(Collections.singletonList("employee created successfully"));
+        responseWrapper.setMessage("empleado creado exitosamente");
+        responseWrapper.setData(Collections.singletonList("empleado creado exitosamente"));
         return responseWrapper;
     }
 
@@ -50,12 +50,12 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
             employeeEntityFound.get().setLastName(entity.getLastName() != null ? entity.getLastName() : employeeEntityFound.get().getLastName());
             employeeRepository.save(employeeEntityFound.get());
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("employee updated successfully");
-            responseWrapper.setData(Collections.singletonList("employee created successfully"));
+            responseWrapper.setMessage("empleado actualizado exitosamente");
+            responseWrapper.setData(Collections.singletonList("empleado actualizado exitosamente"));
         return responseWrapper;
         }
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("employee not found");
+        responseWrapper.setMessage("empleado no encontrado");
         return responseWrapper;
     }
 
@@ -67,11 +67,11 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
             employeeEntityFound.get().getUser().setEnabled(false);
             employeeRepository.save(employeeEntityFound.get());
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("employee deleted successfully");
+            responseWrapper.setMessage("empleado eliminado exitosamente");
             return responseWrapper;
         }
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("employee not found");
+        responseWrapper.setMessage("empleado no encontrado");
         return responseWrapper;
 
     }
@@ -80,7 +80,7 @@ public class EmployeeService extends CrudServiceProcessingController<EmployeeEnt
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("employees found successfully");
+        responseWrapper.setMessage("empleados encontrados exitosamente");
 
         List<EmployeeWrapper> employeeWrappers = employeeRepository.findAll()
                 .stream()

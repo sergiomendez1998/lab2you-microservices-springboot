@@ -92,7 +92,7 @@ public class AnalysisDocumentManagementProcessingController {
 
 
             if (file.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ResponseWrapper(false, "File is empty", null));
+                return ResponseEntity.badRequest().body(new ResponseWrapper(false, "El archivo esta vacio", null));
             }
 
             if (Lab2YouUtils.isFileEncryptedOrEmptyBody(file)) {
@@ -118,7 +118,7 @@ public class AnalysisDocumentManagementProcessingController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body(new ResponseWrapper(false, "Error uploading file", null));
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, "Error cargando el archivo", null));
         }
     }
 

@@ -33,8 +33,8 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
         responseWrapper = new ResponseWrapper();
         sampleTypeRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("SampleType created");
-        responseWrapper.setData(Collections.singletonList("SampleType created"));
+        responseWrapper.setMessage("Tipo de muestra creada");
+        responseWrapper.setData(Collections.singletonList("Tipo de muestra creada"));
         return responseWrapper;
     }
 
@@ -51,13 +51,13 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
             sampleTypeRepository.save(sampleTypeEntityFound.get());
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("SampleType updated");
-            responseWrapper.setData(Collections.singletonList("SampleType updated"));
+            responseWrapper.setMessage("Tipo de muestra actualizada");
+            responseWrapper.setData(Collections.singletonList("Tipo de muestra actualizada"));
             return responseWrapper;
         }
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("SampleType not found");
-        responseWrapper.addError("id", "SampleType not found");
+        responseWrapper.setMessage("Tipo de muestra no encontrada");
+        responseWrapper.addError("id", "Tipo de muestra no encontrada");
         return responseWrapper;
     }
 
@@ -76,8 +76,8 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
         );
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("SampleType deleted");
-        responseWrapper.setData(Collections.singletonList("SampleType deleted"));
+        responseWrapper.setMessage("Tipo de muestra eliminada");
+        responseWrapper.setData(Collections.singletonList("Tipo de muestra eliminada"));
         return responseWrapper;
 
     }
@@ -87,7 +87,7 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("SampleTypes found");
+        responseWrapper.setMessage("Tipos de muestra encontrados");
         List<CatalogWrapper> sampleTypeEntities = sampleTypeRepository.findAllByIsDeletedFalse()
                 .stream()
                 .map(this::mapToCatalogWrapper)
@@ -110,7 +110,7 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -127,7 +127,7 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -144,7 +144,7 @@ public class SampleTypeService extends CrudCatalogServiceProcessingInterceptor<S
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }

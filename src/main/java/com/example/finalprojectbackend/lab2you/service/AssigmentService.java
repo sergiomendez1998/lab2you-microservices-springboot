@@ -24,8 +24,8 @@ public class AssigmentService extends CrudServiceProcessingController<Assignment
         responseWrapper = new ResponseWrapper();
         assignmentRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("request created successfully");
-        responseWrapper.setData(Collections.singletonList("request created successfully"));
+        responseWrapper.setMessage("Solicitud creada exitosamente");
+        responseWrapper.setData(Collections.singletonList("Solicitud creada exitosamente"));
         return responseWrapper;
     }
 

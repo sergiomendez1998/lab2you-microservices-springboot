@@ -44,13 +44,13 @@ public class StateChangeManagementProcessingController {
             requestStatusRepository.save(requestStatusEntity);
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Status changed");
+            responseWrapper.setMessage("Estado cambiado");
             responseWrapper.setData(Collections.singletonList("El estado de la solicitud ha sido cambiado"));
            return ResponseEntity.ok(responseWrapper);
         }
 
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("Status not changed");
+        responseWrapper.setMessage("Estado no cambiado");
         responseWrapper.setData(Collections.singletonList("El estado de la solicitud no ha sido cambiado"));
         return ResponseEntity.ok(responseWrapper);
     }

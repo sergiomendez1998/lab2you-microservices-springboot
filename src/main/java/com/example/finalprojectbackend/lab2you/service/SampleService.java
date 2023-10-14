@@ -27,8 +27,8 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
         responseWrapper = new ResponseWrapper();
         sampleRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("sample created successfully");
-        responseWrapper.setData(Collections.singletonList("sample created successfully"));
+        responseWrapper.setMessage("muestra creada exitosamente");
+        responseWrapper.setData(Collections.singletonList("muestra creada exitosamente"));
         return responseWrapper;
     }
 
@@ -65,7 +65,7 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("sample found successfully");
+        responseWrapper.setMessage("muestras encontradas exitosamente");
 
         List<SampleWrapper> sampleWrappers= sampleRepository.findAllByIsDeletedFalse()
                 .stream()
