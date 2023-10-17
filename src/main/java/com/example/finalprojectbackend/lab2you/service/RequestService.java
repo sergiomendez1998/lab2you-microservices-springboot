@@ -54,7 +54,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         entity.getRequestDetails().forEach(requestDetailEntity -> requestDetailEntity.setIsDeleted(true));
 
         if (!entity.getRequestDetails().isEmpty()) {
-           entity.getRequestDetails()
+            entity.getRequestDetails()
                     .forEach(requestDetailEntity -> requestDetailEntity.setIsDeleted(true));
         }
 
@@ -254,7 +254,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         itemWrapper.setId(requestDetail.getItem().getId());
         itemWrapper.setName(requestDetail.getItem().getName());
         itemWrapper.setExamType(requestDetail.getItem().getExamType().getName());
-
+        requestDetailWrapper.setItemWrapper(itemWrapper);
         return requestDetailWrapper;
     }
 
@@ -290,6 +290,39 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
 
         return generalInformation;
     }
+
+    public RequestSampleItemWrapper mapToSampleItems(RequestEntity requestEntity) {
+        RequestSampleItemWrapper requestSampleItemWrapper = new RequestSampleItemWrapper();
+        requestSampleItemWrapper.setId(requestEntity.getId());
+        requestSampleItemWrapper.setSampleWrapper(requestEntity.getSamples().stream().map(sampleEntity -> {
+            SampleWrapper sampleWrapper = new SampleWrapper();
+            sampleWrapper.setLabel(sampleEntity.getLabel());
+            sampleWrapper.setId(sampleEntity.getId());
+            sampleWrapper.setPresentation(sampleEntity.getPresentation());
+            sampleWrapper.setQuantity(sampleEntity.getQuantity());
+            sampleWrapper.setSampleType(
+                    new SampleTypeWrapper(sampleEntity.getSampleTypeEntity().getId(),
+                            sampleEntity.getSampleTypeEntity().getName(),
+                            sampleEntity.getSampleTypeEntity().getDescription()));
+
+            sampleWrapper.setMeasureUnit(
+                    new MeasureUnitWrapper(sampleEntity.getMeasureUnitEntity().getId(),
+                            sampleEntity.getMeasureUnitEntity().getName(),
+                            sampleEntity.getMeasureUnitEntity().getDescription()));
+
+            sampleWrapper.setItems(sampleEntity.getSampleItemEntities().stream().map(sampleItemEntity -> {
+                ItemWrapper itemWrapper = new ItemWrapper();
+                itemWrapper.setId(sampleItemEntity.getRequestDetail().getItem().getId());
+                itemWrapper.setName(sampleItemEntity.getRequestDetail().getItem().getName());
+                itemWrapper.setDescription(sampleItemEntity.getRequestDetail().getItem().getDescription());
+                itemWrapper.setExamType(sampleItemEntity.getRequestDetail().getItem().getExamType().getName());
+                return itemWrapper;
+            }).collect(Collectors.toList()));
+            return sampleWrapper;
+        }).collect(Collectors.toList()));
+        return requestSampleItemWrapper;
+    }
+
 
     @Override
     protected ResponseWrapper validateForRead(RequestEntity entity) {

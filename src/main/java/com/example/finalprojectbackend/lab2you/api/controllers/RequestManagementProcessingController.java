@@ -4,6 +4,7 @@ import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.RequestDetailWrapper;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.RequestSampleItemWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapperRequest;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestDetailRepository;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.operationTypes.*;
 
@@ -56,6 +56,13 @@ public class RequestManagementProcessingController {
     @GetMapping()
     public ResponseEntity<ResponseWrapper> getAll() {
         return ResponseEntity.ok(requestService.executeReadAll());
+    }
+
+    @GetMapping("/samples/{requestId}")
+    public ResponseEntity<RequestSampleItemWrapper> getSamplesByRequestId(@PathVariable Long requestId) {
+       RequestEntity requestEntity = requestService.getRequestById(requestId);
+       RequestSampleItemWrapper requestSampleItemWrapper =requestService.mapToSampleItems(requestEntity);
+         return ResponseEntity.ok(requestSampleItemWrapper);
     }
 
     @GetMapping("/requestStatuses/{requestId}")

@@ -10,6 +10,8 @@ public class AuthWrapper {
     private Long userId;
     private String role;
     private String name;
+    private String userType;
+    private String Nit;
     private String email;
 
     public AuthWrapper(Long userId,String token, String role, String name, String email) {
