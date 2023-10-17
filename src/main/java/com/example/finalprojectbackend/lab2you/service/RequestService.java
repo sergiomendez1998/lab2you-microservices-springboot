@@ -7,6 +7,7 @@ import com.example.finalprojectbackend.lab2you.db.model.entities.*;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.*;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestRepository;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.ExamTypeService;
+import com.example.finalprojectbackend.lab2you.service.catalogservice.ItemService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.SupportTypeService;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +24,13 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
     private final SupportTypeService supportTypeService;
     private ResponseWrapper responseWrapper;
 
-    private final ExamTypeService examTypeService;
+    private final ItemService itemService;
 
     private final AssigmentService assigmentService;
 
-    public RequestService(RequestRepository requestRepository, ExamTypeService examTypeService, SupportTypeService supportTypeService, AssigmentService assigmentService) {
+    public RequestService(RequestRepository requestRepository, ItemService itemService, SupportTypeService supportTypeService, AssigmentService assigmentService) {
         this.requestRepository = requestRepository;
-        this.examTypeService = examTypeService;
+        this.itemService = itemService;
         this.supportTypeService = supportTypeService;
         this.assigmentService = assigmentService;
     }
@@ -50,19 +51,16 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
     @Override
     public ResponseWrapper executeDeleteById(RequestEntity entity) {
         entity.setDeleted(true);
-
         entity.getRequestDetails().forEach(requestDetailEntity -> requestDetailEntity.setIsDeleted(true));
 
         if (!entity.getRequestDetails().isEmpty()) {
+           entity.getRequestDetails()
+                    .forEach(requestDetailEntity -> requestDetailEntity.setIsDeleted(true));
+        }
 
-            entity.getRequestDetails()
-                    .forEach(requestDetailEntity -> requestDetailEntity.getSample()
-                            .forEach(sampleEntity -> sampleEntity.getSampleItemEntities()
-                                    .forEach(sampleItemEntity -> sampleItemEntity.setDeleted(true))));
-
-            entity.getRequestDetails()
-                    .forEach(requestDetailEntity -> requestDetailEntity.getSample()
-                            .forEach(sampleEntity -> sampleEntity.setDeleted(true)));
+        if (!entity.getSamples().isEmpty()) {
+            entity.getSamples().forEach(sampleEntity -> sampleEntity.setDeleted(true));
+            entity.getSamples().forEach(sampleEntity -> sampleEntity.getSampleItemEntities().forEach(sampleItemEntity -> sampleItemEntity.setDeleted(true)));
         }
 
         requestRepository.save(entity);
@@ -150,8 +148,8 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
 
     public RequestEntity mapToRequestEntity(RequestDTO requestDTO) {
         RequestEntity requestEntity = new RequestEntity();
-        List<String> examNames = new ArrayList<>();
-        requestDTO.getExamType().forEach(examTypeDTO -> examNames.add(examTypeDTO.getName()));
+        List<String> itemNames = new ArrayList<>();
+        requestDTO.getItems().forEach(item -> itemNames.add(item.getName()));
         requestEntity.setSupportNumber(requestDTO.getSupportNumber());
         requestEntity.setEmail(requestDTO.getEmail());
         requestEntity.setRemark(requestDTO.getRemark());
@@ -159,8 +157,8 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         requestEntity.setRequestCode(Lab2YouUtils.generateRequestCode(date));
         SupportTypeEntity supportTypeEntity = supportTypeService.getSupportByName(requestDTO.getSupportType().getName());
-        List<ExamTypeEntity> examTypes = examTypeService.findExamByNames(examNames);
-        examTypes.forEach(requestEntity::addExamType);
+        List<ItemEntity> items = itemService.findItemByNames(itemNames);
+        items.forEach(requestEntity::addItem);
         requestEntity.setSupportType(supportTypeEntity);
         return requestEntity;
     }
@@ -216,7 +214,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         return responseWrapper;
     }
 
-    public ResponseWrapper getAllExamsByRequestId(Long id) {
+    public Map<String, List<RequestDetailWrapper>> getAllExamItemsByRequestId(Long id) {
         List<RequestDetailEntity> requestDetailEntities = requestRepository.findDetailsByRequestId(id)
                 .stream()
                 .filter(requestDetailEntity -> !requestDetailEntity.getIsDeleted())
@@ -224,14 +222,10 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
 
         List<RequestDetailWrapper> requestDetailWrappers = requestDetailEntities.stream()
                 .map(this::mapToRequestDetailWrapper)
-                .collect(Collectors.toList());
+                .toList();
 
-        responseWrapper = new ResponseWrapper();
-        responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Exams found");
-        responseWrapper.setData(requestDetailWrappers);
-        return responseWrapper;
-
+        return requestDetailWrappers.stream()
+                .collect(Collectors.groupingBy(requestDetailWrapper -> requestDetailWrapper.getItemWrapper().getExamType()));
     }
 
     public ResponseWrapperRequest<Map<String, String>> getGeneralInformationByRequestId(Long id) {
@@ -250,51 +244,17 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
     }
 
     public RequestDetailWrapper mapToRequestDetailWrapper(RequestDetailEntity requestDetail) {
-        ExamTypeWrapper examTypeWrapper = new ExamTypeWrapper();
-        examTypeWrapper.setId(requestDetail.getExamType().getId());
-        examTypeWrapper.setName(requestDetail.getExamType().getName());
-        examTypeWrapper.setDescription(requestDetail.getExamType().getDescription());
 
         RequestDetailWrapper requestDetailWrapper = new RequestDetailWrapper();
-        requestDetailWrapper.setId(requestDetail.getId());
-        requestDetailWrapper.setExamType(examTypeWrapper);
 
-        List<SampleWrapper> sampleWrappers = requestDetail.getSample().stream()
-                .filter(sampleEntity -> !sampleEntity.isDeleted())
-                .map(sampleEntity -> {
-                    SampleWrapper sampleWrapper = new SampleWrapper();
-                    sampleWrapper.setPresentation(sampleEntity.getPresentation());
-                    sampleWrapper.setQuantity(sampleEntity.getQuantity());
-                    sampleWrapper.setSampleType(new SampleTypeWrapper(
-                                    sampleEntity.getSampleTypeEntity().getId(),
-                                    sampleEntity.getSampleTypeEntity().getName(),
-                                    sampleEntity.getSampleTypeEntity().getDescription()
-                            )
-                    );
-                    sampleWrapper.setMeasureUnit(new MeasureUnitWrapper(
-                                    sampleEntity.getMeasureUnitEntity().getId(),
-                                    sampleEntity.getMeasureUnitEntity().getName(),
-                                    sampleEntity.getMeasureUnitEntity().getDescription()
-                            )
-                    );
-                    sampleWrapper.setExpirationDate(sampleEntity.getExpirationDate());
-                    sampleWrapper.setLabel(sampleEntity.getLabel());
-                    sampleWrapper.setId(sampleEntity.getId());
-                    sampleWrapper.setItems(sampleEntity.getSampleItemEntities().stream()
-                            .filter(sampleItemEntity -> {
-                                return !sampleItemEntity.isDeleted() && sampleEntity.getId().equals(sampleWrapper.getId());
-                            })
-                            .map(sampleItemEntity -> new ItemWrapper(
-                                    sampleItemEntity.getItem().getId(),
-                                    sampleItemEntity.getItem().getName(),
-                                    sampleItemEntity.getItem().getDescription()))
-                            .collect(Collectors.toList()));
-                    return sampleWrapper;
-                })
-                .collect(Collectors.toList());
-
-        requestDetailWrapper.getExamType().setSamples(sampleWrappers);
         requestDetailWrapper.setRequestId(requestDetail.getRequest().getId());
+        requestDetailWrapper.setId(requestDetail.getId());
+
+        ItemWrapper itemWrapper = new ItemWrapper();
+        itemWrapper.setId(requestDetail.getItem().getId());
+        itemWrapper.setName(requestDetail.getItem().getName());
+        itemWrapper.setExamType(requestDetail.getItem().getExamType().getName());
+
         return requestDetailWrapper;
     }
 

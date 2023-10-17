@@ -1,6 +1,7 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
+import com.example.finalprojectbackend.lab2you.db.model.entities.ExamTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.ItemEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
@@ -24,8 +25,11 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
     private final ItemRepository itemRepository;
     private  ResponseWrapper responseWrapper;
 
-    public ItemService(ItemRepository itemRepository){
+    private final ExamTypeService examTypeService;
+
+    public ItemService(ItemRepository itemRepository, ExamTypeService examTypeService) {
         this.itemRepository=itemRepository;
+        this.examTypeService = examTypeService;
     }
 
     @Override
@@ -165,6 +169,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
     public ItemEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
         ItemEntity itemEntity = new ItemEntity(catalogDTO.getName(),catalogDTO.getDescription());
         itemEntity.setCreatedBy(userLogged);
+        itemEntity.setExamType(examTypeService.findById(catalogDTO.getExamTypeId()));
         return itemEntity;
     }
 
@@ -177,7 +182,28 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
         itemEntity.setUpdatedBy(userLogged);
         return itemEntity;
     }
+    public List<ItemEntity> findItemByNames(List<String> names) {
+        List<ItemEntity> result = new ArrayList<>();
 
+        for (String name : names) {
+            List<CatalogWrapper> catalogWrappers = executeReadAll().getData().stream()
+                    .filter(item -> item instanceof CatalogWrapper)
+                    .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                    .filter(catalogWrapper -> catalogWrapper.getName().equals(name))
+                    .toList();
+
+            if (!catalogWrappers.isEmpty()) {
+                ItemEntity entity = new ItemEntity();
+                CatalogWrapper catalogWrapper = catalogWrappers.get(0);
+                entity.setId(catalogWrapper.getId());
+                entity.setName(catalogWrapper.getName());
+                entity.setDescription(catalogWrapper.getDescription());
+                result.add(entity);
+            }
+        }
+
+        return result;
+    }
     public ItemEntity findById(Long id) {
         return executeReadAll().getData()
                 .stream()

@@ -162,8 +162,8 @@ public class AnalysisDocumentService extends CrudServiceProcessingController<Ana
         analysisDocumentWrapper.setDocumentCode(analysisDocumentEntity.getDocumentCode());
         analysisDocumentWrapper.setResolution(analysisDocumentEntity.getResolution());
         analysisDocumentWrapper.setDocumentType(analysisDocumentEntity.getAnalysisDocumentType().getName());
-        analysisDocumentWrapper.setCustomerNit(analysisDocumentEntity.getSample().getRequestDetail().getRequest().getCustomer().getNit());
-        analysisDocumentWrapper.setRequestCode(analysisDocumentEntity.getSample().getRequestDetail().getRequest().getRequestCode());
+        analysisDocumentWrapper.setCustomerNit(analysisDocumentEntity.getSample().getRequest().getCustomer().getNit());
+        analysisDocumentWrapper.setRequestCode(analysisDocumentEntity.getSample().getRequest().getRequestCode());
         analysisDocumentWrapper.setCreatedAt(analysisDocumentEntity.getCreatedAt());
         return  analysisDocumentWrapper;
     }

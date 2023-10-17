@@ -10,6 +10,7 @@ public class CatalogWrapper {
     private Long id;
     private String name;
     private String description;
+    private String userType;
 
     public CatalogWrapper(Long id, String name, String description) {
         this.id = id;

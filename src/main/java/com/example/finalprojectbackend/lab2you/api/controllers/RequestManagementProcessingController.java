@@ -3,6 +3,7 @@ package com.example.finalprojectbackend.lab2you.api.controllers;
 import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.RequestDetailWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapperRequest;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestDetailRepository;
@@ -13,7 +14,9 @@ import com.example.finalprojectbackend.lab2you.service.catalogservice.StatusServ
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.operationTypes.*;
 
@@ -62,10 +65,10 @@ public class RequestManagementProcessingController {
         return ResponseEntity.ok(responseWrapper);
     }
 
-    @GetMapping("/exams/{requestId}")
-    public ResponseEntity<ResponseWrapper> getExamsByRequestId(@PathVariable Long requestId) {
-        responseWrapper = new ResponseWrapper();
-        responseWrapper = requestService.getAllExamsByRequestId(requestId);
+    @GetMapping("/items/{requestId}")
+    public ResponseEntity<Map<String, List<RequestDetailWrapper>>> getExamsByRequestId(@PathVariable Long requestId) {
+        var
+        responseWrapper = requestService.getAllExamItemsByRequestId(requestId);
         return ResponseEntity.ok(responseWrapper);
     }
 
@@ -125,6 +128,18 @@ public class RequestManagementProcessingController {
         }
 
         RequestEntity requestEntity = requestService.getRequestById(requestId);
+
+        String recentStatus = requestEntity.getRequestStatuses()
+                .stream()
+                .min((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()))
+                .map(status -> status.getStatus().getName())
+                .orElse(null);
+
+        boolean statusCreated = Lab2YouConstants.statusTypes.CREATED.getStatusType().equalsIgnoreCase(recentStatus);
+
+        if (!statusCreated) {
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, "La solicitud con estado: "+recentStatus+" no se puede eliminar", null));
+        }
 
         responseWrapper = requestService.execute(requestEntity, DELETE.getOperationType());
         return ResponseEntity.ok(responseWrapper);

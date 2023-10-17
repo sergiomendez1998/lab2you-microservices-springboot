@@ -11,7 +11,7 @@ public class RequestDTO {
     private String supportNumber;
     private String email;
     private String remark;
-    private List<ExamTypeDTO> examType;
+    private List<ItemDTO> items;
     private SupportTypeDTO supportType;
     private Long  userId;
 }

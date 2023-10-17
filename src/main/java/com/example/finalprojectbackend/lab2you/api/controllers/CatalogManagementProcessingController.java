@@ -5,6 +5,7 @@ import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 
 import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
@@ -28,12 +29,28 @@ public class CatalogManagementProcessingController<T> {
 
     private final CacheManager cacheManager;
 
+
     public CatalogManagementProcessingController(List<CrudCatalogServiceProcessingInterceptor<T>> catalogServices,
             CurrentUserProvider currentUserProvider, CacheManager cacheManager) {
         catalogServiceMap = catalogServices.stream()
                 .collect(Collectors.toMap(service -> service.getCatalogName().toLowerCase(), service -> service));
         this.currentUserProvider = currentUserProvider;
         this.cacheManager = cacheManager;
+    }
+
+    @GetMapping("/supportType/{userType}")
+    public ResponseEntity<List<CatalogWrapper>> getSupportType(@PathVariable("userType") String userType) {
+        CrudCatalogServiceProcessingInterceptor<T> catalogService = getCatalogService("supportType");
+        List<CatalogWrapper> supportType = catalogService.executeReadAll().getData()
+                .stream()
+                .map(supportTypeEntity -> (CatalogWrapper) supportTypeEntity)
+                .collect(Collectors.toList());
+
+        supportType = supportType.stream()
+                .filter(supportTypeEntity -> supportTypeEntity.getUserType().equalsIgnoreCase(userType))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(supportType);
     }
 
     @GetMapping()
@@ -55,6 +72,17 @@ public class CatalogManagementProcessingController<T> {
     @PostMapping
     public ResponseEntity<ResponseWrapper> create(@PathParam("catalogType") String catalogType,
             @RequestBody CatalogDTO CatalogDTO) {
+
+        if(catalogType.equalsIgnoreCase("item")){
+             if(CatalogDTO.getExamTypeId() == null){
+                 responseWrapper = new ResponseWrapper();
+                 responseWrapper.setSuccessful(false);
+                 responseWrapper.setMessage("Tipo de examen no esta presente");
+                 responseWrapper.addError("Tipo de examen", "el tipo de examen es requerido para asociar el item");
+                 return ResponseEntity.badRequest().body(responseWrapper);
+             }
+        }
+
         responseWrapper = new ResponseWrapper();
         CrudCatalogServiceProcessingInterceptor<T> catalogService = getCatalogService(catalogType);
         UserEntity userLogged = currentUserProvider.getCurrentUser();

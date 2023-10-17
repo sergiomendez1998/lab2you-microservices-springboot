@@ -24,6 +24,7 @@ public class SupportTypeEntity extends BaseEntity {
     private Long id;
     private String name;
     private String description;
+    private String userType;
 
     @OneToMany (mappedBy = "supportType")
     private List<RequestEntity> requestEntities = new ArrayList<>();

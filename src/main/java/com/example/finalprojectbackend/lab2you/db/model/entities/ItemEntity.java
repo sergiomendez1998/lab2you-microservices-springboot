@@ -26,9 +26,11 @@ public class ItemEntity extends BaseEntity {
     private String name;
     private String description;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "item")
-    private List<SampleItemEntity> sampleItemEntities = new ArrayList<>();
+    private List<RequestDetailEntity> requestDetails = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "exam_type_id")
+    private ExamTypeEntity examType;
 
     public ItemEntity(String name, String description) {
         this.name = name;

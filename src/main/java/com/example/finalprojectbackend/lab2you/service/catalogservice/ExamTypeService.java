@@ -2,10 +2,12 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.ExamTypeEntity;
-import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.ItemEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.ExamTypeItemWrapper;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.ItemWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.ExamTypeRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Qualifier("examType")
@@ -87,12 +88,12 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
         responseWrapper.setMessage("Tipos de examenes encontrados");
-        List<CatalogWrapper> catalogWrapperList = examTypeRepository
+        List<ExamTypeItemWrapper> examTypeItemWrapperList = examTypeRepository
                 .findAllByIsDeletedFalse()
                 .stream()
-                .map(this::mapToCatalogWrapper)
+                .map(this::mapToExamTypeItemWrapper)
                 .toList();
-        responseWrapper.setData(catalogWrapperList);
+        responseWrapper.setData(examTypeItemWrapperList);
         return responseWrapper;
     }
 
@@ -172,6 +173,23 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         return examType;
     }
 
+    private ExamTypeItemWrapper mapToExamTypeItemWrapper(ExamTypeEntity examTypeEntity) {
+        ExamTypeItemWrapper examTypeItemWrapper = new ExamTypeItemWrapper();
+        examTypeItemWrapper.setId(examTypeEntity.getId());
+        examTypeItemWrapper.setName(examTypeEntity.getName());
+        examTypeItemWrapper.setDescription(examTypeEntity.getDescription());
+
+        examTypeItemWrapper.setItems(examTypeEntity.getItems().stream().map(itemEntity -> {
+            ItemWrapper itemWrapper = new ItemWrapper();
+            itemWrapper.setId(itemEntity.getId());
+            itemWrapper.setName(itemEntity.getName());
+            itemWrapper.setDescription(itemEntity.getDescription());
+            return itemWrapper;
+        }).toList());
+
+        return examTypeItemWrapper;
+    }
+
     @Override
     public ExamTypeEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
         ExamTypeEntity examType = new ExamTypeEntity();
@@ -203,5 +221,23 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         }
 
         return result;
+    }
+
+    public ExamTypeEntity findById(Long id) {
+        return executeReadAll().getData()
+                .stream()
+                .filter(item -> item instanceof CatalogWrapper)
+                .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                .filter(catalogWrapper -> catalogWrapper.getId().equals(id))
+                .findFirst()
+                .map(catalogWrapper -> {
+                    ExamTypeEntity entity = new ExamTypeEntity();
+                    entity.setId(catalogWrapper.getId());
+                    entity.setName(catalogWrapper.getName());
+                    entity.setDescription(catalogWrapper.getDescription());
+                    return entity;
+                })
+                .orElse(new ExamTypeEntity());
+
     }
 }

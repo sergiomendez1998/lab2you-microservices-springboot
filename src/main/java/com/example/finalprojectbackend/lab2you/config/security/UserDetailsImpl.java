@@ -58,7 +58,21 @@ public class UserDetailsImpl implements UserDetails {
     public String getName() {
         return userEntity.getNickName();
     }
+    public String getUserType() {
+        return userEntity.getUserType();
+    }
 
+    public String getNit() {
+       if (userEntity.getCustomer() != null) {
+           if(getUserType().equals("externo")){
+               return userEntity.getCustomer().getNit();
+           }else {
+               return "";
+           }
+       } else {
+           return "";
+       }
+    }
     public String getRole() {
         return userEntity.getRole().getName();
     }

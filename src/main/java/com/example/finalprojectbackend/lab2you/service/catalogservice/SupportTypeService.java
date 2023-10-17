@@ -1,7 +1,6 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.SupportTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
@@ -160,7 +159,9 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
 
     @Override
     public CatalogWrapper mapToCatalogWrapper(SupportTypeEntity catalogItem) {
-        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+        CatalogWrapper catalogWrapper = new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+        catalogWrapper.setUserType(catalogItem.getUserType());
+        return catalogWrapper;
     }
 
     @Override

@@ -38,6 +38,9 @@ public class RequestEntity {
     @OneToMany(mappedBy = "request")
     private List<RequestStatusEntity> requestStatuses = new ArrayList<>();
 
+    @OneToMany(mappedBy = "request")
+    private List<SampleEntity> samples = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private CustomerEntity customer;
@@ -48,9 +51,9 @@ public class RequestEntity {
         this.receptionDate = new Date(System.currentTimeMillis());
     }
 
-    public void addExamType(ExamTypeEntity examTypeEntity) {
+    public void addItem(ItemEntity ItemEntity) {
         RequestDetailEntity requestDetailEntity = new RequestDetailEntity();
-        requestDetailEntity.setExamType(examTypeEntity);
+        requestDetailEntity.setItem(ItemEntity);
         requestDetailEntity.setRequest(this);
         this.requestDetails.add(requestDetailEntity);
     }

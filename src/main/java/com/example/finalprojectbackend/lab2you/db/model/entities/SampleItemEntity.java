@@ -23,8 +23,8 @@ public class SampleItemEntity {
     private SampleEntity sample;
 
     @ManyToOne
-    @JoinColumn(name="item_id")
-    private ItemEntity item;
+    @JoinColumn(name="request_detail_item_id")
+    private RequestDetailEntity requestDetail;
 
     private boolean isDeleted;
 }
