@@ -145,7 +145,7 @@ public class RequestManagementProcessingController {
         boolean statusCreated = Lab2YouConstants.statusTypes.CREATED.getStatusType().equalsIgnoreCase(recentStatus);
 
         if (!statusCreated) {
-            return ResponseEntity.badRequest().body(new ResponseWrapper(false, "La solicitud con estado: "+recentStatus+" no se puede eliminar", null));
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, "La solicitud con estado "+recentStatus+" no se puede eliminar", null));
         }
 
         responseWrapper = requestService.execute(requestEntity, DELETE.getOperationType());

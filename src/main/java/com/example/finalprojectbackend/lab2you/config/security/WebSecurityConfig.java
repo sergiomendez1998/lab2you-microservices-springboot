@@ -151,6 +151,7 @@ public class WebSecurityConfig {
                 new AntPathRequestMatcher("/api/v1/sample/**", "DELETE"),
                 new AntPathRequestMatcher("/api/v1/request/**", "GET"),
                 new AntPathRequestMatcher("/api/v1/request/**", "POST"),
+                new AntPathRequestMatcher("/api/v1/request/**", "PUT"),
                 new AntPathRequestMatcher("/api/v1/customer/register", "POST"),
                 new AntPathRequestMatcher("/api/v1/employee/**", "POST"),
                 new AntPathRequestMatcher("/api/v1/employee/**", "PUT"),

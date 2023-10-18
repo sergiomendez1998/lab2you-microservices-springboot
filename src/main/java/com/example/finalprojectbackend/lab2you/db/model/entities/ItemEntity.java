@@ -25,6 +25,7 @@ public class ItemEntity extends BaseEntity {
     private Long id;
     private String name;
     private String description;
+    private Double price;
     @OneToMany(mappedBy = "item")
     private List<RequestDetailEntity> requestDetails = new ArrayList<>();
     @ManyToOne

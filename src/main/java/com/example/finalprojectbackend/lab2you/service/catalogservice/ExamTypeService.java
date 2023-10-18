@@ -184,6 +184,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
             itemWrapper.setId(itemEntity.getId());
             itemWrapper.setName(itemEntity.getName());
             itemWrapper.setDescription(itemEntity.getDescription());
+            itemWrapper.setPrice(itemEntity.getPrice());
             return itemWrapper;
         }).toList());
 
@@ -198,29 +199,6 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         examType.setDescription(catalogDTO.getDescription());
         examType.setUpdatedBy(userLogged);
         return examType;
-    }
-
-    public List<ExamTypeEntity> findExamByNames(List<String> names) {
-        List<ExamTypeEntity> result = new ArrayList<>();
-
-        for (String name : names) {
-            List<CatalogWrapper> catalogWrappers = executeReadAll().getData().stream()
-                    .filter(item -> item instanceof CatalogWrapper)
-                    .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
-                    .filter(catalogWrapper -> catalogWrapper.getName().equals(name))
-                    .toList();
-
-            if (!catalogWrappers.isEmpty()) {
-                ExamTypeEntity entity = new ExamTypeEntity();
-                CatalogWrapper catalogWrapper = catalogWrappers.get(0); // Tomamos el primero si hay múltiples coincidencias
-                entity.setId(catalogWrapper.getId());
-                entity.setName(catalogWrapper.getName());
-                entity.setDescription(catalogWrapper.getDescription());
-                result.add(entity);
-            }
-        }
-
-        return result;
     }
 
     public ExamTypeEntity findById(Long id) {
