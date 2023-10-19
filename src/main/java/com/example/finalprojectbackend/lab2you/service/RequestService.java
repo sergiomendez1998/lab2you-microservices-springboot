@@ -305,7 +305,9 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
                             sampleEntity.getMeasureUnitEntity().getName(),
                             sampleEntity.getMeasureUnitEntity().getDescription()));
 
-            sampleWrapper.setItems(sampleEntity.getSampleItemEntities().stream().map(sampleItemEntity -> {
+            sampleWrapper.setItems(sampleEntity.getSampleItemEntities().stream()
+                            .filter(sampleItemEntity -> !sampleItemEntity.isDeleted())
+                    .map(sampleItemEntity -> {
                 ItemWrapper itemWrapper = new ItemWrapper();
                 itemWrapper.setId(sampleItemEntity.getRequestDetail().getItem().getId());
                 itemWrapper.setName(sampleItemEntity.getRequestDetail().getItem().getName());
