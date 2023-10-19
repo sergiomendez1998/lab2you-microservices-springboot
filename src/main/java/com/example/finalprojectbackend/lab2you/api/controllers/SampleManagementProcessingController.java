@@ -33,7 +33,7 @@ public class SampleManagementProcessingController {
     private final SampleTypeService sampleTypeService;
     private final MeasureUniteService measureUniteService;
     private final RequestDetailRepository requestDetailRepository;
-    private final ItemService itemService;
+
     private final SampleItemRepository sampleItemRepository;
     private final RequestRepository requestRepository;
     private final Map<Long, RequestEntity> requestMap = new HashMap<>();
@@ -43,13 +43,12 @@ public class SampleManagementProcessingController {
     public SampleManagementProcessingController(SampleService sampleService, SampleTypeService sampleTypeService,
                                                 MeasureUniteService measureUniteService,
                                                 RequestDetailRepository requestDetailRepository, SampleItemRepository sampleItemRepository,
-                                                ItemService itemService, RequestRepository requestRepository) {
+                                                RequestRepository requestRepository) {
         this.sampleService = sampleService;
         this.sampleTypeService = sampleTypeService;
         this.measureUniteService = measureUniteService;
         this.requestDetailRepository = requestDetailRepository;
         this.sampleItemRepository = sampleItemRepository;
-        this.itemService = itemService;
         this.requestRepository = requestRepository;
     }
 
@@ -101,6 +100,10 @@ public class SampleManagementProcessingController {
             sampleItemEntity.setSample(sampleEntity);
             sampleItemEntity.setRequestDetail(requestDetailEntity);
             sampleItemRepository.save(sampleItemEntity);
+            if (requestDetailEntity != null){
+                requestDetailEntity.setIsAssociated(true);
+                requestDetailRepository.save(requestDetailEntity);
+            }
         }
 
         return ResponseEntity.ok(new ResponseWrapper(true, "Items asociados correctamente", null));
