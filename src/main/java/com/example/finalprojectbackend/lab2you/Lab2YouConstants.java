@@ -100,8 +100,8 @@ public class Lab2YouConstants {
     }
 
     public enum statusTypes {
-        CREATED("Creado");
-
+        CREATED("Creado"),
+        ANALYSIS("Analisis");
         String status;
 
         statusTypes(String status) {

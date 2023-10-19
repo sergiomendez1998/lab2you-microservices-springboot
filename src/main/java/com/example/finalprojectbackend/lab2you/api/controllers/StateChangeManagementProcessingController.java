@@ -33,9 +33,15 @@ public class StateChangeManagementProcessingController {
     }
     @PostMapping
     public ResponseEntity<ResponseWrapper> changeState(@RequestBody RequestStatusDTO requestStatus) {
-         ResponseWrapper responseWrapper = new ResponseWrapper();
+        ResponseWrapper responseWrapper = new ResponseWrapper();
         StatusEntity statusEntity = statusService.findStatusById(requestStatus.getStatusId());
         RequestEntity requestEntity = requestService.getRequestById(requestStatus.getRequestId());
+
+        if(requestEntity.getSamples().isEmpty()){
+            responseWrapper.setSuccessful(false);
+            responseWrapper.setMessage("Debe de haber al menos una muestra asociada a la solicitud para cambiar su estado.");
+            return ResponseEntity.ok(responseWrapper);
+        }
 
         if (statusEntity != null && requestEntity != null) {
             RequestStatusEntity requestStatusEntity = new RequestStatusEntity();
@@ -51,7 +57,6 @@ public class StateChangeManagementProcessingController {
 
         responseWrapper.setSuccessful(false);
         responseWrapper.setMessage("Estado no cambiado");
-        responseWrapper.setData(Collections.singletonList("El estado de la solicitud no ha sido cambiado"));
         return ResponseEntity.ok(responseWrapper);
     }
 }

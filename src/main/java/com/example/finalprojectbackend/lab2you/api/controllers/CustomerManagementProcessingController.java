@@ -12,10 +12,7 @@ import com.example.finalprojectbackend.lab2you.service.EmailService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.RoleService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/customer")
@@ -33,6 +30,12 @@ public class CustomerManagementProcessingController {
         this.customerService = customerService;
         this.roleServiceCRUD = roleServiceCRUD;
         this.emailService = emailService;
+    }
+
+    @GetMapping("/{customerCui}")
+    public ResponseEntity<Boolean> getCustomerByCui(@PathVariable String customerCui) {
+        CustomerEntity existCustomer = customerService.findCustomerByCui(customerCui);
+        return ResponseEntity.ok(existCustomer != null);
     }
 
     @PostMapping("/register")

@@ -1,9 +1,12 @@
 package com.example.finalprojectbackend.lab2you.api.controllers;
 
+import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.db.model.dto.AnalysisDocumentDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.SampleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
+import com.example.finalprojectbackend.lab2you.db.repository.SampleRepository;
 import com.example.finalprojectbackend.lab2you.service.AnalysisDocumentService;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -25,9 +28,11 @@ import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.operation
 public class AnalysisDocumentManagementProcessingController {
 
     private final AnalysisDocumentService analysisDocumentService;
+    private final SampleRepository sampleRepository;
 
-    public AnalysisDocumentManagementProcessingController(AnalysisDocumentService analysisDocumentService) {
+    public AnalysisDocumentManagementProcessingController(AnalysisDocumentService analysisDocumentService, SampleRepository sampleRepository) {
         this.analysisDocumentService = analysisDocumentService;
+        this.sampleRepository = sampleRepository;
 
     }
 
@@ -39,7 +44,7 @@ public class AnalysisDocumentManagementProcessingController {
 
     @GetMapping("/{sampleId}")
     public ResponseEntity<ResponseWrapper> getDocumentsBySampleId(@PathVariable Long sampleId) {
-         ResponseWrapper responseWrapper = analysisDocumentService.findAllDocumentsBySampleId(sampleId);
+        ResponseWrapper responseWrapper = analysisDocumentService.findAllDocumentsBySampleId(sampleId);
         return ResponseEntity.ok(responseWrapper);
     }
 
@@ -90,6 +95,24 @@ public class AnalysisDocumentManagementProcessingController {
 
         try {
 
+
+            SampleEntity sampleEntity = sampleRepository.findById(sampleId).orElse(null);
+
+            if (sampleEntity == null) {
+                return ResponseEntity.badRequest().body(new ResponseWrapper(false, "La muestra no existe", null));
+            }
+
+            String recentStatus = sampleEntity.getRequest().getRequestStatuses()
+                    .stream()
+                    .min((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()))
+                    .map(status -> status.getStatus().getName())
+                    .orElse(null);
+
+            boolean statusAnalysis = Lab2YouConstants.statusTypes.ANALYSIS.getStatusType().equalsIgnoreCase(recentStatus);
+
+            if (!statusAnalysis) {
+                return ResponseEntity.badRequest().body(new ResponseWrapper(false, "Solo se permite cargar documentos a la muestra en estado analisis", null));
+            }
 
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body(new ResponseWrapper(false, "El archivo esta vacio", null));

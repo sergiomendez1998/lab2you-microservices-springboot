@@ -210,7 +210,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
     public Map<String, List<RequestDetailWrapper>> getAllExamItemsByRequestId(Long id) {
         List<RequestDetailEntity> requestDetailEntities = requestRepository.findDetailsByRequestId(id)
                 .stream()
-                .filter(requestDetailEntity -> !requestDetailEntity.getIsDeleted())
+                .filter(requestDetailEntity -> !requestDetailEntity.getIsDeleted() && !requestDetailEntity.getIsAssociated())
                 .toList();
 
         List<RequestDetailWrapper> requestDetailWrappers = requestDetailEntities.stream()
@@ -246,6 +246,8 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         ItemWrapper itemWrapper = new ItemWrapper();
         itemWrapper.setId(requestDetail.getItem().getId());
         itemWrapper.setName(requestDetail.getItem().getName());
+        itemWrapper.setDescription(requestDetail.getItem().getDescription());
+        itemWrapper.setPrice(requestDetail.getItem().getPrice());
         itemWrapper.setExamType(requestDetail.getItem().getExamType().getName());
         requestDetailWrapper.setItemWrapper(itemWrapper);
         return requestDetailWrapper;

@@ -34,6 +34,7 @@ public class RequestDetailEntity {
     private List<SampleItemEntity>  sampleItemEntities = new ArrayList<>();
     private LocalDate createdAt;
     private Boolean isDeleted;
+    private Boolean isAssociated;
 
     @PrePersist
     public void prePersist() {
