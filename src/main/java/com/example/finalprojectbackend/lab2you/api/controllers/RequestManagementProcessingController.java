@@ -1,6 +1,7 @@
 package com.example.finalprojectbackend.lab2you.api.controllers;
 
 import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
+import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.RequestDetailWrapper;
@@ -15,6 +16,9 @@ import com.example.finalprojectbackend.lab2you.service.catalogservice.StatusServ
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +30,6 @@ public class RequestManagementProcessingController {
 
     private final RequestService requestService;
     private final CustomerService customerService;
-    private final AssigmentService assigmentService;
-    private final EmployeeService employeeService;
-    private final UserService userService;
     private final RequestDetailRepository requestDetailRepository;
     private ResponseWrapper responseWrapper;
 
@@ -38,15 +39,11 @@ public class RequestManagementProcessingController {
     private final CurrentUserProvider currentUserProvider;
 
     public RequestManagementProcessingController(RequestService requestService, CustomerService customerService,
-                                                 AssigmentService assigmentService, UserService userService,
-                                                 EmployeeService employeeService, CurrentUserProvider currentUserProvider,
+                                                 CurrentUserProvider currentUserProvider,
                                                  RequestDetailRepository requestDetailRepository,
                                                  RequestStatusRepository requestStatusRepository, StatusService statusService) {
         this.requestService = requestService;
         this.customerService = customerService;
-        this.assigmentService = assigmentService;
-        this.userService = userService;
-        this.employeeService = employeeService;
         this.currentUserProvider = currentUserProvider;
         this.requestDetailRepository = requestDetailRepository;
         this.requestStatusRepository = requestStatusRepository;
@@ -87,19 +84,31 @@ public class RequestManagementProcessingController {
 
     @PostMapping
     public ResponseEntity<ResponseWrapper> create(@RequestBody RequestDTO requestDTO) {
-        AssignmentEntity assignmentEntity = new AssignmentEntity();
-        UserEntity userAssignedBy = currentUserProvider.getCurrentUser();
-        if (userAssignedBy==null || userAssignedBy.getUserType().equals(Lab2YouConstants.lab2YouUserTypes.CUSTOMER.getUserType())) {
-            UserEntity userAssignedBySystem = userService.findByEmail("application@application.com");
-            assignmentEntity.setAssignedByEmployee(userAssignedBySystem.getEmployee());
+
+        CustomerEntity customerEntity;
+        UserEntity currentUserLogin = currentUserProvider.getCurrentUser();
+        String userType;
+        userType = getUserTypeFromUserLogin(currentUserLogin);
+
+        if(userType.equalsIgnoreCase(Lab2YouConstants.lab2YouUserTypes.EMPLOYEE.getUserType())){
+            customerEntity = new CustomerEntity();
+            customerEntity    = customerService.findCustomerByCui(requestDTO.getCustomerCui());
+            if (customerEntity == null) {
+                return ResponseEntity.badRequest().body(new ResponseWrapper(false, "El cliente no existe", null));
+            }
+        }else{
+            customerEntity = new CustomerEntity();
+            customerEntity = customerService.findCustomerByUserId(requestDTO.getUserId());
         }
 
-        assignmentEntity.setAssignedToEmployee(employeeService.getRandomEmployeeWithRoleTechnician());
-        CustomerEntity customerEntity = customerService.findCustomerByUserId(requestDTO.getUserId());
         RequestEntity requestEntity = requestService.mapToRequestEntity(requestDTO);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        requestEntity.setRequestCode(Lab2YouUtils.generateRequestCode(date, userType));
         requestEntity.setCustomer(customerEntity);
 
         responseWrapper = requestService.validate(requestEntity, CREATE.getOperationType());
+
         if (!responseWrapper.getErrors().isEmpty()) {
             return ResponseEntity.badRequest().body(responseWrapper);
         }
@@ -108,21 +117,17 @@ public class RequestManagementProcessingController {
         if (!responseWrapper.isSuccessful()) {
             return ResponseEntity.badRequest().body(responseWrapper);
         }
-        RequestEntity requestToAssign = requestService.findRequestByRequestCode(requestEntity.getRequestCode());
+        RequestEntity newRequest = requestService.findRequestByRequestCode(requestEntity.getRequestCode());
 
         requestEntity.getRequestDetails().forEach(requestDetailEntity -> {
-            requestDetailEntity.setRequest(requestToAssign);
+            requestDetailEntity.setRequest(newRequest);
             requestDetailRepository.save(requestDetailEntity);
         });
 
-        assignmentEntity.setRequest(requestToAssign);
-
         RequestStatusEntity requestStatusEntity = new RequestStatusEntity();
-        requestStatusEntity.setRequest(requestToAssign);
+        requestStatusEntity.setRequest(newRequest);
         requestStatusEntity.setStatus(statusService.findStatusByName(Lab2YouConstants.statusTypes.CREATED.getStatusType()));
-
         requestStatusRepository.save(requestStatusEntity);
-        assigmentService.executeCreation(assignmentEntity);
         responseWrapper.setMessage("Solicitud No. " + requestEntity.getRequestCode() + " creada exitosamente");
         return ResponseEntity.ok(responseWrapper);
     }
@@ -150,5 +155,19 @@ public class RequestManagementProcessingController {
 
         responseWrapper = requestService.execute(requestEntity, DELETE.getOperationType());
         return ResponseEntity.ok(responseWrapper);
+    }
+
+    private String getUserTypeFromUserLogin(UserEntity userAssignedBy) {
+        String userType;
+        if((userAssignedBy != null ? userAssignedBy.getUserType() : null) !=null){
+            if (userAssignedBy.getUserType().equalsIgnoreCase(Lab2YouConstants.lab2YouUserTypes.CUSTOMER.getUserType())) {
+                userType = Lab2YouConstants.lab2YouUserTypes.CUSTOMER.getUserType();
+            } else {
+                userType = Lab2YouConstants.lab2YouUserTypes.EMPLOYEE.getUserType();
+            }
+        }else{
+            userType = Lab2YouConstants.lab2YouUserTypes.CUSTOMER.getUserType();
+        }
+        return userType;
     }
 }

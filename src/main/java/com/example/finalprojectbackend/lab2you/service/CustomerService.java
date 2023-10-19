@@ -231,4 +231,8 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
     public CustomerEntity findCustomerByUserId(Long id){
         return customerRepository.findByUserId(id);
     }
+
+    public CustomerEntity findCustomerByCui(String cui){
+        return customerRepository.findByCui(cui);
+    }
 }

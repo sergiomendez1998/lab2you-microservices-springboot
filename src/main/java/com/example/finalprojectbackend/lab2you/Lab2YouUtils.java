@@ -66,9 +66,9 @@ public class Lab2YouUtils {
         return String.format("%04d-%02d-%02d-%02d-%07d", firstGroup, secondGroup, thirdGroup, fourthGroup, fifthGroup);
     }
 
-    public static String generateRequestCode(Date dateOfReception) {
+    public static String generateRequestCode(Date dateOfReception, String userType) {
         Random random = new Random();
-        String letters = random.nextBoolean() ? "IN" : "EX";
+        String letters = userType.equalsIgnoreCase("externo") ? "EX" : "IN";
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         String date = dateFormat.format(dateOfReception);
         int numbers = random.nextInt(100000);

@@ -14,4 +14,5 @@ public class RequestDTO {
     private List<ItemDTO> items;
     private SupportTypeDTO supportType;
     private Long  userId;
+    private String customerCui;
 }

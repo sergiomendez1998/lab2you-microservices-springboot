@@ -6,13 +6,9 @@ import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.*;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestRepository;
-import com.example.finalprojectbackend.lab2you.service.catalogservice.ExamTypeService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.ItemService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.SupportTypeService;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -94,7 +90,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         }
 
         if (entity.getRequestDetails().isEmpty()) {
-            responseWrapper.addError("requestDetails", "el requestDetails solicitado no debe de ser nulo");
+            responseWrapper.addError("requestDetails", "la solicitud debe de tener al menos un item");
         }
         if (Lab2YouUtils.isObjectNullOrEmpty(entity.getSupportType())) {
             responseWrapper.addError("supportType", "el tipo de soporte solicitado no debe de ser nulo");
@@ -153,9 +149,6 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         requestEntity.setSupportNumber(requestDTO.getSupportNumber());
         requestEntity.setEmail(requestDTO.getEmail());
         requestEntity.setRemark(requestDTO.getRemark());
-        LocalDateTime localDateTime = LocalDateTime.now();
-        Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-        requestEntity.setRequestCode(Lab2YouUtils.generateRequestCode(date));
         SupportTypeEntity supportTypeEntity = supportTypeService.getSupportByName(requestDTO.getSupportType().getName());
         List<ItemEntity> items = itemService.findItemByNames(itemNames);
         items.forEach(requestEntity::addItem);
