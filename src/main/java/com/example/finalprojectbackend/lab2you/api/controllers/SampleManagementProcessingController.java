@@ -96,11 +96,11 @@ public class SampleManagementProcessingController {
 
         for (Long requestDetail : requestListIds) {
             RequestDetailEntity requestDetailEntity = requestDetailRepository.findById(requestDetail).orElse(null);
-            SampleItemEntity sampleItemEntity = new SampleItemEntity();
-            sampleItemEntity.setSample(sampleEntity);
-            sampleItemEntity.setRequestDetail(requestDetailEntity);
-            sampleItemRepository.save(sampleItemEntity);
             if (requestDetailEntity != null){
+                SampleItemEntity sampleItemEntity = new SampleItemEntity();
+                sampleItemEntity.setSample(sampleEntity);
+                sampleItemEntity.setRequestDetail(requestDetailEntity);
+                sampleItemRepository.save(sampleItemEntity);
                 requestDetailEntity.setIsAssociated(true);
                 requestDetailRepository.save(requestDetailEntity);
             }
