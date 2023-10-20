@@ -44,6 +44,7 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
         entity.setDeleted(true);
         entity.getSampleItemEntities().forEach(sampleItemEntity -> {
             sampleItemEntity.setDeleted(true);
+            sampleItemEntity.getRequestDetail().setIsAssociated(false);
         });
 
         sampleRepository.save(entity);

@@ -47,7 +47,6 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
     @Override
     public ResponseWrapper executeDeleteById(RequestEntity entity) {
         entity.setDeleted(true);
-        entity.getRequestDetails().forEach(requestDetailEntity -> requestDetailEntity.setIsDeleted(true));
 
         if (!entity.getRequestDetails().isEmpty()) {
             entity.getRequestDetails()
