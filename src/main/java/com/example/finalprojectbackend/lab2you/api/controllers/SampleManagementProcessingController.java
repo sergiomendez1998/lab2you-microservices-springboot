@@ -1,27 +1,19 @@
 package com.example.finalprojectbackend.lab2you.api.controllers;
 
-
-import com.example.finalprojectbackend.lab2you.db.model.dto.ItemDTO;
 import com.example.finalprojectbackend.lab2you.db.model.dto.SampleDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestDetailRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.SampleItemRepository;
-import com.example.finalprojectbackend.lab2you.service.RequestService;
-import com.example.finalprojectbackend.lab2you.service.SampleService;
-import com.example.finalprojectbackend.lab2you.service.catalogservice.ItemService;
+import com.example.finalprojectbackend.lab2you.service.SampleService;;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.MeasureUniteService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.SampleTypeService;
 import jakarta.websocket.server.PathParam;
-import org.apache.coyote.Request;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.operationTypes.*;
 
@@ -36,8 +28,6 @@ public class SampleManagementProcessingController {
 
     private final SampleItemRepository sampleItemRepository;
     private final RequestRepository requestRepository;
-    private final Map<Long, RequestEntity> requestMap = new HashMap<>();
-    private final Map<Long, RequestDetailEntity> requestDetailMap = new HashMap<>();
     private ResponseWrapper responseWrapper;
 
     public SampleManagementProcessingController(SampleService sampleService, SampleTypeService sampleTypeService,

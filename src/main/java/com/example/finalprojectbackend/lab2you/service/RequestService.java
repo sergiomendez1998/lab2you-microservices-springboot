@@ -288,7 +288,9 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
     public RequestSampleItemWrapper mapToSampleItems(RequestEntity requestEntity) {
         RequestSampleItemWrapper requestSampleItemWrapper = new RequestSampleItemWrapper();
         requestSampleItemWrapper.setId(requestEntity.getId());
-        requestSampleItemWrapper.setSampleWrapper(requestEntity.getSamples().stream().map(sampleEntity -> {
+        requestSampleItemWrapper.setSampleWrapper(requestEntity.getSamples().stream()
+                        .filter(sampleEntity -> !sampleEntity.isDeleted())
+                .map(sampleEntity -> {
             SampleWrapper sampleWrapper = new SampleWrapper();
             sampleWrapper.setLabel(sampleEntity.getLabel());
             sampleWrapper.setId(sampleEntity.getId());
