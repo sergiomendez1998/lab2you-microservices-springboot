@@ -289,33 +289,33 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         RequestSampleItemWrapper requestSampleItemWrapper = new RequestSampleItemWrapper();
         requestSampleItemWrapper.setId(requestEntity.getId());
         requestSampleItemWrapper.setSampleWrapper(requestEntity.getSamples().stream()
-                        .filter(sampleEntity -> !sampleEntity.isDeleted())
+                .filter(sampleEntity -> !sampleEntity.isDeleted())
                 .map(sampleEntity -> {
-            SampleWrapper sampleWrapper = new SampleWrapper();
-            sampleWrapper.setLabel(sampleEntity.getLabel());
-            sampleWrapper.setId(sampleEntity.getId());
-            sampleWrapper.setPresentation(sampleEntity.getPresentation());
-            sampleWrapper.setQuantity(sampleEntity.getQuantity());
-            sampleWrapper.setSampleType(
-                    new SampleTypeWrapper(sampleEntity.getSampleTypeEntity().getId(),
-                            sampleEntity.getSampleTypeEntity().getName(),
-                            sampleEntity.getSampleTypeEntity().getDescription()));
+                    SampleWrapper sampleWrapper = new SampleWrapper();
+                    sampleWrapper.setLabel(sampleEntity.getLabel());
+                    sampleWrapper.setId(sampleEntity.getId());
+                    sampleWrapper.setPresentation(sampleEntity.getPresentation());
+                    sampleWrapper.setQuantity(sampleEntity.getQuantity());
+                    sampleWrapper.setSampleType(
+                            new SampleTypeWrapper(sampleEntity.getSampleTypeEntity().getId(),
+                                    sampleEntity.getSampleTypeEntity().getName(),
+                                    sampleEntity.getSampleTypeEntity().getDescription()));
 
-            sampleWrapper.setMeasureUnit(
-                    new MeasureUnitWrapper(sampleEntity.getMeasureUnitEntity().getId(),
-                            sampleEntity.getMeasureUnitEntity().getName(),
-                            sampleEntity.getMeasureUnitEntity().getDescription()));
+                    sampleWrapper.setMeasureUnit(
+                            new MeasureUnitWrapper(sampleEntity.getMeasureUnitEntity().getId(),
+                                    sampleEntity.getMeasureUnitEntity().getName(),
+                                    sampleEntity.getMeasureUnitEntity().getDescription()));
 
-            sampleWrapper.setItems(sampleEntity.getSampleItemEntities().stream()
+                    sampleWrapper.setItems(sampleEntity.getSampleItemEntities().stream()
                             .filter(sampleItemEntity -> !sampleItemEntity.isDeleted())
-                    .map(sampleItemEntity -> {
-                ItemWrapper itemWrapper = new ItemWrapper();
-                itemWrapper.setId(sampleItemEntity.getRequestDetail().getItem().getId());
-                itemWrapper.setName(sampleItemEntity.getRequestDetail().getItem().getName());
-                itemWrapper.setDescription(sampleItemEntity.getRequestDetail().getItem().getDescription());
-                itemWrapper.setExamType(sampleItemEntity.getRequestDetail().getItem().getExamType().getName());
-                return itemWrapper;
-            }).collect(Collectors.toList()));
+                            .map(sampleItemEntity -> {
+                                ItemWrapper itemWrapper = new ItemWrapper();
+                                itemWrapper.setId(sampleItemEntity.getRequestDetail().getItem().getId());
+                                itemWrapper.setName(sampleItemEntity.getRequestDetail().getItem().getName());
+                                itemWrapper.setDescription(sampleItemEntity.getRequestDetail().getItem().getDescription());
+                                itemWrapper.setExamType(sampleItemEntity.getRequestDetail().getItem().getExamType().getName());
+                                return itemWrapper;
+                            }).collect(Collectors.toList()));
             return sampleWrapper;
         }).collect(Collectors.toList()));
         return requestSampleItemWrapper;
