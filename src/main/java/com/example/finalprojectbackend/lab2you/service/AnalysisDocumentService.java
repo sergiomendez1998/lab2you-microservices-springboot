@@ -153,6 +153,7 @@ public class AnalysisDocumentService extends CrudServiceProcessingController<Ana
         analysisDocumentEntity.setSample(sampleService.findSampleById(analysisDocumentDTO.getSampleId()));
         analysisDocumentEntity.setResolution(analysisDocumentDTO.getResolution());
         analysisDocumentEntity.setDocumentCode(Lab2YouUtils.generateDocumentCode());
+        analysisDocumentEntity.setNit(analysisDocumentDTO.getNit());
         return analysisDocumentEntity;
     }
 

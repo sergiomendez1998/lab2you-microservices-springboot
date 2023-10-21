@@ -133,6 +133,7 @@ public class AnalysisDocumentManagementProcessingController {
 
     @PostMapping("/upload")
     public ResponseEntity<ResponseWrapper> upload(@RequestParam("file") MultipartFile file,
+                                                  @RequestParam("nit") String nit,
                                                   @RequestParam("sampleId") Long sampleId,
                                                   @RequestParam("resolution") String resolution,
                                                   @RequestParam("analysisDocumentType") Long analysisDocumentTypeId) {
@@ -166,7 +167,7 @@ public class AnalysisDocumentManagementProcessingController {
                 return ResponseEntity.badRequest().body(new ResponseWrapper(false, "el archivo podria estar encriptado, o su contenido esta vacio", null));
             }
 
-            AnalysisDocumentDTO analysisDocumentDTO = new AnalysisDocumentDTO(sampleId, resolution, analysisDocumentTypeId);
+            AnalysisDocumentDTO analysisDocumentDTO = new AnalysisDocumentDTO(nit,sampleId, resolution, analysisDocumentTypeId);
 
             AnalysisDocumentEntity analysisDocumentEntity = analysisDocumentService.mapToEntityAnalysisDocument(analysisDocumentDTO);
 

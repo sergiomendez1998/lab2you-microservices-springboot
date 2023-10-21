@@ -18,6 +18,7 @@ public class AnalysisDocumentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String nit;
     private String documentCode;
     private String resolution;
     private String path;
