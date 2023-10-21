@@ -4,10 +4,8 @@ import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
 import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.RequestDetailWrapper;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.RequestSampleItemWrapper;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapperRequest;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.*;
+import com.example.finalprojectbackend.lab2you.db.repository.AssignmentRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestDetailRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestStatusRepository;
 import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
@@ -21,6 +19,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.operationTypes.*;
 
@@ -32,7 +31,6 @@ public class RequestManagementProcessingController {
     private final CustomerService customerService;
     private final RequestDetailRepository requestDetailRepository;
     private ResponseWrapper responseWrapper;
-
     private final StatusService statusService;
     private final RequestStatusRepository requestStatusRepository;
 
@@ -52,7 +50,22 @@ public class RequestManagementProcessingController {
 
     @GetMapping()
     public ResponseEntity<ResponseWrapper> getAll() {
-        return ResponseEntity.ok(requestService.executeReadAll());
+
+        UserEntity currentUserLogin = currentUserProvider.getCurrentUser();
+        if (currentUserLogin.getUserType().equalsIgnoreCase(Lab2YouConstants.lab2YouUserTypes.EMPLOYEE.getUserType())) {
+            if (currentUserLogin.getEmployee().getUser().getRole().getName().equalsIgnoreCase(Lab2YouConstants.lab2YouRoles.ADMIN.getRole())) {
+                {
+                    return ResponseEntity.ok(requestService.executeReadAll());
+                }
+            } else {
+                return ResponseEntity.ok(
+                        requestService.executeReadAllFilteredByRolAndAssigment(
+                                currentUserLogin.getEmployee().getUser().getRole().getName(),
+                                currentUserLogin.getEmployee().getId()));
+            }
+        } else {
+            return ResponseEntity.ok(new ResponseWrapper(false, "No tiene permisos para realizar esta acción", null));
+        }
     }
 
     @GetMapping("/samples/{requestId}")
@@ -71,8 +84,7 @@ public class RequestManagementProcessingController {
 
     @GetMapping("/items/{requestId}")
     public ResponseEntity<Map<String, List<RequestDetailWrapper>>> getExamsByRequestId(@PathVariable Long requestId) {
-        var
-        responseWrapper = requestService.getAllExamItemsByRequestId(requestId);
+        var responseWrapper = requestService.getAllExamItemsByRequestId(requestId);
         return ResponseEntity.ok(responseWrapper);
     }
 

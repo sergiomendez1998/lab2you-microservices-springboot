@@ -80,4 +80,10 @@ public class AssigmentService extends CrudServiceProcessingController<Assignment
     public List<AssignmentEntity> findAllByRequestId(Long requestId) {
         return assignmentRepository.findAllByRequestId(requestId);
     }
+    public List<AssignmentEntity> findAllByAssignedToEmployeeId(Long employeeId) {
+        return assignmentRepository.findAllByAssignedToEmployeeId(employeeId);
+    }
+    public AssignmentEntity findCurrentAssignmentForRequest(Long requestId) {
+        return assignmentRepository.findCurrentAssignmentForRequest(requestId);
+    }
 }

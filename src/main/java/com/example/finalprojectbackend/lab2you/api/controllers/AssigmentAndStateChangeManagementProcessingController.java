@@ -4,6 +4,7 @@ package com.example.finalprojectbackend.lab2you.api.controllers;
 import com.example.finalprojectbackend.lab2you.db.model.dto.AssigmentDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
+import com.example.finalprojectbackend.lab2you.db.repository.AssignmentRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestStatusRepository;
 import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
 import com.example.finalprojectbackend.lab2you.service.AssigmentService;
@@ -21,6 +22,7 @@ public class AssigmentAndStateChangeManagementProcessingController {
     private final AssigmentService assigmentService;
     private final RequestService requestService;
 
+    private final AssignmentRepository assignmentRepository;
     private final EmployeeService employeeService;
 
     private final CurrentUserProvider currentUserProvider;
@@ -34,13 +36,14 @@ public class AssigmentAndStateChangeManagementProcessingController {
                                                                  EmployeeService employeeService,
                                                                  RequestStatusRepository requestStatusRepository,
                                                                  StatusService statusService,
-                                                                 CurrentUserProvider currentUserProvider) {
+                                                                 CurrentUserProvider currentUserProvider, AssignmentRepository assignmentRepository) {
         this.assigmentService = assigmentService;
         this.requestService = requestService;
         this.employeeService = employeeService;
         this.currentUserProvider = currentUserProvider;
         this.requestStatusRepository = requestStatusRepository;
         this.statusService = statusService;
+        this.assignmentRepository = assignmentRepository;
     }
 
     @PostMapping
@@ -81,6 +84,12 @@ public class AssigmentAndStateChangeManagementProcessingController {
 
         requestStatusEntity.setRequest(requestEntity);
         requestStatusEntity.setStatus(statusEntity);
+        AssignmentEntity currentAssignment = assignmentRepository.findCurrentAssignmentForRequest(requestEntity.getId());
+
+        if(currentAssignment != null){
+            currentAssignment.setCurrentAssignment(false);
+            assignmentRepository.save(currentAssignment);
+        }
 
         assignmentEntity.setAssignedByEmployee(employeeAssignedBy);
         assignmentEntity.setAssignedToEmployee(employeeReceiver);

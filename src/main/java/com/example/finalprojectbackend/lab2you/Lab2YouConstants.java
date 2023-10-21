@@ -51,7 +51,7 @@ public class Lab2YouConstants {
     }
 
     public enum lab2YouRoles {
-        ADMIN("admin"),
+        ADMIN("Admin"),
         USER("user"),
         ANALYST("Analista"),
         MEDICAL("Medico"),

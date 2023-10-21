@@ -27,9 +27,4 @@ public class RequestStatusEntity {
     @JoinColumn(name = "status_id")
     private StatusEntity status;
     private LocalDate createdAt;
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDate.now();
-    }
 }

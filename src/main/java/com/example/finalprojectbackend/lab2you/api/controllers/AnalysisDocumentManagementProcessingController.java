@@ -5,8 +5,11 @@ import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.db.model.dto.AnalysisDocumentDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.AnalysisDocumentEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.SampleEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.PDFSummary;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.SampleRepository;
+import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
 import com.example.finalprojectbackend.lab2you.service.AnalysisDocumentService;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -20,6 +23,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.operationTypes.*;
 
@@ -30,9 +35,13 @@ public class AnalysisDocumentManagementProcessingController {
     private final AnalysisDocumentService analysisDocumentService;
     private final SampleRepository sampleRepository;
 
-    public AnalysisDocumentManagementProcessingController(AnalysisDocumentService analysisDocumentService, SampleRepository sampleRepository) {
+    private final CurrentUserProvider currentUserProvider;
+
+    public AnalysisDocumentManagementProcessingController(AnalysisDocumentService analysisDocumentService,
+                                                          SampleRepository sampleRepository, CurrentUserProvider currentUserProvider) {
         this.analysisDocumentService = analysisDocumentService;
         this.sampleRepository = sampleRepository;
+        this.currentUserProvider = currentUserProvider;
 
     }
 
@@ -46,6 +55,41 @@ public class AnalysisDocumentManagementProcessingController {
     public ResponseEntity<ResponseWrapper> getDocumentsBySampleId(@PathVariable Long sampleId) {
         ResponseWrapper responseWrapper = analysisDocumentService.findAllDocumentsBySampleId(sampleId);
         return ResponseEntity.ok(responseWrapper);
+    }
+
+    @GetMapping("generalInformationForPDF/{sampleId}")
+    public ResponseEntity<Map<String,Map<String,String>>> getGeneralInformationForPDF(@PathVariable Long sampleId) {
+        UserEntity userLogin = currentUserProvider.getCurrentUser();
+        PDFSummary pdfSummary = new PDFSummary();
+        Map<String,String> header = new HashMap<>();
+        Map<String,String> externalUser = new HashMap<>();
+        Map<String,String> sample = new HashMap<>();
+        SampleEntity sampleEntity = sampleRepository.findById(sampleId).orElse(null);
+
+        if (sampleEntity == null || sampleEntity.isDeleted()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        header.put("Codigo Solictud", sampleEntity.getRequest().getRequestCode());
+        header.put("No. Expediente", sampleEntity.getRequest().getCustomer().getExpedientNumber());
+        header.put("Solicitante", userLogin.getEmployee().getFirstName()+" "+userLogin.getEmployee().getLastName());
+
+        externalUser.put("Nombre", sampleEntity.getRequest().getCustomer().getFirstName()+" "+sampleEntity.getRequest().getCustomer().getLastName());
+        externalUser.put("Telefono", sampleEntity.getRequest().getCustomer().getPhoneNumber());
+        externalUser.put("Correo", sampleEntity.getRequest().getCustomer().getUser().getEmail());
+        externalUser.put("Nit", sampleEntity.getRequest().getCustomer().getNit());
+
+        sample.put("Codigo Muestra", sampleEntity.getId().toString());
+        sample.put("Tipo de Muestra", sampleEntity.getSampleTypeEntity().getName());
+        sample.put("Fecha de Recepcion", sampleEntity.getCreatedAt().toString());
+        sample.put("Cantidad de unidades", String.valueOf(sampleEntity.getSampleItemEntities().size()));
+        sample.put("Presentacion",sampleEntity.getPresentation());
+
+        pdfSummary.add("Encabezado",header);
+        pdfSummary.add("Usuario Externo",externalUser);
+        pdfSummary.add("Muestra",sample);
+
+        return ResponseEntity.ok(pdfSummary.getPdfSummary());
     }
 
     @GetMapping("/download/{documentId}")

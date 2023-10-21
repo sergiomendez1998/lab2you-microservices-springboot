@@ -31,6 +31,7 @@ public class AssignmentEntity {
     @ManyToOne
     @JoinColumn(name = "request_id")
     private RequestEntity request;
-    private LocalDate AssignationDate;
+    private boolean isCurrentAssignment;
+    private LocalDate assignationDate;
 
 }

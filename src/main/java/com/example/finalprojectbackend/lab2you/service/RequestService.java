@@ -80,6 +80,28 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
 
         return responseWrapper;
     }
+    public ResponseWrapper executeReadAllFilteredByRolAndAssigment(String role, Long employeeId) {
+        responseWrapper = new ResponseWrapper();
+        List<RequestEntity> requestEntities = new ArrayList<>();
+        List<AssignmentEntity> allByAssignedToEmployeeId = assigmentService.findAllByAssignedToEmployeeId(employeeId);
+        allByAssignedToEmployeeId.sort(Comparator.comparing(AssignmentEntity::getAssignationDate).reversed());
+        allByAssignedToEmployeeId.forEach(
+
+                assignmentEntity -> {
+                    if (assignmentEntity.isCurrentAssignment()) {
+                        requestEntities.add(assignmentEntity.getRequest());
+                    }
+                });
+
+        List<RequestWrapper> requestWrappers = requestEntities.stream()
+                .map(this::mapToRequestWrapper)
+                .collect(Collectors.toList());
+
+        responseWrapper.setSuccessful(true);
+        responseWrapper.setMessage("solicitudes recuperadas exitosamente");
+        responseWrapper.setData(requestWrappers);
+        return responseWrapper;
+    }
 
     @Override
     protected ResponseWrapper validateForCreation(RequestEntity entity) {
@@ -155,7 +177,7 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
         return requestEntity;
     }
 
-    private RequestWrapper mapToRequestWrapper(RequestEntity requestEntity) {
+    public RequestWrapper mapToRequestWrapper(RequestEntity requestEntity) {
         RequestWrapper requestWrapper = new RequestWrapper();
         requestWrapper.setId(requestEntity.getId());
         requestWrapper.setRequestCode(requestEntity.getRequestCode());
