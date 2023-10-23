@@ -34,4 +34,9 @@ public class AssignmentEntity {
     private boolean isCurrentAssignment;
     private LocalDate assignationDate;
 
+    @PrePersist
+    public void prePersist() {
+        this.isCurrentAssignment = true;
+    }
+
 }
