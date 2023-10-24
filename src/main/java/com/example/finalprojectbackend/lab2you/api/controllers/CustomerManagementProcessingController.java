@@ -45,7 +45,7 @@ public class CustomerManagementProcessingController {
 
         userEntity.setNickName(customerDTO.getUser().getNickName());
         userEntity.setEmail(customerDTO.getUser().getEmail());
-        userEntity.setUserType(Lab2YouConstants.lab2YouUserTypes.CUSTOMER.getUserType());
+        userEntity.setUserType(Lab2YouConstants.userTypes.CUSTOMER.getUserType());
         userEntity.setEnabled(true);
 
         if (ObjectUtils.isEmpty(customerDTO.getUser().getPassword())) {
@@ -67,7 +67,7 @@ public class CustomerManagementProcessingController {
         customerService.execute(customerEntity, Lab2YouConstants.operationTypes.CREATE.getOperationType());
         emailService.sendRegistrationEmail(customerDTO);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage(Lab2YouConstants.lab2YouSuccessCodes.EMAIL_SENT.getDescription());
+        responseWrapper.setMessage(Lab2YouConstants.successCodes.EMAIL_SENT.getDescription());
         return ResponseEntity.ok(responseWrapper);
     }
 }

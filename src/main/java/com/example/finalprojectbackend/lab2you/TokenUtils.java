@@ -53,6 +53,7 @@ public class TokenUtils {
      * if the token is not valid will return null.
      */
 
+    @SuppressWarnings("unchecked")
     public static UsernamePasswordAuthenticationToken getAuthentication(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
@@ -63,9 +64,11 @@ public class TokenUtils {
 
             String email = claims.getSubject();
 
-            List<GrantedAuthority> authorities = ((List<?>) claims.get("authorities")).stream()
-                    .map(authority -> new SimpleGrantedAuthority((String) authority))
+            List<GrantedAuthority> authorities = ((List<Map<String, String>>) claims.get("authorities"))
+                    .stream()
+                    .map(authorityMap -> new SimpleGrantedAuthority(authorityMap.get("authority")))
                     .collect(Collectors.toList());
+
 
             return new UsernamePasswordAuthenticationToken(email, null, authorities);
         } catch (JwtException e) {

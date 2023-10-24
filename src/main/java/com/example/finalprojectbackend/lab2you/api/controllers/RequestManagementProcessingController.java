@@ -5,7 +5,6 @@ import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.*;
-import com.example.finalprojectbackend.lab2you.db.repository.AssignmentRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestDetailRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestStatusRepository;
 import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
@@ -19,7 +18,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.operationTypes.*;
 
@@ -52,7 +50,7 @@ public class RequestManagementProcessingController {
     public ResponseEntity<ResponseWrapper> getAll() {
 
         UserEntity currentUserLogin = currentUserProvider.getCurrentUser();
-        if (currentUserLogin.getUserType().equalsIgnoreCase(Lab2YouConstants.lab2YouUserTypes.EMPLOYEE.getUserType())) {
+        if (currentUserLogin.getUserType().equalsIgnoreCase(Lab2YouConstants.userTypes.EMPLOYEE.getUserType())) {
             if (currentUserLogin.getEmployee().getUser().getRole().getName().equalsIgnoreCase(Lab2YouConstants.lab2YouRoles.ADMIN.getRole())) {
                 {
                     return ResponseEntity.ok(requestService.executeReadAll());
@@ -102,7 +100,7 @@ public class RequestManagementProcessingController {
         String userType;
         userType = getUserTypeFromUserLogin(currentUserLogin);
 
-        if(userType.equalsIgnoreCase(Lab2YouConstants.lab2YouUserTypes.EMPLOYEE.getUserType())){
+        if(userType.equalsIgnoreCase(Lab2YouConstants.userTypes.EMPLOYEE.getUserType())){
             customerEntity = new CustomerEntity();
             customerEntity    = customerService.findCustomerByCui(requestDTO.getCustomerCui());
             if (customerEntity == null) {
@@ -172,13 +170,13 @@ public class RequestManagementProcessingController {
     private String getUserTypeFromUserLogin(UserEntity userAssignedBy) {
         String userType;
         if((userAssignedBy != null ? userAssignedBy.getUserType() : null) !=null){
-            if (userAssignedBy.getUserType().equalsIgnoreCase(Lab2YouConstants.lab2YouUserTypes.CUSTOMER.getUserType())) {
-                userType = Lab2YouConstants.lab2YouUserTypes.CUSTOMER.getUserType();
+            if (userAssignedBy.getUserType().equalsIgnoreCase(Lab2YouConstants.userTypes.CUSTOMER.getUserType())) {
+                userType = Lab2YouConstants.userTypes.CUSTOMER.getUserType();
             } else {
-                userType = Lab2YouConstants.lab2YouUserTypes.EMPLOYEE.getUserType();
+                userType = Lab2YouConstants.userTypes.EMPLOYEE.getUserType();
             }
         }else{
-            userType = Lab2YouConstants.lab2YouUserTypes.CUSTOMER.getUserType();
+            userType = Lab2YouConstants.userTypes.CUSTOMER.getUserType();
         }
         return userType;
     }

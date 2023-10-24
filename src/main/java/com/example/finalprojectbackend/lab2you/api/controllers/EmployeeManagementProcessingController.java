@@ -51,7 +51,7 @@ public class EmployeeManagementProcessingController {
         DepartmentEntity department = departmentServiceCRUD.getDepartmentByName(employeeDTO.getDepartment().getName());
 
         userEntity.setNickName(employeeDTO.getUser().getNickName());
-        userEntity.setUserType(Lab2YouConstants.lab2YouUserTypes.EMPLOYEE.getUserType());
+        userEntity.setUserType(Lab2YouConstants.userTypes.EMPLOYEE.getUserType());
         userEntity.setEmail(employeeDTO.getUser().getEmail());
         userEntity.setPassword(Lab2YouUtils.encodePassword(employeeDTO.getUser().getPassword()));
         userEntity.setEnabled(true);
@@ -70,7 +70,7 @@ public class EmployeeManagementProcessingController {
         userService.save(userEntity);
         employeeService.execute(employeeEntity, Lab2YouConstants.operationTypes.CREATE.getOperationType());
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage(Lab2YouConstants.lab2YouSuccessCodes.REGISTRATION_SUCCESS.getDescription());
+        responseWrapper.setMessage(Lab2YouConstants.successCodes.REGISTRATION_SUCCESS.getDescription());
         return ResponseEntity.ok(responseWrapper);
     }
 
@@ -94,7 +94,7 @@ public class EmployeeManagementProcessingController {
         userService.executeUpdate(userEntity);
         employeeService.execute(employeeEntity, Lab2YouConstants.operationTypes.UPDATE.getOperationType());
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage(Lab2YouConstants.lab2YouSuccessCodes.REGISTRATION_SUCCESS.getDescription());
+        responseWrapper.setMessage(Lab2YouConstants.successCodes.REGISTRATION_SUCCESS.getDescription());
         return ResponseEntity.ok(responseWrapper);
     }
 
