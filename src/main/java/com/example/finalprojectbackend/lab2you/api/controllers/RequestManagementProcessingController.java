@@ -122,7 +122,7 @@ public class RequestManagementProcessingController {
         if (!responseWrapper.getErrors().isEmpty()) {
             return ResponseEntity.badRequest().body(responseWrapper);
         }
-
+        requestEntity.setCreatedBy(currentUserLogin.getId());
         responseWrapper = requestService.execute(requestEntity, CREATE.getOperationType());
         if (!responseWrapper.isSuccessful()) {
             return ResponseEntity.badRequest().body(responseWrapper);
@@ -130,12 +130,14 @@ public class RequestManagementProcessingController {
         RequestEntity newRequest = requestService.findRequestByRequestCode(requestEntity.getRequestCode());
 
         requestEntity.getRequestDetails().forEach(requestDetailEntity -> {
+            requestDetailEntity.setCreatedBy(currentUserLogin.getId());
             requestDetailEntity.setRequest(newRequest);
             requestDetailRepository.save(requestDetailEntity);
         });
 
         RequestStatusEntity requestStatusEntity = new RequestStatusEntity();
         requestStatusEntity.setRequest(newRequest);
+        requestStatusEntity.setCreatedBy(currentUserLogin.getId());
         requestStatusEntity.setStatus(statusService.findStatusByName(Lab2YouConstants.statusTypes.CREATED.getStatusType()));
         requestStatusRepository.save(requestStatusEntity);
         responseWrapper.setMessage("Solicitud No. " + requestEntity.getRequestCode() + " creada exitosamente");
@@ -144,7 +146,7 @@ public class RequestManagementProcessingController {
 
     @PutMapping("delete/{requestId}")
     public ResponseEntity<ResponseWrapper> delete(@PathVariable Long requestId) {
-
+        UserEntity currentUserLogin = currentUserProvider.getCurrentUser();
         if(requestId == null) {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, "El id de la solicitud no puede ser nulo", null));
         }
@@ -162,7 +164,7 @@ public class RequestManagementProcessingController {
         if (!statusCreated) {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, "La solicitud con estado "+recentStatus+" no se puede eliminar", null));
         }
-
+         requestEntity.setUpdatedBy(currentUserLogin.getId());
         responseWrapper = requestService.execute(requestEntity, DELETE.getOperationType());
         return ResponseEntity.ok(responseWrapper);
     }

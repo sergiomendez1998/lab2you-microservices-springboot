@@ -99,7 +99,8 @@ public class AssigmentAndStateChangeManagementProcessingController {
         if (!responseWrapper.getErrors().isEmpty()) {
             return ResponseEntity.badRequest().body(responseWrapper);
         }
-
+        assignmentEntity.setCreatedBy(userAssignedBy.getId());
+        requestStatusEntity.setCreatedBy(userAssignedBy.getId());
         requestStatusRepository.save(requestStatusEntity);
         responseWrapper = assigmentService.execute(assignmentEntity, CREATE.getOperationType());
         responseWrapper.setMessage("Estado cambiado a: " + statusEntity.getName() + " y asignado a: " + employeeReceiver.getFirstName() + " " + employeeReceiver.getLastName());

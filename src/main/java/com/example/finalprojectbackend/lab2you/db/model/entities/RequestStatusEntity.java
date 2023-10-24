@@ -26,4 +26,6 @@ public class RequestStatusEntity {
     @JoinColumn(name = "status_id")
     private StatusEntity status;
     private LocalDateTime createdAt;
+    private Long createdBy;
+    private Long updatedBy;
 }

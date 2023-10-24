@@ -28,6 +28,8 @@ public class RequestEntity {
     private String remark;
     private Date receptionDate;
     private boolean isDeleted;
+    private Long createdBy;
+    private Long updatedBy;
     @ManyToOne
     @JoinColumn(name = "support_type_id")
     private SupportTypeEntity supportType;

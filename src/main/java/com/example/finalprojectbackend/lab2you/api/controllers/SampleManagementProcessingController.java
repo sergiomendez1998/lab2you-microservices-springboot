@@ -6,10 +6,12 @@ import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper
 import com.example.finalprojectbackend.lab2you.db.repository.RequestDetailRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.SampleItemRepository;
+import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
 import com.example.finalprojectbackend.lab2you.service.SampleService;;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.MeasureUniteService;
 import com.example.finalprojectbackend.lab2you.service.catalogservice.SampleTypeService;
 import jakarta.websocket.server.PathParam;
+import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,21 +32,24 @@ public class SampleManagementProcessingController {
     private final RequestRepository requestRepository;
     private ResponseWrapper responseWrapper;
 
+    private final CurrentUserProvider currentUserProvider;
+
     public SampleManagementProcessingController(SampleService sampleService, SampleTypeService sampleTypeService,
                                                 MeasureUniteService measureUniteService,
                                                 RequestDetailRepository requestDetailRepository, SampleItemRepository sampleItemRepository,
-                                                RequestRepository requestRepository) {
+                                                RequestRepository requestRepository, CurrentUserProvider currentUserProvider) {
         this.sampleService = sampleService;
         this.sampleTypeService = sampleTypeService;
         this.measureUniteService = measureUniteService;
         this.requestDetailRepository = requestDetailRepository;
         this.sampleItemRepository = sampleItemRepository;
         this.requestRepository = requestRepository;
+        this.currentUserProvider = currentUserProvider;
     }
 
     @PostMapping("/create/{requestId}")
     public ResponseEntity<ResponseWrapper> register(@RequestBody List<SampleDTO> sampleDTO, @PathVariable Long requestId) {
-
+        UserEntity userLogin = currentUserProvider.getCurrentUser();
         if (requestId == null) {
             responseWrapper = new ResponseWrapper();
             responseWrapper.setSuccessful(false);
@@ -65,7 +70,7 @@ public class SampleManagementProcessingController {
             if (!responseWrapper.getErrors().isEmpty()) {
                 return ResponseEntity.badRequest().body(responseWrapper);
             }
-
+             sampleEntity.setCreatedBy(userLogin.getId());
             responseWrapper = sampleService.execute(sampleEntity, CREATE.getOperationType());
             if (!responseWrapper.isSuccessful()) {
                 return ResponseEntity.badRequest().body(responseWrapper);
@@ -77,7 +82,7 @@ public class SampleManagementProcessingController {
 
     @PostMapping("/associate-item/{sampleId}")
     public ResponseEntity<ResponseWrapper> associateItem(@PathVariable Long sampleId, @RequestBody List<Long> requestListIds) {
-
+        UserEntity userLogin = currentUserProvider.getCurrentUser();
         if (sampleId == null) {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, "el id de la muestra es requerido", null));
         }
@@ -90,8 +95,12 @@ public class SampleManagementProcessingController {
                 SampleItemEntity sampleItemEntity = new SampleItemEntity();
                 sampleItemEntity.setSample(sampleEntity);
                 sampleItemEntity.setRequestDetail(requestDetailEntity);
+
+                sampleItemEntity.setCreatedBy(userLogin.getId());
                 sampleItemRepository.save(sampleItemEntity);
+
                 requestDetailEntity.setIsAssociated(true);
+                requestDetailEntity.setUpdatedBy(userLogin.getId());
                 requestDetailRepository.save(requestDetailEntity);
             }
         }
@@ -101,20 +110,20 @@ public class SampleManagementProcessingController {
 
     @PutMapping("delete/{sampleId}")
     public ResponseEntity<ResponseWrapper> delete(@PathVariable Long sampleId) {
-
+        UserEntity currentUserLogin = currentUserProvider.getCurrentUser();
         if (sampleId == null) {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, "El id de la muestra no puede ser nulo", null));
         }
 
         SampleEntity sampleEntity = sampleService.findSampleById(sampleId);
-
+        sampleEntity.setUpdatedBy(currentUserLogin.getId());
         responseWrapper = sampleService.execute(sampleEntity, DELETE.getOperationType());
         return ResponseEntity.ok(responseWrapper);
     }
 
     @PutMapping("disassociate-item/{sampleId}")
     public ResponseEntity<ResponseWrapper> deleteItem(@PathVariable Long sampleId, @PathParam("itemId") Long itemId) {
-
+        UserEntity currentUserLogin = currentUserProvider.getCurrentUser();
         if (sampleId == null) {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, "El id de la muestra es requerido", null));
         }
@@ -124,7 +133,7 @@ public class SampleManagementProcessingController {
 
         SampleEntity sampleEntity = sampleService.findSampleById(sampleId);
 
-
+        sampleEntity.setUpdatedBy(currentUserLogin.getId());
         sampleService.disassociateItem(sampleEntity, itemId);
         return ResponseEntity.ok(new ResponseWrapper(true, "Item desasociado exitosamente", null));
     }

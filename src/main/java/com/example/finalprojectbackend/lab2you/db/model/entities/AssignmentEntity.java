@@ -34,6 +34,9 @@ public class AssignmentEntity {
     private boolean isCurrentAssignment;
     private LocalDate assignationDate;
 
+    private Long createdBy;
+    private Long updatedBy;
+
     @PrePersist
     public void prePersist() {
         this.isCurrentAssignment = true;

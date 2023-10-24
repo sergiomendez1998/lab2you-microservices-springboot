@@ -27,4 +27,6 @@ public class SampleItemEntity {
     private RequestDetailEntity requestDetail;
 
     private boolean isDeleted;
+    private Long createdBy;
+    private Long updatedBy;
 }

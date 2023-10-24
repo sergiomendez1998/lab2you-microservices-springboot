@@ -35,6 +35,8 @@ public class RequestDetailEntity {
     private LocalDate createdAt;
     private Boolean isDeleted;
     private Boolean isAssociated;
+    private Long createdBy;
+    private Long updatedBy;
 
     @PrePersist
     public void prePersist() {

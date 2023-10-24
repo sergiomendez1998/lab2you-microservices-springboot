@@ -140,7 +140,7 @@ public class AnalysisDocumentManagementProcessingController {
 
         try {
 
-
+            UserEntity userLogin = currentUserProvider.getCurrentUser();
             SampleEntity sampleEntity = sampleRepository.findById(sampleId).orElse(null);
 
             if (sampleEntity == null) {
@@ -179,7 +179,7 @@ public class AnalysisDocumentManagementProcessingController {
             if (!responseWrapper.getErrors().isEmpty()) {
                 return ResponseEntity.badRequest().body(responseWrapper);
             }
-
+            analysisDocumentEntity.setCreatedBy(userLogin.getId());
             responseWrapper = analysisDocumentService.execute(analysisDocumentEntity, CREATE.getOperationType());
 
             return ResponseEntity.ok(responseWrapper);

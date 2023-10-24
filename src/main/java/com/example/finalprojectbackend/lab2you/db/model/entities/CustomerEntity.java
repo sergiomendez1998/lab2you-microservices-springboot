@@ -30,6 +30,8 @@ public class CustomerEntity {
     private String phoneNumber;
     private String gender;
     private String occupation;
+    private Long createdBy;
+    private Long updatedBy;
 
     @OneToOne
     @JoinColumn(name = "user_id")

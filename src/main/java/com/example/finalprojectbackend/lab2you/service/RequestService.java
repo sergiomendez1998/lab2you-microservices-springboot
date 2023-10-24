@@ -50,12 +50,23 @@ public class RequestService extends CrudServiceProcessingController<RequestEntit
 
         if (!entity.getRequestDetails().isEmpty()) {
             entity.getRequestDetails()
-                    .forEach(requestDetailEntity -> requestDetailEntity.setIsDeleted(true));
+                    .forEach(requestDetailEntity -> {
+                        requestDetailEntity.setIsDeleted(true);
+                        requestDetailEntity.setUpdatedBy(entity.getUpdatedBy());
+                    });
         }
 
         if (!entity.getSamples().isEmpty()) {
-            entity.getSamples().forEach(sampleEntity -> sampleEntity.setDeleted(true));
-            entity.getSamples().forEach(sampleEntity -> sampleEntity.getSampleItemEntities().forEach(sampleItemEntity -> sampleItemEntity.setDeleted(true)));
+            entity.getSamples().forEach(sampleEntity -> {
+                sampleEntity.setDeleted(true);
+                sampleEntity.setUpdatedBy(entity.getUpdatedBy());
+            });
+            entity.getSamples().forEach(sampleEntity -> sampleEntity.getSampleItemEntities()
+                    .forEach(sampleItemEntity ->
+                    {
+                        sampleItemEntity.setDeleted(true);
+                        sampleItemEntity.setUpdatedBy(entity.getUpdatedBy());
+                    }));
         }
 
         requestRepository.save(entity);

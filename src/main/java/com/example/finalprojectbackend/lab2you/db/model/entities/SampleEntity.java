@@ -27,6 +27,8 @@ public class SampleEntity {
     private LocalDateTime createdAt;
     private Date expirationDate;
     private boolean isDeleted;
+    private Long createdBy;
+    private Long updatedBy;
 
     @ManyToOne
     @JoinColumn (name="measure_unit_id")

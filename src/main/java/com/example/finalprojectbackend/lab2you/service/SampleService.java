@@ -44,7 +44,9 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
         entity.setDeleted(true);
         entity.getSampleItemEntities().forEach(sampleItemEntity -> {
             sampleItemEntity.setDeleted(true);
+            sampleItemEntity.setUpdatedBy(entity.getUpdatedBy());
             sampleItemEntity.getRequestDetail().setIsAssociated(false);
+            sampleItemEntity.getRequestDetail().setUpdatedBy(entity.getUpdatedBy());
         });
 
         sampleRepository.save(entity);
@@ -57,8 +59,10 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
         sampleEntity.getSampleItemEntities().forEach(sampleItemEntity -> {
             if(sampleItemEntity.getRequestDetail().getItem().getId().equals(itemId)){
                 sampleItemEntity.setDeleted(true);
+                sampleItemEntity.setUpdatedBy(sampleEntity.getUpdatedBy());
                 sampleEntity.getRequest().getRequestDetails().forEach(requestDetailEntity -> {
                     if(requestDetailEntity.getItem().getId().equals(itemId)){
+                        requestDetailEntity.setUpdatedBy(sampleEntity.getUpdatedBy());
                         requestDetailEntity.setIsAssociated(false);
                     }
                 });
