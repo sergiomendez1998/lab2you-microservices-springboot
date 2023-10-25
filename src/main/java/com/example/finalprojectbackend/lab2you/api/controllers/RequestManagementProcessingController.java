@@ -51,7 +51,9 @@ public class RequestManagementProcessingController {
 
         UserEntity currentUserLogin = currentUserProvider.getCurrentUser();
         if (currentUserLogin.getUserType().equalsIgnoreCase(Lab2YouConstants.userTypes.EMPLOYEE.getUserType())) {
-            if (currentUserLogin.getEmployee().getUser().getRole().getName().equalsIgnoreCase(Lab2YouConstants.lab2YouRoles.ADMIN.getRole())) {
+            if (currentUserLogin.getEmployee().getUser().getRole().getName().equalsIgnoreCase(Lab2YouConstants.lab2YouRoles.ADMIN.getRole()) ||
+                    currentUserLogin.getEmployee().getUser().getRole().getName().equalsIgnoreCase(Lab2YouConstants.lab2YouRoles.CENTRALIZER.getRole())
+            ) {
                 {
                     return ResponseEntity.ok(requestService.executeReadAll());
                 }

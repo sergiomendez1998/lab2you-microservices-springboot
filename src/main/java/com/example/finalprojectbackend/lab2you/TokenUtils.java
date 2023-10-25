@@ -1,6 +1,8 @@
 package com.example.finalprojectbackend.lab2you;
 
+import com.example.finalprojectbackend.lab2you.config.security.UserDetailsImpl;
 import com.example.finalprojectbackend.lab2you.db.model.entities.ModuleEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -25,22 +27,23 @@ public class TokenUtils {
      * The token will have the name as extra information.
      * The token will have the expiration date.
      */
-    public static String createToken(Long userId, String name, String email,String userType, String nit, Collection<? extends GrantedAuthority> authorities,
-            String role, List<ModuleEntity> moduleEntities) {
+    public static String createToken(UserDetailsImpl userDetails) {
         long expirationTime = EXPIRATION_TIME * 1000; // Convert to milliseconds
         Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
 
         Map<String, Object> extra = new HashMap<>();
-        extra.put("id", userId);
-        extra.put("name", name);
-        extra.put("userType", userType);
-        extra.put("Nit", nit);
-        extra.put("authorities", authorities);
-        extra.put("role", role);
-        extra.put("modules", moduleEntities);
+        extra.put("id", userDetails.getUserId());
+        extra.put("name", userDetails.getName());
+        extra.put("userType", userDetails.getUserType());
+        extra.put("Nit", userDetails.getNit());
+        extra.put("authorities", userDetails.getAuthorities().stream()
+                .map(authority -> Map.of("authority", authority.getAuthority()))
+                .collect(Collectors.toList()));
+        extra.put("role", userDetails.getRole());
+        extra.put("modules", userDetails.getModules());
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(userDetails.getUsername())
                 .setExpiration(expirationDate)
                 .addClaims(extra)
                 .signWith(Keys.hmacShaKeyFor(ACCESS_TOKEN_SECRET.getBytes()))

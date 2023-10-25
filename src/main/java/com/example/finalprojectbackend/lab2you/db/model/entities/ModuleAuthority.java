@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.yaml.snakeyaml.events.Event;
 
 @Getter
 @Setter
@@ -16,15 +14,18 @@ import java.util.List;
 @DynamicInsert
 @NoArgsConstructor
 @Entity
-@Table(name = "modules")
-public class ModuleEntity extends BaseEntity {
+@Table(name = "module_authority")
+public class ModuleAuthority {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String description;
-    private String path;
-    private String icon;
-    @OneToMany(mappedBy = "moduleEntity")
-    private List<ModuleAuthority> moduleAuthorities = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "module_id")
+    private ModuleEntity moduleEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "authority_id")
+    private AuthorityEntity authorityEntity;
 }

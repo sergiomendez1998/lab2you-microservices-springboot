@@ -3,6 +3,8 @@ package com.example.finalprojectbackend.lab2you.db.model.wrappers;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class AuthWrapper {
@@ -13,6 +15,9 @@ public class AuthWrapper {
     private String userType;
     private String Nit;
     private String email;
+
+    private List<ModuleWrapper> modules;
+    private List<AuthorityWrapper> authorities;
 
     public AuthWrapper(Long userId,String token, String role, String name, String email) {
         this.userId = userId;

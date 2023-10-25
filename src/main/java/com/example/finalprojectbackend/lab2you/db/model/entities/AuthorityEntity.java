@@ -25,12 +25,8 @@ public class AuthorityEntity extends BaseEntity{
     private String description;
     private String path;
     private String icon;
-
     @ManyToMany(mappedBy ="authorities" )
     private List<RoleEntity> roleEntities;
-
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "module_authority", joinColumns = @JoinColumn(name = "module_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
-    private List<ModuleEntity> moduleEntities = new ArrayList<>();
+    @OneToMany(mappedBy = "authorityEntity", fetch = FetchType.EAGER)
+    private List<ModuleAuthority> moduleAuthorities = new ArrayList<>();
 }
