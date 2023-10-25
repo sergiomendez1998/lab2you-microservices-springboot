@@ -2,6 +2,7 @@ package com.example.finalprojectbackend.lab2you;
 
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -108,7 +109,21 @@ public class Lab2YouUtils {
         File tempFile = File.createTempFile("temp", ".pdf");
         file.transferTo(tempFile);
         try (PDDocument pdDocument = PDDocument.load(new File(tempFile.getAbsolutePath()))) {
-            return pdDocument.isEncrypted();
+            if (!pdDocument.isEncrypted()) {
+                return isFileEmptyBody(pdDocument);
+            }else {
+                return true;
+            }
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    public static boolean isFileEmptyBody(PDDocument file) throws IOException {
+        try  {
+            PDFTextStripper pdfTextStripper = new PDFTextStripper();
+            String text = pdfTextStripper.getText(file);
+            return text.trim().isEmpty();
         } catch (Exception e) {
             return true;
         }

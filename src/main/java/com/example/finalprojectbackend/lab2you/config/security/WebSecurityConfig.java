@@ -188,7 +188,6 @@ public class WebSecurityConfig {
 
     private List<RequestMatcher> AnalysisDocumentControllerMatchers() {
         return List.of(
-                new AntPathRequestMatcher("/api/v1/analysis-document/**", "GET"),
                 new AntPathRequestMatcher("/api/v1/analysis-document/**", "POST")
         );
     }
@@ -229,6 +228,7 @@ public class WebSecurityConfig {
 
     private List<RequestMatcher> permitAllRequestMatchers() {
         return List.of(
+                new AntPathRequestMatcher("/api/v1/analysis-document/**", "GET"),
                 new AntPathRequestMatcher("/api/v1/catalog/**", "GET"),
                 new AntPathRequestMatcher("/api/v1/customer/register", "POST"),
                 new AntPathRequestMatcher("/doc/**", "GET"),
