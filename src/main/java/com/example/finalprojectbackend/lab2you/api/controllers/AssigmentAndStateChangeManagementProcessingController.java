@@ -88,6 +88,7 @@ public class AssigmentAndStateChangeManagementProcessingController {
 
         if(currentAssignment != null){
             currentAssignment.setCurrentAssignment(false);
+            currentAssignment.setUpdatedBy(userAssignedBy.getId());
             assignmentRepository.save(currentAssignment);
         }
 
