@@ -23,6 +23,7 @@ public class FinalProjectBackendApplication extends SpringBootServletInitializer
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(FinalProjectBackendApplication.class);
     }
+
     @Bean
     OpenAPI customOpenAPI() {
         return new OpenAPI()
