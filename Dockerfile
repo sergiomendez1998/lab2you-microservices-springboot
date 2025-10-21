@@ -13,5 +13,7 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 COPY --from=builder /app/target/*.war app.war
 
+# Render asigna el puerto dinámicamente mediante la variable $PORT
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.war"]
+ENTRYPOINT ["sh", "-c", "java -jar app.war --server.port=${PORT}"]
+
