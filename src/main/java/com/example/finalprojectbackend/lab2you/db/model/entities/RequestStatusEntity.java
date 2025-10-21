@@ -5,8 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -26,10 +25,7 @@ public class RequestStatusEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status_id")
     private StatusEntity status;
-    private LocalDate createdAt;
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDate.now();
-    }
+    private LocalDateTime createdAt;
+    private Long createdBy;
+    private Long updatedBy;
 }

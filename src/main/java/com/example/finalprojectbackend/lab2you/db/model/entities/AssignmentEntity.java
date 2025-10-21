@@ -31,6 +31,15 @@ public class AssignmentEntity {
     @ManyToOne
     @JoinColumn(name = "request_id")
     private RequestEntity request;
-    private LocalDate AssignationDate;
+    private boolean isCurrentAssignment;
+    private LocalDate assignationDate;
+
+    private Long createdBy;
+    private Long updatedBy;
+
+    @PrePersist
+    public void prePersist() {
+        this.isCurrentAssignment = true;
+    }
 
 }

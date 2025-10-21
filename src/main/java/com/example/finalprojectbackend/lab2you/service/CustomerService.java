@@ -33,8 +33,8 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
         userService.save(entity.getUser());
         customerRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("customer created successfully");
-        responseWrapper.setData(Collections.singletonList("customer created successfully"));
+        responseWrapper.setMessage("cliente creado exitosamente");
+        responseWrapper.setData(Collections.singletonList("cliente creado exitosamente"));
         return responseWrapper;
     }
 
@@ -48,8 +48,8 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
             customerEntityFound.get().setLastName(entity.getLastName() != null ? entity.getLastName() : customerEntityFound.get().getLastName());
             customerRepository.save(customerEntityFound.get());
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("customer updated successfully");
-            responseWrapper.setData(Collections.singletonList("customer updated successfully"));
+            responseWrapper.setMessage("cliente actualizado exitosamente");
+            responseWrapper.setData(Collections.singletonList("cliente actualizado exitosamente"));
             return responseWrapper;
         }
         responseWrapper.setSuccessful(false);
@@ -65,11 +65,11 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
             customerEntityFound.get().getUser().setEnabled(false);
             customerRepository.save(customerEntityFound.get());
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("customer deleted successfully");
+            responseWrapper.setMessage("cliente eliminado exitosamente");
             return responseWrapper;
         }
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("customer not found");
+        responseWrapper.setMessage("cliente no encontrado");
         return responseWrapper;
     }
 
@@ -77,7 +77,7 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("customers found successfully");
+        responseWrapper.setMessage("clientes encontrados existosamente");
 
         List<CustomerWrapper> customerWrappers = customerRepository.findAll()
                 .stream()
@@ -230,5 +230,9 @@ public class CustomerService extends CrudServiceProcessingController<CustomerEnt
     }
     public CustomerEntity findCustomerByUserId(Long id){
         return customerRepository.findByUserId(id);
+    }
+
+    public CustomerEntity findCustomerByCui(String cui){
+        return customerRepository.findByCui(cui);
     }
 }

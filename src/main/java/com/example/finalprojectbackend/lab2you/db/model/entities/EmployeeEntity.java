@@ -24,6 +24,9 @@ public class EmployeeEntity {
     private String address;
     private String phoneNumber;
     private String gender;
+
+    private Long createdBy;
+    private Long updatedBy;
     @ManyToOne
     @JoinColumn (name="department_id")
     private DepartmentEntity departmentEntity;

@@ -18,11 +18,13 @@ public class AnalysisDocumentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String nit;
     private String documentCode;
     private String resolution;
     private String path;
     private Boolean isDeleted;
-
+    private Long createdBy;
+    private Long updatedBy;
     @ManyToOne
     @JoinColumn (name = "sample_id")
     private SampleEntity sample;

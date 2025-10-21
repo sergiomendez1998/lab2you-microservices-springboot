@@ -27,8 +27,8 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
         responseWrapper = new ResponseWrapper();
         sampleRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("sample created successfully");
-        responseWrapper.setData(Collections.singletonList("sample created successfully"));
+        responseWrapper.setMessage("muestra creada exitosamente");
+        responseWrapper.setData(Collections.singletonList("muestra creada exitosamente"));
         return responseWrapper;
     }
 
@@ -44,6 +44,9 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
         entity.setDeleted(true);
         entity.getSampleItemEntities().forEach(sampleItemEntity -> {
             sampleItemEntity.setDeleted(true);
+            sampleItemEntity.setUpdatedBy(entity.getUpdatedBy());
+            sampleItemEntity.getRequestDetail().setIsAssociated(false);
+            sampleItemEntity.getRequestDetail().setUpdatedBy(entity.getUpdatedBy());
         });
 
         sampleRepository.save(entity);
@@ -54,8 +57,15 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
 
     public void disassociateItem(SampleEntity sampleEntity, Long itemId){
         sampleEntity.getSampleItemEntities().forEach(sampleItemEntity -> {
-            if(sampleItemEntity.getItem().getId().equals(itemId)){
+            if(sampleItemEntity.getRequestDetail().getItem().getId().equals(itemId)){
                 sampleItemEntity.setDeleted(true);
+                sampleItemEntity.setUpdatedBy(sampleEntity.getUpdatedBy());
+                sampleEntity.getRequest().getRequestDetails().forEach(requestDetailEntity -> {
+                    if(requestDetailEntity.getItem().getId().equals(itemId)){
+                        requestDetailEntity.setUpdatedBy(sampleEntity.getUpdatedBy());
+                        requestDetailEntity.setIsAssociated(false);
+                    }
+                });
             }
         });
         sampleRepository.save(sampleEntity);
@@ -65,7 +75,7 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("sample found successfully");
+        responseWrapper.setMessage("muestras encontradas exitosamente");
 
         List<SampleWrapper> sampleWrappers= sampleRepository.findAllByIsDeletedFalse()
                 .stream()
@@ -88,8 +98,8 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
             responseWrapper.addError("quantity", "la cantidad es requerida");
         }
 
-        if (Lab2YouUtils.isObjectNullOrEmpty(entity.getRequestDetail())){
-            responseWrapper.addError("RequestDetail", "el id del de la solicitud detalle es requerido");
+        if (Lab2YouUtils.isObjectNullOrEmpty(entity.getRequest())){
+            responseWrapper.addError("request", "el id del de la solicitud detalle es requerido");
         }
 
         if (entity.getExpirationDate() == null){
@@ -138,9 +148,11 @@ public class SampleService extends CrudServiceProcessingController<SampleEntity>
         sampleWrapper.setPresentation(sampleEntity.getPresentation());
         sampleWrapper.setQuantity(sampleEntity.getQuantity());
         sampleWrapper.setExpirationDate(sampleEntity.getExpirationDate());
+
         sampleWrapper.getSampleType().setId(sampleEntity.getSampleTypeEntity().getId());
         sampleWrapper.getSampleType().setName(sampleEntity.getSampleTypeEntity().getName());
         sampleWrapper.getSampleType().setDescription(sampleEntity.getSampleTypeEntity().getDescription());
+
         sampleWrapper.getMeasureUnit().setId(sampleEntity.getMeasureUnitEntity().getId());
         sampleWrapper.getMeasureUnit().setName(sampleEntity.getMeasureUnitEntity().getName());
         sampleWrapper.getMeasureUnit().setDescription(sampleEntity.getMeasureUnitEntity().getDescription());

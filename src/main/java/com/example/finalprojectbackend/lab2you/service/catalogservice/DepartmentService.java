@@ -35,8 +35,8 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
         departmentRepository.save(entity);
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Department created");
-        responseWrapper.setData(Collections.singletonList("Department created"));
+        responseWrapper.setMessage("Departmento creado");
+        responseWrapper.setData(Collections.singletonList("Departmento creado"));
         return responseWrapper;
     }
 
@@ -52,14 +52,14 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
             departmentRepository.save(departmentEntityFound.get());
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Department updated");
-            responseWrapper.setData(Collections.singletonList("Department updated"));
+            responseWrapper.setMessage("Departmento actualizado");
+            responseWrapper.setData(Collections.singletonList("Departmento actualizado"));
             return responseWrapper;
         }
 
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("Department not found");
-        responseWrapper.addError("id", "Department not found");
+        responseWrapper.setMessage("Departmento no encontrado");
+        responseWrapper.addError("id", "Departmento no encontrado");
         return responseWrapper;
 
     }
@@ -87,7 +87,7 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Departments found");
+        responseWrapper.setMessage("Departmentos encontrados");
 
         List<CatalogWrapper> catalogWrapperList = departmentRepository.findAllByIsDeletedFalse()
                 .stream()
@@ -111,7 +111,7 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -128,7 +128,7 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -145,7 +145,7 @@ public class DepartmentService extends CrudCatalogServiceProcessingInterceptor<D
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }

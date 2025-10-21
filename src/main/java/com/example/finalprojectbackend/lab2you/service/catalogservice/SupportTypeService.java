@@ -1,7 +1,6 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
-import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.SupportTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
@@ -33,8 +32,8 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
         responseWrapper = new ResponseWrapper();
         supportTypeRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("SupportType created");
-        responseWrapper.setData(Collections.singletonList("SupportType created"));
+        responseWrapper.setMessage("Tipo de soporte creado");
+        responseWrapper.setData(Collections.singletonList("Tipo de soporte creado"));
         return responseWrapper;
     }
 
@@ -51,14 +50,14 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
               supportTypeRepository.save(supportTypeEntityFound.get());
 
               responseWrapper.setSuccessful(true);
-              responseWrapper.setMessage("SupportType updated");
-              responseWrapper.setData(Collections.singletonList("SupportType updated"));
+              responseWrapper.setMessage("Tipo de soporte actualizado");
+              responseWrapper.setData(Collections.singletonList("Tipo de soporte actualizado"));
               return responseWrapper;
          }
 
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("SupportType not found");
-            responseWrapper.addError("id","SupportType not found");
+            responseWrapper.setMessage("Tipo de soporte no encontrado");
+            responseWrapper.addError("id","Tipo de soporte no encontrado");
             return responseWrapper;
     }
 
@@ -75,8 +74,8 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
         });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("SupportType deleted");
-        responseWrapper.setData(Collections.singletonList("SupportType deleted"));
+        responseWrapper.setMessage("Tipo de soporte eliminado");
+        responseWrapper.setData(Collections.singletonList("Tipo de soporte eliminado"));
         return responseWrapper;
     }
 
@@ -85,7 +84,7 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("SupportTypes found");
+        responseWrapper.setMessage("Tipos de soporte encontrados");
         List<CatalogWrapper> catalogWrapperList = supportTypeRepository.findAllByIsDeletedFalse()
                 .stream()
                 .map(this::mapToCatalogWrapper)
@@ -107,7 +106,7 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -124,7 +123,7 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -141,7 +140,7 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -160,7 +159,9 @@ public class SupportTypeService extends CrudCatalogServiceProcessingInterceptor<
 
     @Override
     public CatalogWrapper mapToCatalogWrapper(SupportTypeEntity catalogItem) {
-        return new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+        CatalogWrapper catalogWrapper = new CatalogWrapper(catalogItem.getId(),catalogItem.getName(),catalogItem.getDescription());
+        catalogWrapper.setUserType(catalogItem.getUserType());
+        return catalogWrapper;
     }
 
     @Override

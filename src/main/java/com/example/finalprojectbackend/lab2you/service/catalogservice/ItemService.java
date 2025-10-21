@@ -1,6 +1,7 @@
 package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
+import com.example.finalprojectbackend.lab2you.db.model.entities.ExamTypeEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.ItemEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
@@ -24,16 +25,19 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
     private final ItemRepository itemRepository;
     private  ResponseWrapper responseWrapper;
 
-    public ItemService(ItemRepository itemRepository){
+    private final ExamTypeService examTypeService;
+
+    public ItemService(ItemRepository itemRepository, ExamTypeService examTypeService) {
         this.itemRepository=itemRepository;
+        this.examTypeService = examTypeService;
     }
 
     @Override
     public ResponseWrapper executeCreation(ItemEntity entity) {
         itemRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Item created");
-        responseWrapper.setData(Collections.singletonList("Item created"));
+        responseWrapper.setMessage("Item creado");
+        responseWrapper.setData(Collections.singletonList("Item creado"));
         return responseWrapper;
     }
 
@@ -49,14 +53,14 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
             itemRepository.save(itemEntityFound.get());
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Item updated");
-            responseWrapper.setData(Collections.singletonList("Item updated"));
+            responseWrapper.setMessage("Item actualizado");
+            responseWrapper.setData(Collections.singletonList("Item actualizado"));
             return responseWrapper;
         }
 
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("Item not found");
-        responseWrapper.addError("id", "Item not found");
+        responseWrapper.setMessage("Item no encontrado");
+        responseWrapper.addError("id", "Item no encontrado");
         return responseWrapper;
     }
     @CacheEvict(value = "items",allEntries = true)
@@ -72,8 +76,8 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
         });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Item deleted");
-        responseWrapper.setData(Collections.singletonList("item deleted"));
+        responseWrapper.setMessage("Item eliminado");
+        responseWrapper.setData(Collections.singletonList("item eliminado"));
         return responseWrapper;
     }
     @Cacheable(value = "items")
@@ -81,7 +85,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("items found");
+        responseWrapper.setMessage("items encontrados");
 
         List<CatalogWrapper> catalogWrapperList = itemRepository.findAllByIsDeletedFalse()
                 .stream()
@@ -105,7 +109,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -122,7 +126,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -139,7 +143,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -165,6 +169,7 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
     public ItemEntity mapToCatalogEntityForCreation(CatalogDTO catalogDTO, UserEntity userLogged) {
         ItemEntity itemEntity = new ItemEntity(catalogDTO.getName(),catalogDTO.getDescription());
         itemEntity.setCreatedBy(userLogged);
+        itemEntity.setExamType(examTypeService.findById(catalogDTO.getExamTypeId()));
         return itemEntity;
     }
 
@@ -177,7 +182,28 @@ public class ItemService extends CrudCatalogServiceProcessingInterceptor<ItemEnt
         itemEntity.setUpdatedBy(userLogged);
         return itemEntity;
     }
+    public List<ItemEntity> findItemByNames(List<String> names) {
+        List<ItemEntity> result = new ArrayList<>();
 
+        for (String name : names) {
+            List<CatalogWrapper> catalogWrappers = executeReadAll().getData().stream()
+                    .filter(item -> item instanceof CatalogWrapper)
+                    .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                    .filter(catalogWrapper -> catalogWrapper.getName().equals(name))
+                    .toList();
+
+            if (!catalogWrappers.isEmpty()) {
+                ItemEntity entity = new ItemEntity();
+                CatalogWrapper catalogWrapper = catalogWrappers.get(0);
+                entity.setId(catalogWrapper.getId());
+                entity.setName(catalogWrapper.getName());
+                entity.setDescription(catalogWrapper.getDescription());
+                result.add(entity);
+            }
+        }
+
+        return result;
+    }
     public ItemEntity findById(Long id) {
         return executeReadAll().getData()
                 .stream()

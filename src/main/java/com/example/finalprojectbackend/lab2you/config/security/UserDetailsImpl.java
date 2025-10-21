@@ -1,17 +1,15 @@
 package com.example.finalprojectbackend.lab2you.config.security;
 
-import com.example.finalprojectbackend.lab2you.db.model.entities.AuthorityEntity;
-import com.example.finalprojectbackend.lab2you.db.model.entities.ModuleEntity;
-import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
+import com.example.finalprojectbackend.lab2you.db.model.entities.*;
 
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.AuthorityWrapper;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.ModuleWrapper;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -58,27 +56,45 @@ public class UserDetailsImpl implements UserDetails {
     public String getName() {
         return userEntity.getNickName();
     }
+    public String getUserType() {
+        return userEntity.getUserType();
+    }
 
+    public String getNit() {
+       if (userEntity.getCustomer() != null) {
+           if(getUserType().equals("externo")){
+               return userEntity.getCustomer().getNit();
+           }else {
+               return "";
+           }
+       } else {
+           return "";
+       }
+    }
     public String getRole() {
         return userEntity.getRole().getName();
     }
     public Long getUserId() {
         return userEntity.getId();
     }
-
-    public List<ModuleEntity> getModules() {
-        return userEntity.getRole().getAuthorities().stream()
-                .map(AuthorityEntity::getModuleEntities)
-                .flatMap(Collection::stream)
-                .map(moduleEntity -> {
-                    ModuleEntity newModuleEntity = new ModuleEntity();
-                    newModuleEntity.setId(moduleEntity.getId());
-                    newModuleEntity.setName(moduleEntity.getName());
-                    newModuleEntity.setDescription(moduleEntity.getDescription());
-                    newModuleEntity.setPath(moduleEntity.getPath());
-                    newModuleEntity.setIcon(moduleEntity.getIcon());
-                    return newModuleEntity;
-                })
+    public List<AuthorityWrapper> getAuthoritiesList() {
+        return userEntity.getRole() != null ? userEntity.getRole().getAuthorities().stream()
+                .map(authorityEntity -> new AuthorityWrapper(authorityEntity.getId(), authorityEntity.getName(), authorityEntity.getDescription()))
+                .collect(Collectors.toList()) : new ArrayList<AuthorityWrapper>();
+    }
+    public List<ModuleWrapper> getModules() {
+        List<ModuleEntity> modules = new ArrayList<>();
+        if (userEntity.getRole() != null) {
+            for (AuthorityEntity authority : userEntity.getRole().getAuthorities()) {
+                for (ModuleEntity module : authority.getModuleAuthorities().stream().map(ModuleAuthority::getModuleEntity).toList()) {
+                    if (!modules.contains(module)) {
+                        modules.add(module);
+                    }
+                }
+            }
+        }
+        return modules.stream()
+                .map(module -> new ModuleWrapper(module.getId(), module.getName(), module.getDescription(), module.getPath(), module.getIcon()))
                 .collect(Collectors.toList());
     }
 }

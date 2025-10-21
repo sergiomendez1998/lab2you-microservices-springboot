@@ -34,8 +34,8 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
         responseWrapper = new ResponseWrapper();
         roleRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Role created");
-        responseWrapper.setData(Collections.singletonList("Role created"));
+        responseWrapper.setMessage("Rol creado");
+        responseWrapper.setData(Collections.singletonList("Rol creado"));
         return responseWrapper;
     }
 
@@ -51,13 +51,13 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
             roleRepository.save(roleEntityFound.get());
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Role updated");
-            responseWrapper.setData(Collections.singletonList("Role updated"));
+            responseWrapper.setMessage("Rol actualizado");
+            responseWrapper.setData(Collections.singletonList("Rol actualizado"));
             return responseWrapper;
         }
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("Role not found");
-        responseWrapper.addError("Id", "Role not found");
+        responseWrapper.setMessage("Rol no encontrado");
+        responseWrapper.addError("Id", "Rol no encontrado");
         return responseWrapper;
     }
 
@@ -74,8 +74,8 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
         });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Role deleted");
-        responseWrapper.setData(Collections.singletonList("Role deleted"));
+        responseWrapper.setMessage("Rol eliminado");
+        responseWrapper.setData(Collections.singletonList("Rol eliminado"));
         return responseWrapper;
 
     }
@@ -85,7 +85,7 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Roles found");
+        responseWrapper.setMessage("Roles encontrados");
 
         List<CatalogWrapper> catalogWrapperList = roleRepository.findAllByIsDeletedFalse()
                 .stream()
@@ -108,7 +108,7 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -125,7 +125,7 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -142,7 +142,7 @@ public class RoleService extends CrudCatalogServiceProcessingInterceptor<RoleEnt
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }

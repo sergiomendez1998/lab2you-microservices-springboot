@@ -23,6 +23,6 @@ public class SecurityCurrentUserProvider implements CurrentUserProvider {
                 return userService.findByEmail(userName);
             }
         }
-        return userService.findByEmail("system@system.com");
+        return userService.findByEmail("application@application.com");
     }
 }

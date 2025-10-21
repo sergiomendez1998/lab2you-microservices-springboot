@@ -58,14 +58,53 @@ public class WebSecurityConfig {
                     auth.requestMatchers(request ->
                                     permitAllRequestMatchers().stream().anyMatch(matcher -> matcher.matches(request))
                             ).permitAll()
+
                             .requestMatchers(request ->
-                                    adminRequestMatchers().stream().anyMatch(matcher -> matcher.matches(request)))
-                            .hasAuthority(
-                                    Lab2YouConstants.lab2YouRoles.ADMIN.getRole())
+                                    requestControllerMatchers().stream().anyMatch(matcher -> matcher.matches(request)))
+                            .hasAnyAuthority(
+                                    Lab2YouConstants.Authority.READ_REQUEST.getAuthority(),
+                                    Lab2YouConstants.Authority.CREATE_REQUEST.getAuthority(),
+                                    Lab2YouConstants.Authority.UPDATE_REQUEST.getAuthority(),
+                                    Lab2YouConstants.Authority.DELETE_REQUEST.getAuthority())
                             .requestMatchers(request ->
-                                    medicalRequestMatchers().stream().anyMatch(matcher -> matcher.matches(request)))
-                            .hasAuthority(
-                                    Lab2YouConstants.lab2YouRoles.MEDICAL.getRole())
+                                    AnalysisDocumentControllerMatchers().stream().anyMatch(matcher -> matcher.matches(request)))
+                            .hasAnyAuthority(
+                                    Lab2YouConstants.Authority.READ_ANALYSIS_DOCUMENT.getAuthority(),
+                                    Lab2YouConstants.Authority.CREATE_ANALYSIS_DOCUMENT.getAuthority(),
+                                    Lab2YouConstants.Authority.UPDATE_ANALYSIS_DOCUMENT.getAuthority(),
+                                    Lab2YouConstants.Authority.DELETE_ANALYSIS_DOCUMENT.getAuthority())
+                            .requestMatchers(request ->
+                                    AssigmentAndStateChangeControllerMatchers().stream().anyMatch(matcher -> matcher.matches(request)))
+                            .hasAnyAuthority(
+                                    Lab2YouConstants.Authority.READ_ASSIGNMENT.getAuthority(),
+                                    Lab2YouConstants.Authority.CREATE_ASSIGNMENT.getAuthority(),
+                                    Lab2YouConstants.Authority.UPDATE_ASSIGNMENT.getAuthority(),
+                                    Lab2YouConstants.Authority.DELETE_ASSIGNMENT.getAuthority(),
+                                    Lab2YouConstants.Authority.READ_REQUEST_STATUS.getAuthority(),
+                                    Lab2YouConstants.Authority.CREATE_REQUEST_STATUS.getAuthority(),
+                                    Lab2YouConstants.Authority.UPDATE_REQUEST_STATUS.getAuthority(),
+                                    Lab2YouConstants.Authority.DELETE_REQUEST_STATUS.getAuthority()
+                                    )
+                            .requestMatchers(request ->
+                                    catalogControllerMatchers().stream().anyMatch(matcher -> matcher.matches(request)))
+                            .hasAnyAuthority(
+                                    Lab2YouConstants.Authority.CREATE_CATALOG.getAuthority(),
+                                    Lab2YouConstants.Authority.UPDATE_CATALOG.getAuthority(),
+                                    Lab2YouConstants.Authority.DELETE_CATALOG.getAuthority())
+                            .requestMatchers(request ->
+                                    employeeControllerMatchers().stream().anyMatch(matcher -> matcher.matches(request)))
+                            .hasAnyAuthority(
+                                    Lab2YouConstants.Authority.READ_EMPLOYEE.getAuthority(),
+                                    Lab2YouConstants.Authority.CREATE_EMPLOYEE.getAuthority(),
+                                    Lab2YouConstants.Authority.UPDATE_EMPLOYEE.getAuthority(),
+                                    Lab2YouConstants.Authority.DELETE_EMPLOYEE.getAuthority())
+                            .requestMatchers(request ->
+                                    sampleControllerMatchers().stream().anyMatch(matcher -> matcher.matches(request)))
+                            .hasAnyAuthority(
+                                    Lab2YouConstants.Authority.READ_SAMPLE.getAuthority(),
+                                    Lab2YouConstants.Authority.CREATE_SAMPLE.getAuthority(),
+                                    Lab2YouConstants.Authority.UPDATE_SAMPLE.getAuthority(),
+                                    Lab2YouConstants.Authority.DELETE_SAMPLE.getAuthority())
                             .anyRequest().authenticated();
                 })
                 .sessionManagement(
@@ -77,7 +116,7 @@ public class WebSecurityConfig {
                     ex.authenticationEntryPoint((request, response, failed) -> {
                         var responseWrapper = new ResponseWrapper();
                         responseWrapper.setSuccessful(false);
-                        responseWrapper.setMessage("Authentication failed");
+                        responseWrapper.setMessage("Autenticacion fallida");
                         responseWrapper.setData(Collections.emptyList());
 
                         response.getWriter().write(
@@ -90,7 +129,7 @@ public class WebSecurityConfig {
                     ex.accessDeniedHandler((request, response, failed) -> {
                         var responseWrapper = new ResponseWrapper();
                         responseWrapper.setSuccessful(false);
-                        responseWrapper.setMessage("Access denied");
+                        responseWrapper.setMessage("Acceso denegado");
                         responseWrapper.setData(Collections.emptyList());
 
                         response.getWriter().write(
@@ -139,41 +178,63 @@ public class WebSecurityConfig {
         return filterFilterRegistrationBean;
     }
 
+    private List<RequestMatcher> requestControllerMatchers() {
+        return List.of(
+                new AntPathRequestMatcher("/api/v1/request/**", "GET"),
+                new AntPathRequestMatcher("/api/v1/request/**", "POST"),
+                new AntPathRequestMatcher("/api/v1/request/**", "PUT")
+        );
+    }
+
+    private List<RequestMatcher> AnalysisDocumentControllerMatchers() {
+        return List.of(
+                new AntPathRequestMatcher("/api/v1/analysis-document/**", "POST")
+        );
+    }
+
+    private List<RequestMatcher> AssigmentAndStateChangeControllerMatchers() {
+        return List.of(
+                new AntPathRequestMatcher("/api/v1/assigment/**", "GET"),
+                new AntPathRequestMatcher("/api/v1/assigment/**", "POST"),
+                new AntPathRequestMatcher("/api/v1/stateChange", "POST")
+        );
+    }
+
+    private List<RequestMatcher> catalogControllerMatchers(){
+        return List.of(
+                new AntPathRequestMatcher("/api/v1/catalog/**", "POST"),
+                new AntPathRequestMatcher("/api/v1/catalog/**", "PUT"),
+                new AntPathRequestMatcher("/api/v1/catalog/**", "DELETE")
+        );
+    }
+
+     private List<RequestMatcher> employeeControllerMatchers(){
+        return List.of(
+                new AntPathRequestMatcher("/api/v1/employee/**", "GET"),
+                new AntPathRequestMatcher("/api/v1/employee/**", "POST"),
+                new AntPathRequestMatcher("/api/v1/employee/**", "PUT"),
+                new AntPathRequestMatcher("/api/v1/employee/**", "DELETE")
+        );
+     }
+
+     private List<RequestMatcher> sampleControllerMatchers(){
+        return List.of(
+                new AntPathRequestMatcher("/api/v1/sample/**", "GET"),
+                new AntPathRequestMatcher("/api/v1/sample/**", "POST"),
+                new AntPathRequestMatcher("/api/v1/sample/**", "PUT"),
+                new AntPathRequestMatcher("/api/v1/sample/**", "DELETE")
+        );
+     }
 
     private List<RequestMatcher> permitAllRequestMatchers() {
         return List.of(
                 new AntPathRequestMatcher("/api/v1/analysis-document/**", "GET"),
-                new AntPathRequestMatcher("/api/v1/analysis-document/**", "POST"),
-                new AntPathRequestMatcher("/api/v1/stateChange", "POST"),
-                new AntPathRequestMatcher("/api/v1/sample/**", "POST"),
-                new AntPathRequestMatcher("/api/v1/sample/**", "GET"),
-                new AntPathRequestMatcher("/api/v1/sample/**", "PUT"),
-                new AntPathRequestMatcher("/api/v1/sample/**", "DELETE"),
-                new AntPathRequestMatcher("/api/v1/request/**", "GET"),
-                new AntPathRequestMatcher("/api/v1/request/**", "POST"),
-                new AntPathRequestMatcher("/api/v1/customer/register", "POST"),
-                new AntPathRequestMatcher("/api/v1/employee/**", "POST"),
-                new AntPathRequestMatcher("/api/v1/employee/**", "PUT"),
-                new AntPathRequestMatcher("/api/v1/employee/**", "DELETE"),
-                new AntPathRequestMatcher("/api/v1/employee/**", "GET"),
                 new AntPathRequestMatcher("/api/v1/catalog/**", "GET"),
-                new AntPathRequestMatcher("/api/v1/catalog/**", "POST"),
-                new AntPathRequestMatcher("/api/v1/catalog/**", "PUT"),
-                new AntPathRequestMatcher("/api/v1/catalog/**", "DELETE"),
-                new AntPathRequestMatcher("/doc/**", "GET"),
-                new AntPathRequestMatcher("/v3/api-docs/**", "GET"),
-                new AntPathRequestMatcher("/api/v1/login", "POST"));
+                new AntPathRequestMatcher("/api/v1/customer/register", "POST"),
+                new AntPathRequestMatcher("/swagger-ui/**", "GET"),    // <-- UI de Swagger
+                new AntPathRequestMatcher("/v3/api-docs/**", "GET"),   // <-- definición JSON
+                new AntPathRequestMatcher("/api/v1/login", "POST")
+        );
     }
-
-    private List<RequestMatcher> adminRequestMatchers() {
-        return List.of(new AntPathRequestMatcher("/api/v1/userList", "GET"),
-                new AntPathRequestMatcher("/api/v1/registerUserFromInternalRequest", "POST"));
-    }
-
-    private List<RequestMatcher> medicalRequestMatchers() {
-        return List.of(new AntPathRequestMatcher("/api/v1/userList", "GET"),
-                new AntPathRequestMatcher("/api/v1/registerUserFromMedicalRequest", "POST"));
-    }
-
 
 }

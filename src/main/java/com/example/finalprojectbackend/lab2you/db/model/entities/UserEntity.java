@@ -25,6 +25,8 @@ public class UserEntity{
     private boolean confirmed;
     private String userType;
     private String resetPasswordToken;
+    private Long createdBy;
+    private Long updatedBy;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")

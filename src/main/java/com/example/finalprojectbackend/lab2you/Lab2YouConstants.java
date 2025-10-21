@@ -33,7 +33,7 @@ public class Lab2YouConstants {
         }
     }
 
-    public enum lab2YouSuccessCodes {
+    public enum successCodes {
         EMAIL_SENT("el correo de confirmacion fue enviado a su correo electronico"),
         USER_CREATED("Usuario creado exitosamente"),
         SAMPLE_CREATED("La muestra se agrego exitosamente"),
@@ -45,13 +45,13 @@ public class Lab2YouConstants {
             return this.description;
         }
 
-        lab2YouSuccessCodes(String description) {
+        successCodes(String description) {
             this.description = description;
         }
     }
 
     public enum lab2YouRoles {
-        ADMIN("admin"),
+        ADMIN("Admin"),
         USER("user"),
         ANALYST("Analista"),
         MEDICAL("Medico"),
@@ -70,11 +70,66 @@ public class Lab2YouConstants {
 
     }
 
-    public enum lab2YouUserTypes {
+    public enum Authority {
+
+        CREATE_REQUEST("CREATE_REQUEST"),
+        UPDATE_REQUEST("UPDATE_REQUEST"),
+        DELETE_REQUEST("DELETE_REQUEST"),
+        READ_REQUEST("READ_REQUEST"),
+
+        CREATE_SAMPLE("CREATE_SAMPLE"),
+        UPDATE_SAMPLE("UPDATE_SAMPLE"),
+        DELETE_SAMPLE("DELETE_SAMPLE"),
+        READ_SAMPLE("READ_SAMPLE"),
+
+        CREATE_ASSIGNMENT("CREATE_ASSIGNMENT"),
+        UPDATE_ASSIGNMENT("UPDATE_ASSIGNMENT"),
+        DELETE_ASSIGNMENT("DELETE_ASSIGNMENT"),
+        READ_ASSIGNMENT("READ_ASSIGNMENT"),
+
+        CREATE_REQUEST_STATUS("CREATE_REQUEST_STATUS"),
+        UPDATE_REQUEST_STATUS("UPDATE_REQUEST_STATUS"),
+        DELETE_REQUEST_STATUS("DELETE_REQUEST_STATUS"),
+        READ_REQUEST_STATUS("READ_REQUEST_STATUS"),
+
+        CREATE_CATALOG("CREATE_CATALOG"),
+        UPDATE_CATALOG("UPDATE_CATALOG"),
+        DELETE_CATALOG("DELETE_CATALOG"),
+        READ_CATALOG("READ_CATALOG"),
+
+        CREATE_ANALYST("CREATE_ANALYSIS"),
+        UPDATE_ANALYST("UPDATE_ANALYSIS"),
+        DELETE_ANALYST("DELETE_ANALYSIS"),
+        READ_ANALYST("READ_ANALYSIS"),
+
+        CREATE_ANALYSIS_DOCUMENT("CREATE_ANALYSIS_DOCUMENT"),
+        UPDATE_ANALYSIS_DOCUMENT("UPDATE_ANALYSIS_DOCUMENT"),
+        DELETE_ANALYSIS_DOCUMENT("DELETE_ANALYSIS_DOCUMENT"),
+        READ_ANALYSIS_DOCUMENT("READ_ANALYSIS_DOCUMENT"),
+
+        CREATE_EMPLOYEE("CREATE_EMPLOYEE"),
+        UPDATE_EMPLOYEE("UPDATE_EMPLOYEE"),
+        DELETE_EMPLOYEE("DELETE_EMPLOYEE"),
+        READ_EMPLOYEE("READ_EMPLOYEE");
+
+
+        private String authority;
+
+        Authority(String authority) {
+            this.authority = authority;
+        }
+
+        public String getAuthority() {
+            return authority;
+        }
+
+    }
+
+    public enum userTypes {
         CUSTOMER("externo"),
         EMPLOYEE("interno");
         private String userType;
-        lab2YouUserTypes(String userType) {
+        userTypes(String userType) {
             this.userType = userType;
         }
 
@@ -100,8 +155,8 @@ public class Lab2YouConstants {
     }
 
     public enum statusTypes {
-        CREATED("Creado");
-
+        CREATED("Creado"),
+        ANALYSIS("Análisis");
         String status;
 
         statusTypes(String status) {

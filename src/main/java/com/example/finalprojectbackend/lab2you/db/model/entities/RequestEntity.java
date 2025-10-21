@@ -28,6 +28,8 @@ public class RequestEntity {
     private String remark;
     private Date receptionDate;
     private boolean isDeleted;
+    private Long createdBy;
+    private Long updatedBy;
     @ManyToOne
     @JoinColumn(name = "support_type_id")
     private SupportTypeEntity supportType;
@@ -37,6 +39,9 @@ public class RequestEntity {
 
     @OneToMany(mappedBy = "request")
     private List<RequestStatusEntity> requestStatuses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "request")
+    private List<SampleEntity> samples = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -48,9 +53,9 @@ public class RequestEntity {
         this.receptionDate = new Date(System.currentTimeMillis());
     }
 
-    public void addExamType(ExamTypeEntity examTypeEntity) {
+    public void addItem(ItemEntity ItemEntity) {
         RequestDetailEntity requestDetailEntity = new RequestDetailEntity();
-        requestDetailEntity.setExamType(examTypeEntity);
+        requestDetailEntity.setItem(ItemEntity);
         requestDetailEntity.setRequest(this);
         this.requestDetails.add(requestDetailEntity);
     }

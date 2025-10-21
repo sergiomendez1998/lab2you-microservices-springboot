@@ -2,10 +2,11 @@ package com.example.finalprojectbackend.lab2you.service.catalogservice;
 
 import com.example.finalprojectbackend.lab2you.db.model.dto.CatalogDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.ExamTypeEntity;
-import com.example.finalprojectbackend.lab2you.db.model.entities.RoleEntity;
 import com.example.finalprojectbackend.lab2you.db.model.entities.UserEntity;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.CatalogWrapper;
 import com.example.finalprojectbackend.lab2you.api.controllers.CrudCatalogServiceProcessingInterceptor;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.ExamTypeItemWrapper;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.ItemWrapper;
 import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
 import com.example.finalprojectbackend.lab2you.db.repository.ExamTypeRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Qualifier("examType")
@@ -34,8 +34,8 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         responseWrapper = new ResponseWrapper();
         examTypeRepository.save(examTypeEntity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Exam type created");
-        responseWrapper.setData(Collections.singletonList("Exam type created"));
+        responseWrapper.setMessage("Tipo de examen creado");
+        responseWrapper.setData(Collections.singletonList("Tipo de examen creado"));
         return responseWrapper;
     }
 
@@ -52,14 +52,14 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
             examTypeRepository.save(examTypeFound.get());
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Department updated");
-            responseWrapper.setData(Collections.singletonList("Department updated"));
+            responseWrapper.setMessage("Tipo de examen actualizado");
+            responseWrapper.setData(Collections.singletonList("Tipo de examen actualizado"));
             return responseWrapper;
         }
 
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("examTypeEntity not found");
-        responseWrapper.addError("id", "examTypeEntity not found");
+        responseWrapper.setMessage("Tipo de examen no encontrado");
+        responseWrapper.addError("id", "Tipo de examen no encontrado");
         return responseWrapper;
     }
 
@@ -76,8 +76,8 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Exam type deleted");
-        responseWrapper.setData(Collections.singletonList("Exam Type deleted"));
+        responseWrapper.setMessage("Tipo de examen eliminado");
+        responseWrapper.setData(Collections.singletonList("Tipo de examen eliminado"));
         return responseWrapper;
     }
 
@@ -86,13 +86,13 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Exam types found");
-        List<CatalogWrapper> catalogWrapperList = examTypeRepository
+        responseWrapper.setMessage("Tipos de examenes encontrados");
+        List<ExamTypeItemWrapper> examTypeItemWrapperList = examTypeRepository
                 .findAllByIsDeletedFalse()
                 .stream()
-                .map(this::mapToCatalogWrapper)
+                .map(this::mapToExamTypeItemWrapper)
                 .toList();
-        responseWrapper.setData(catalogWrapperList);
+        responseWrapper.setData(examTypeItemWrapperList);
         return responseWrapper;
     }
 
@@ -109,7 +109,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -126,7 +126,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -142,7 +142,7 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -172,6 +172,24 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         return examType;
     }
 
+    private ExamTypeItemWrapper mapToExamTypeItemWrapper(ExamTypeEntity examTypeEntity) {
+        ExamTypeItemWrapper examTypeItemWrapper = new ExamTypeItemWrapper();
+        examTypeItemWrapper.setId(examTypeEntity.getId());
+        examTypeItemWrapper.setName(examTypeEntity.getName());
+        examTypeItemWrapper.setDescription(examTypeEntity.getDescription());
+
+        examTypeItemWrapper.setItems(examTypeEntity.getItems().stream().map(itemEntity -> {
+            ItemWrapper itemWrapper = new ItemWrapper();
+            itemWrapper.setId(itemEntity.getId());
+            itemWrapper.setName(itemEntity.getName());
+            itemWrapper.setDescription(itemEntity.getDescription());
+            itemWrapper.setPrice(itemEntity.getPrice());
+            return itemWrapper;
+        }).toList());
+
+        return examTypeItemWrapper;
+    }
+
     @Override
     public ExamTypeEntity mapToCatalogEntityForUpdate(CatalogDTO catalogDTO, UserEntity userLogged) {
         ExamTypeEntity examType = new ExamTypeEntity();
@@ -182,26 +200,21 @@ public class ExamTypeService extends CrudCatalogServiceProcessingInterceptor<Exa
         return examType;
     }
 
-    public List<ExamTypeEntity> findExamByNames(List<String> names) {
-        List<ExamTypeEntity> result = new ArrayList<>();
+    public ExamTypeEntity findById(Long id) {
+        return executeReadAll().getData()
+                .stream()
+                .filter(item -> item instanceof CatalogWrapper)
+                .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
+                .filter(catalogWrapper -> catalogWrapper.getId().equals(id))
+                .findFirst()
+                .map(catalogWrapper -> {
+                    ExamTypeEntity entity = new ExamTypeEntity();
+                    entity.setId(catalogWrapper.getId());
+                    entity.setName(catalogWrapper.getName());
+                    entity.setDescription(catalogWrapper.getDescription());
+                    return entity;
+                })
+                .orElse(new ExamTypeEntity());
 
-        for (String name : names) {
-            List<CatalogWrapper> catalogWrappers = executeReadAll().getData().stream()
-                    .filter(item -> item instanceof CatalogWrapper)
-                    .map(catalogWrapper -> (CatalogWrapper) catalogWrapper)
-                    .filter(catalogWrapper -> catalogWrapper.getName().equals(name))
-                    .toList();
-
-            if (!catalogWrappers.isEmpty()) {
-                ExamTypeEntity entity = new ExamTypeEntity();
-                CatalogWrapper catalogWrapper = catalogWrappers.get(0); // Tomamos el primero si hay múltiples coincidencias
-                entity.setId(catalogWrapper.getId());
-                entity.setName(catalogWrapper.getName());
-                entity.setDescription(catalogWrapper.getDescription());
-                result.add(entity);
-            }
-        }
-
-        return result;
     }
 }

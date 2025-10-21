@@ -41,7 +41,7 @@ public class UserService extends CrudServiceProcessingController<UserEntity> {
         Optional<UserEntity> userEntityFound = userRepository.findById(entity.getId());
         userEntityFound.ifPresent(userEntity -> userEntity.setEmail(entity.getEmail()));
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("user updated successfully");
+        responseWrapper.setMessage("usuario actualizado exitosamente");
         return responseWrapper;
     }
 
@@ -52,12 +52,12 @@ public class UserService extends CrudServiceProcessingController<UserEntity> {
         if (userEntityFound.isPresent()) {
             userEntityFound.get().setEnabled(false);
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("user deleted successfully");
+            responseWrapper.setMessage("usuario eliminado exitosamente");
             return responseWrapper;
         }
 
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("user not found");
+        responseWrapper.setMessage("usuario no encontrado");
         return responseWrapper;
     }
 
@@ -83,7 +83,7 @@ public class UserService extends CrudServiceProcessingController<UserEntity> {
         }
 
         if (entity.getRole() == null) {
-            responseWrapper.addError("role","role es requerido");
+            responseWrapper.addError("role","rol es requerido");
         }
 
        UserEntity  userEntityFound = userRepository.findByEmail(entity.getEmail());

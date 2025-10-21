@@ -1,10 +1,10 @@
 package com.example.finalprojectbackend.lab2you.api.controllers;
 
 import com.example.finalprojectbackend.lab2you.Lab2YouConstants;
+import com.example.finalprojectbackend.lab2you.Lab2YouUtils;
 import com.example.finalprojectbackend.lab2you.db.model.dto.RequestDTO;
 import com.example.finalprojectbackend.lab2you.db.model.entities.*;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapper;
-import com.example.finalprojectbackend.lab2you.db.model.wrappers.ResponseWrapperRequest;
+import com.example.finalprojectbackend.lab2you.db.model.wrappers.*;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestDetailRepository;
 import com.example.finalprojectbackend.lab2you.db.repository.RequestStatusRepository;
 import com.example.finalprojectbackend.lab2you.providers.CurrentUserProvider;
@@ -13,6 +13,10 @@ import com.example.finalprojectbackend.lab2you.service.catalogservice.StatusServ
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import static com.example.finalprojectbackend.lab2you.Lab2YouConstants.operationTypes.*;
@@ -23,27 +27,19 @@ public class RequestManagementProcessingController {
 
     private final RequestService requestService;
     private final CustomerService customerService;
-    private final AssigmentService assigmentService;
-    private final EmployeeService employeeService;
-    private final UserService userService;
     private final RequestDetailRepository requestDetailRepository;
     private ResponseWrapper responseWrapper;
-
     private final StatusService statusService;
     private final RequestStatusRepository requestStatusRepository;
 
     private final CurrentUserProvider currentUserProvider;
 
     public RequestManagementProcessingController(RequestService requestService, CustomerService customerService,
-                                                 AssigmentService assigmentService, UserService userService,
-                                                 EmployeeService employeeService, CurrentUserProvider currentUserProvider,
+                                                 CurrentUserProvider currentUserProvider,
                                                  RequestDetailRepository requestDetailRepository,
                                                  RequestStatusRepository requestStatusRepository, StatusService statusService) {
         this.requestService = requestService;
         this.customerService = customerService;
-        this.assigmentService = assigmentService;
-        this.userService = userService;
-        this.employeeService = employeeService;
         this.currentUserProvider = currentUserProvider;
         this.requestDetailRepository = requestDetailRepository;
         this.requestStatusRepository = requestStatusRepository;
@@ -52,7 +48,31 @@ public class RequestManagementProcessingController {
 
     @GetMapping()
     public ResponseEntity<ResponseWrapper> getAll() {
-        return ResponseEntity.ok(requestService.executeReadAll());
+
+        UserEntity currentUserLogin = currentUserProvider.getCurrentUser();
+        if (currentUserLogin.getUserType().equalsIgnoreCase(Lab2YouConstants.userTypes.EMPLOYEE.getUserType())) {
+            if (currentUserLogin.getEmployee().getUser().getRole().getName().equalsIgnoreCase(Lab2YouConstants.lab2YouRoles.ADMIN.getRole()) ||
+                    currentUserLogin.getEmployee().getUser().getRole().getName().equalsIgnoreCase(Lab2YouConstants.lab2YouRoles.CENTRALIZER.getRole())
+            ) {
+                {
+                    return ResponseEntity.ok(requestService.executeReadAll());
+                }
+            } else {
+                return ResponseEntity.ok(
+                        requestService.executeReadAllFilteredByRolAndAssigment(
+                                currentUserLogin.getEmployee().getUser().getRole().getName(),
+                                currentUserLogin.getEmployee().getId()));
+            }
+        } else {
+            return ResponseEntity.ok(new ResponseWrapper(false, "No tiene permisos para realizar esta acción", null));
+        }
+    }
+
+    @GetMapping("/samples/{requestId}")
+    public ResponseEntity<RequestSampleItemWrapper> getSamplesByRequestId(@PathVariable Long requestId) {
+       RequestEntity requestEntity = requestService.getRequestById(requestId);
+       RequestSampleItemWrapper requestSampleItemWrapper =requestService.mapToSampleItems(requestEntity);
+         return ResponseEntity.ok(requestSampleItemWrapper);
     }
 
     @GetMapping("/requestStatuses/{requestId}")
@@ -62,10 +82,9 @@ public class RequestManagementProcessingController {
         return ResponseEntity.ok(responseWrapper);
     }
 
-    @GetMapping("/exams/{requestId}")
-    public ResponseEntity<ResponseWrapper> getExamsByRequestId(@PathVariable Long requestId) {
-        responseWrapper = new ResponseWrapper();
-        responseWrapper = requestService.getAllExamsByRequestId(requestId);
+    @GetMapping("/items/{requestId}")
+    public ResponseEntity<Map<String, List<RequestDetailWrapper>>> getExamsByRequestId(@PathVariable Long requestId) {
+        var responseWrapper = requestService.getAllExamItemsByRequestId(requestId);
         return ResponseEntity.ok(responseWrapper);
     }
 
@@ -77,56 +96,92 @@ public class RequestManagementProcessingController {
 
     @PostMapping
     public ResponseEntity<ResponseWrapper> create(@RequestBody RequestDTO requestDTO) {
-        AssignmentEntity assignmentEntity = new AssignmentEntity();
-        UserEntity userAssignedBy = currentUserProvider.getCurrentUser();
-        if (userAssignedBy==null || userAssignedBy.getUserType().equals(Lab2YouConstants.lab2YouUserTypes.CUSTOMER.getUserType())) {
-            UserEntity userAssignedBySystem = userService.findByEmail("application@application.com");
-            assignmentEntity.setAssignedByEmployee(userAssignedBySystem.getEmployee());
+
+        CustomerEntity customerEntity;
+        UserEntity currentUserLogin = currentUserProvider.getCurrentUser();
+        String userType;
+        userType = getUserTypeFromUserLogin(currentUserLogin);
+
+        if(userType.equalsIgnoreCase(Lab2YouConstants.userTypes.EMPLOYEE.getUserType())){
+            customerEntity = new CustomerEntity();
+            customerEntity    = customerService.findCustomerByCui(requestDTO.getCustomerCui());
+            if (customerEntity == null) {
+                return ResponseEntity.badRequest().body(new ResponseWrapper(false, "El cliente no existe", null));
+            }
+        }else{
+            customerEntity = new CustomerEntity();
+            customerEntity = customerService.findCustomerByUserId(requestDTO.getUserId());
         }
 
-        assignmentEntity.setAssignedToEmployee(employeeService.getRandomEmployeeWithRoleTechnician());
-        CustomerEntity customerEntity = customerService.findCustomerByUserId(requestDTO.getUserId());
         RequestEntity requestEntity = requestService.mapToRequestEntity(requestDTO);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        requestEntity.setRequestCode(Lab2YouUtils.generateRequestCode(date, userType));
         requestEntity.setCustomer(customerEntity);
 
         responseWrapper = requestService.validate(requestEntity, CREATE.getOperationType());
+
         if (!responseWrapper.getErrors().isEmpty()) {
             return ResponseEntity.badRequest().body(responseWrapper);
         }
-
+        requestEntity.setCreatedBy(currentUserLogin.getId());
         responseWrapper = requestService.execute(requestEntity, CREATE.getOperationType());
         if (!responseWrapper.isSuccessful()) {
             return ResponseEntity.badRequest().body(responseWrapper);
         }
-        RequestEntity requestToAssign = requestService.findRequestByRequestCode(requestEntity.getRequestCode());
+        RequestEntity newRequest = requestService.findRequestByRequestCode(requestEntity.getRequestCode());
 
         requestEntity.getRequestDetails().forEach(requestDetailEntity -> {
-            requestDetailEntity.setRequest(requestToAssign);
+            requestDetailEntity.setCreatedBy(currentUserLogin.getId());
+            requestDetailEntity.setRequest(newRequest);
             requestDetailRepository.save(requestDetailEntity);
         });
 
-        assignmentEntity.setRequest(requestToAssign);
-
         RequestStatusEntity requestStatusEntity = new RequestStatusEntity();
-        requestStatusEntity.setRequest(requestToAssign);
+        requestStatusEntity.setRequest(newRequest);
+        requestStatusEntity.setCreatedBy(currentUserLogin.getId());
         requestStatusEntity.setStatus(statusService.findStatusByName(Lab2YouConstants.statusTypes.CREATED.getStatusType()));
-
         requestStatusRepository.save(requestStatusEntity);
-        assigmentService.executeCreation(assignmentEntity);
         responseWrapper.setMessage("Solicitud No. " + requestEntity.getRequestCode() + " creada exitosamente");
         return ResponseEntity.ok(responseWrapper);
     }
 
     @PutMapping("delete/{requestId}")
     public ResponseEntity<ResponseWrapper> delete(@PathVariable Long requestId) {
-
+        UserEntity currentUserLogin = currentUserProvider.getCurrentUser();
         if(requestId == null) {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, "El id de la solicitud no puede ser nulo", null));
         }
 
         RequestEntity requestEntity = requestService.getRequestById(requestId);
 
+        String recentStatus = requestEntity.getRequestStatuses()
+                .stream()
+                .min((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()))
+                .map(status -> status.getStatus().getName())
+                .orElse(null);
+
+        boolean statusCreated = Lab2YouConstants.statusTypes.CREATED.getStatusType().equalsIgnoreCase(recentStatus);
+
+        if (!statusCreated) {
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, "La solicitud con estado "+recentStatus+" no se puede eliminar", null));
+        }
+         requestEntity.setUpdatedBy(currentUserLogin.getId());
         responseWrapper = requestService.execute(requestEntity, DELETE.getOperationType());
         return ResponseEntity.ok(responseWrapper);
+    }
+
+    private String getUserTypeFromUserLogin(UserEntity userAssignedBy) {
+        String userType;
+        if((userAssignedBy != null ? userAssignedBy.getUserType() : null) !=null){
+            if (userAssignedBy.getUserType().equalsIgnoreCase(Lab2YouConstants.userTypes.CUSTOMER.getUserType())) {
+                userType = Lab2YouConstants.userTypes.CUSTOMER.getUserType();
+            } else {
+                userType = Lab2YouConstants.userTypes.EMPLOYEE.getUserType();
+            }
+        }else{
+            userType = Lab2YouConstants.userTypes.CUSTOMER.getUserType();
+        }
+        return userType;
     }
 }

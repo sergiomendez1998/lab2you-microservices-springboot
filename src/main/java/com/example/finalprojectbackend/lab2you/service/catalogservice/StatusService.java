@@ -34,8 +34,8 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
         responseWrapper = new ResponseWrapper();
         statusRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Status created");
-        responseWrapper.setData(Collections.singletonList("Status created"));
+        responseWrapper.setMessage("Estado creado");
+        responseWrapper.setData(Collections.singletonList("Estado creado"));
         return responseWrapper;
     }
 
@@ -54,14 +54,14 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
             statusRepository.save(statusEntityFound.get());
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Status updated");
-            responseWrapper.setData(Collections.singletonList("Status updated"));
+            responseWrapper.setMessage("Estado actualizado");
+            responseWrapper.setData(Collections.singletonList("Estado actualizado"));
             return responseWrapper;
         }
 
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("Status not found");
-        responseWrapper.addError("id", "Status not found");
+        responseWrapper.setMessage("Estado no encontrado");
+        responseWrapper.addError("id", "Estado no encontrado");
         return responseWrapper;
     }
 
@@ -77,8 +77,8 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
         });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Status deleted");
-        responseWrapper.setData(Collections.singletonList("Status deleted"));
+        responseWrapper.setMessage("Estado eliminado");
+        responseWrapper.setData(Collections.singletonList("Estado eliminado"));
         return responseWrapper;
     }
 
@@ -87,7 +87,7 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Statuses found");
+        responseWrapper.setMessage("Estados encontrados");
 
         List<CatalogWrapper> catalogWrapperList = statusRepository.findAllByIsDeletedFalse()
                 .stream()
@@ -111,7 +111,7 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -128,7 +128,7 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -145,7 +145,7 @@ public class StatusService extends CrudCatalogServiceProcessingInterceptor<Statu
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }

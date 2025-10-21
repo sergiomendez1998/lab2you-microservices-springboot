@@ -1,13 +1,13 @@
 package com.example.finalprojectbackend.lab2you.db.model.wrappers;
 
-
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
-public class RequestDetailWrapper {
+public class RequestSampleItemWrapper {
     private Long id;
-    private Long requestId;
-    private ItemWrapper itemWrapper;
+    private List<SampleWrapper> sampleWrapper;
 }

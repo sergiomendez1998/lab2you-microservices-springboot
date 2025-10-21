@@ -27,11 +27,20 @@ public class RequestDetailEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     private RequestEntity request;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exam_type_id")
-    private ExamTypeEntity examType;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_id")
+    private ItemEntity item;
     @OneToMany(mappedBy = "requestDetail")
-    private List<SampleEntity> sample = new ArrayList<>();
+    private List<SampleItemEntity>  sampleItemEntities = new ArrayList<>();
     private LocalDate createdAt;
     private Boolean isDeleted;
+    private Boolean isAssociated;
+    private Long createdBy;
+    private Long updatedBy;
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDate.now();
+        isDeleted = false;
+    }
 }

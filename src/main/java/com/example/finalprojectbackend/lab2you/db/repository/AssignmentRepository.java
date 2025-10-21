@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 public interface AssignmentRepository extends JpaRepository<AssignmentEntity, Long> {
-    @Query("SELECT a FROM AssignmentEntity a WHERE a.request.id = :requestId ORDER BY a.AssignationDate DESC")
+    @Query("SELECT a FROM AssignmentEntity a WHERE a.request.id = :requestId ORDER BY a.assignationDate DESC")
     List<AssignmentEntity> findAllByRequestId(@Param("requestId") Long requestId);
+    List<AssignmentEntity> findAllByAssignedToEmployeeId(Long employeeId);
+    @Query("SELECT a FROM AssignmentEntity a WHERE a.request.id = :requestId AND a.isCurrentAssignment = true ORDER BY a.assignationDate DESC")
+    AssignmentEntity findCurrentAssignmentForRequest(@Param("requestId") Long requestId);
 }

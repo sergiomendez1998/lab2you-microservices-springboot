@@ -36,8 +36,8 @@ public class AnalysisDocumentService extends CrudServiceProcessingController<Ana
         responseWrapper = new ResponseWrapper();
         analysisDocumentRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("AnalysisDocument created");
-        responseWrapper.setData(Collections.singletonList("AnalysisDocument created"));
+        responseWrapper.setMessage("Documento de analisis creado");
+        responseWrapper.setData(Collections.singletonList("Documento de analisis creado"));
         return responseWrapper;
     }
 
@@ -54,14 +54,14 @@ public class AnalysisDocumentService extends CrudServiceProcessingController<Ana
             analysisDocumentEntityFound.get().setIsDeleted(true);
             analysisDocumentRepository.save(analysisDocumentEntityFound.get());
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("AnalysisDocument deleted");
-            responseWrapper.setData(Collections.singletonList("AnalysisDocument deleted"));
+            responseWrapper.setMessage("Documento de analisis eliminado");
+            responseWrapper.setData(Collections.singletonList("Documento de analisis eliminado"));
             return responseWrapper;
         }
 
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("AnalysisDocument not found");
-        responseWrapper.addError("id", "AnalysisDocument not found");
+        responseWrapper.setMessage("Documento de analisis no encontrado");
+        responseWrapper.addError("id", "Documento de analisis no encontrado");
         return responseWrapper;
     }
 
@@ -76,13 +76,13 @@ public class AnalysisDocumentService extends CrudServiceProcessingController<Ana
 
         if (analysisDocumentWrapperList.isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("AnalysisDocument not found");
-            responseWrapper.addError("id", "AnalysisDocument not found");
+            responseWrapper.setMessage("Documento de analisis no encontrado");
+            responseWrapper.addError("id", "Documento de analisis no encontrado");
             return responseWrapper;
         }
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("AnalysisDocument found");
+        responseWrapper.setMessage("Documento de analisis encontrado");
         responseWrapper.setData(analysisDocumentWrapperList);
         return responseWrapper;
     }
@@ -141,7 +141,7 @@ public class AnalysisDocumentService extends CrudServiceProcessingController<Ana
                 .toList();
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("AnalysisDocument found");
+        responseWrapper.setMessage("Documento de analisis encontrado");
         responseWrapper.setData(analysisDocumentWrapperList);
         return responseWrapper;
     }
@@ -153,6 +153,7 @@ public class AnalysisDocumentService extends CrudServiceProcessingController<Ana
         analysisDocumentEntity.setSample(sampleService.findSampleById(analysisDocumentDTO.getSampleId()));
         analysisDocumentEntity.setResolution(analysisDocumentDTO.getResolution());
         analysisDocumentEntity.setDocumentCode(Lab2YouUtils.generateDocumentCode());
+        analysisDocumentEntity.setNit(analysisDocumentDTO.getNit());
         return analysisDocumentEntity;
     }
 
@@ -162,8 +163,8 @@ public class AnalysisDocumentService extends CrudServiceProcessingController<Ana
         analysisDocumentWrapper.setDocumentCode(analysisDocumentEntity.getDocumentCode());
         analysisDocumentWrapper.setResolution(analysisDocumentEntity.getResolution());
         analysisDocumentWrapper.setDocumentType(analysisDocumentEntity.getAnalysisDocumentType().getName());
-        analysisDocumentWrapper.setCustomerNit(analysisDocumentEntity.getSample().getRequestDetail().getRequest().getCustomer().getNit());
-        analysisDocumentWrapper.setRequestCode(analysisDocumentEntity.getSample().getRequestDetail().getRequest().getRequestCode());
+        analysisDocumentWrapper.setCustomerNit(analysisDocumentEntity.getSample().getRequest().getCustomer().getNit());
+        analysisDocumentWrapper.setRequestCode(analysisDocumentEntity.getSample().getRequest().getRequestCode());
         analysisDocumentWrapper.setCreatedAt(analysisDocumentEntity.getCreatedAt());
         return  analysisDocumentWrapper;
     }

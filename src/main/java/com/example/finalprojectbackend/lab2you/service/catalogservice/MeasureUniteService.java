@@ -32,8 +32,8 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
         responseWrapper = new ResponseWrapper();
         measureUnitRepository.save(entity);
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Measure unit created");
-        responseWrapper.setData(Collections.singletonList("Measure unit created"));
+        responseWrapper.setMessage("Unidad de medida creada");
+        responseWrapper.setData(Collections.singletonList("Unidad de medida creada"));
         return responseWrapper;
     }
 
@@ -50,14 +50,14 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
             measureUnitRepository.save(measureUnitEntityFound.get());
 
             responseWrapper.setSuccessful(true);
-            responseWrapper.setMessage("Measure unit updated");
-            responseWrapper.setData(Collections.singletonList("Measure unit updated"));
+            responseWrapper.setMessage("Unidad de medida actualizada");
+            responseWrapper.setData(Collections.singletonList("Unidad de medida actualizada"));
             return responseWrapper;
         }
 
         responseWrapper.setSuccessful(false);
-        responseWrapper.setMessage("Measure unit not found");
-        responseWrapper.addError("id", "Measure unit not found");
+        responseWrapper.setMessage("Unidad de medida no encontrada");
+        responseWrapper.addError("id", "Unidad de medida no encontrada");
         return responseWrapper;
     }
 
@@ -73,8 +73,8 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
         });
 
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Measure unit deleted");
-        responseWrapper.setData(Collections.singletonList("Measure unit deleted"));
+        responseWrapper.setMessage("Unidad de medida eliminada");
+        responseWrapper.setData(Collections.singletonList("Unidad de medida eliminada"));
         return responseWrapper;
     }
 
@@ -83,7 +83,7 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
     public ResponseWrapper executeReadAll() {
         responseWrapper = new ResponseWrapper();
         responseWrapper.setSuccessful(true);
-        responseWrapper.setMessage("Measure units found");
+        responseWrapper.setMessage("Unidades de medidas encontradas");
         List<CatalogWrapper> catalogWrapperList = measureUnitRepository.findAllByIsDeletedFalse()
                 .stream()
                 .map(this::mapToCatalogWrapper)
@@ -105,7 +105,7 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -122,7 +122,7 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
@@ -139,7 +139,7 @@ public class MeasureUniteService extends CrudCatalogServiceProcessingInterceptor
 
         if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
             responseWrapper.setSuccessful(false);
-            responseWrapper.setMessage("Error validating");
+            responseWrapper.setMessage("Error validando");
             responseWrapper.setData(new ArrayList<>());
             return responseWrapper;
         }
