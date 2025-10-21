@@ -231,8 +231,10 @@ public class WebSecurityConfig {
                 new AntPathRequestMatcher("/api/v1/analysis-document/**", "GET"),
                 new AntPathRequestMatcher("/api/v1/catalog/**", "GET"),
                 new AntPathRequestMatcher("/api/v1/customer/register", "POST"),
-                new AntPathRequestMatcher("/doc/**", "GET"),
-                new AntPathRequestMatcher("/v3/api-docs/**", "GET"),
-                new AntPathRequestMatcher("/api/v1/login", "POST"));
+                new AntPathRequestMatcher("/swagger-ui/**", "GET"),    // <-- UI de Swagger
+                new AntPathRequestMatcher("/v3/api-docs/**", "GET"),   // <-- definición JSON
+                new AntPathRequestMatcher("/api/v1/login", "POST")
+        );
     }
+
 }
